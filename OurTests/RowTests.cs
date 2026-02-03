@@ -12,19 +12,5 @@ namespace OurTests
 
         }
         */
-        private List<ColumnDefinition> columns;
-
-        [SetUp]
-        public void SetUp() 
-        {
-            columns = new List<ColumnDefinition>
-            {
-                new ColumnDefinition (ColumnDefinition.DataType.String, "Name"),
-				new ColumnDefinition (ColumnDefinition.DataType.Int, "Age"),
-				new ColumnDefinition (ColumnDefinition.DataType.Double, "Height")
-			};
-        }
-
-        
     }
 }
