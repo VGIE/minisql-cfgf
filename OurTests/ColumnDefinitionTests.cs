@@ -31,5 +31,18 @@ namespace OurTests
       //Assert
       Assert.Equal(expectedReturn, result);
     }
+        [Fact]
+        public void ColumnDefinition_Constructor_TypeCorrecto() 
+        {
+            ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
+            Assert.Equal(ColumnDefinition.DataType.Int, column.Type);
+        }
+
+        [Fact]
+        public void ColumnDefinition_Constructor_NameCorrecto() 
+        {
+            ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
+            Assert.Equal("Name", column.Name);
+        }
   }
 }
