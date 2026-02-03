@@ -14,7 +14,10 @@ namespace DbManager
         public Table(string name, List<ColumnDefinition> columns)
         {
             //TODO DEADLINE 1.A: Initialize member variables
-            
+            Name = name;
+            ColumnDefinitions = columns;
+            Rows = new List<Row>();
+
         }
 
         public Row GetRow(int i)

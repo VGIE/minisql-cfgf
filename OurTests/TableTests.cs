@@ -1,3 +1,5 @@
+using DbManager;
+
 namespace OurTests
 {
     public class TableTests
@@ -10,5 +12,13 @@ namespace OurTests
 
         }
         */
-    }
+
+        [Fact]
+        public void Table_Constructor_GuardaNombreCorrecto() 
+        {
+            var columns = new List<ColumnDefinition>();
+            var table = new Table("Personas", columns);
+            Assert.Equal("Personas", table.Name);
+        }
+	}
 }
