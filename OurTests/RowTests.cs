@@ -37,5 +37,16 @@ namespace OurTests
             var row = new Row(columns, values);
             Assert.Same(values, row.Values);
 		}
+        [Fact]
+        public void Row_Constructor_ListOfValuesEmpty()
+        {
+			var columns = new List<ColumnDefinition>
+			{
+				new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+			};
+			var values = new List<String> ();
+			var row = new Row(columns, values);
+            Assert.Empty(row.Values);
+		}
     }
 }
