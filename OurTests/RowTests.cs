@@ -59,7 +59,7 @@ namespace OurTests
 				new ColumnDefinition(ColumnDefinition.DataType.Double, "Height")
 			};
 
-            var values = new List<String> { "Ane", "21", "1.65"};
+            var values = new List<String> { "Ane", "20", "1.65"};
             var row = new Row(columns, values);
 
             row.SetValue("Age", "21");
