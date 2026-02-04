@@ -28,7 +28,6 @@ namespace DbManager
                 if (ColumnDefinitions[i].Name == columnName)
                 {
                     Values[i] = value;
-                    
                 }
             }
         }

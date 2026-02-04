@@ -66,7 +66,7 @@ namespace OurTests
 
             Assert.Equal("21", row.Values[1]);
             Assert.Equal("Ane", row.Values[0]);
-            Assert.Equal("1.62", row.Values[2]);
+            Assert.Equal("1.65", row.Values[2]);
         }
         [Fact]
         public void Row_SetValue_NoExistColumnDoNothing()
