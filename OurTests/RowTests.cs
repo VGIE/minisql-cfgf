@@ -25,5 +25,17 @@ namespace OurTests
             var row = new Row(columns, values);
             Assert.Equal(values, row.Values);
         }
+
+        [Fact]
+        public void Row_Constructor_SameListOfValues() 
+        {
+			var columns = new List<ColumnDefinition>
+			{
+				new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+			};
+			var values = new List<String> { "Andrea"};
+            var row = new Row(columns, values);
+            Assert.Same(values, row.Values);
+		}
     }
 }
