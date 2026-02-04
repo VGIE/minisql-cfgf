@@ -12,5 +12,18 @@ namespace OurTests
 
         }
         */
+        [Fact]
+        public void Row_Constructor_SaveValuesCorrectly() 
+        {
+            var columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
+            };
+
+            var values = new List<String> { "Ane", "21" };
+            var row = new Row(columns, values);
+            Assert.Equal(values, row.Values);
+        }
     }
 }

@@ -3,7 +3,6 @@ namespace OurTests
 {
   public class ColumnDefinitionsTests
   {
-<<<<<<< HEAD
     //[Theory]
     //[InlineData(ColumnDefinition.DataType.String, "Pepe")] 
     //[InlineData(ColumnDefinition.DataType.Int, "2")]
@@ -38,6 +37,7 @@ namespace OurTests
         ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
         Assert.Equal(ColumnDefinition.DataType.Int, column.Type);
     }
+    
 
     [Fact]
     public void ColumnDefinition_Constructor_NameCorrecto() 
@@ -46,7 +46,5 @@ namespace OurTests
         Assert.Equal("Name", column.Name);
     }
   }
-=======
-     }
->>>>>>> NAIARA
+
 }
