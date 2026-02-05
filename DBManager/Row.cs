@@ -16,6 +16,10 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
         {
             //TODO DEADLINE 1.A: Initialize member variables
+            //Check that the number of column definitions matches the number of values, otherwise return without doing anything
+            if (columnDefinitions.Count() != values.Count()) { return; }
+            //Check that there is at least one column definition, otherwise return without doing anything
+            if (columnDefinitions.Count() == 0) { return; }
             ColumnDefinitions = columnDefinitions;
             Values = values;
         }
