@@ -94,7 +94,7 @@ namespace OurTests
 			{
 				new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
 				new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
-				new ColumnDefinition(ColumnDefinition.DataType.Int, "Height")
+				new ColumnDefinition(ColumnDefinition.DataType.Double, "Height")
 			};
 
 			var values = new List<String> { "Ane", "21", "1.65"};
