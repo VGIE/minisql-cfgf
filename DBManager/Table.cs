@@ -37,8 +37,7 @@ namespace DbManager
         public int NumRows()
         {
             //TODO DEADLINE 1.A: Return the number of rows
-            
-            return 0;
+            return Rows.Count;
             
         }
 

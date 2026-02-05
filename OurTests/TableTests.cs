@@ -20,5 +20,11 @@ namespace OurTests
             var table = new Table("Personas", columns);
             Assert.Equal("Personas", table.Name);
         }
-	}
+        [Fact]
+        public void Table_NumRows_ReturnsCorrectNum()
+        {
+            var table = new Table("Test", new List<ColumnDefinition>());
+            Assert.Equal(0, table.NumRows());
+        }
+    }
 }
