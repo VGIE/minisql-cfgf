@@ -66,9 +66,14 @@ namespace DbManager
         public ColumnDefinition ColumnByName(string column)
         {
             //TODO DEADLINE 1.A: Return the number of columns
-            
-            return null;
-            
+            foreach (var col in ColumnDefinitions) 
+            {
+                if (column == col.Name)
+                {
+                    return col;
+                }
+            }
+            throw new ArgumentException("la columna " + column + " no existe"); 
         }
         public int ColumnIndexByName(string columnName)
         {

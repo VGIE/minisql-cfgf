@@ -112,5 +112,25 @@ namespace OurTests
             catch (ArgumentException){error = true;}
             Assert.True(error);
         }
+        [Fact]
+        public void Table_ColumnByName_ReturnsCorrectColumn()
+        {
+            var columns = new List<ColumnDefinition> 
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String,"Nombre"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int,"Edad")
+            };
+
+            Table table = new Table("TestTable",columns);
+
+            ColumnDefinition col = table.ColumnByName("Edad");
+            Assert.NotNull(col);
+            Assert.Equal("Edad", col.Name);
+
+            bool error = false;
+            try{table.ColumnByName("lasjfdlkaj");}
+            catch (ArgumentException){error = true;}
+            Assert.True(error); 
+        }
     }
 }
