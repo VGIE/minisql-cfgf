@@ -132,5 +132,24 @@ namespace OurTests
             catch (ArgumentException){error = true;}
             Assert.True(error); 
         }
+        [Fact]
+        public void Table_ColumnIndexByName_ReturnsCorrectColumnIndex()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String,"Nombre"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int,"Edad")
+            };
+
+            Table table = new Table("TestTable", columns);
+
+            int index = table.ColumnIndexByName("Edad");
+            Assert.Equal(1, index);
+
+            bool error = false;
+            try { table.ColumnIndexByName("lasjfdlkaj"); }
+            catch (ArgumentException) { error = true; }
+            Assert.True(error);
+        }
     }
 }

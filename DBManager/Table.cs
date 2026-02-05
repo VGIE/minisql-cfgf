@@ -1,6 +1,7 @@
 using DbManager.Parser;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 
 namespace DbManager
 {
@@ -78,11 +79,15 @@ namespace DbManager
         public int ColumnIndexByName(string columnName)
         {
             //TODO DEADLINE 1.A: Return the zero-based index of the column named columnName
-            
-            return -1;
-            
+            for (int i=0; i<NumColumns(); i++)
+            {
+                if (GetColumn(i).Name == columnName)
+                {
+                    return i;
+                }
+            }
+            throw new ArgumentException("la columna " + columnName + " no existe");
         }
-
 
         public override string ToString()
         {
