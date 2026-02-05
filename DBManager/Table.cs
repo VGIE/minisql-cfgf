@@ -23,8 +23,7 @@ namespace DbManager
         public Row GetRow(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th row
-            
-            return null;
+            return Rows[i];
             
         }
 

@@ -31,10 +31,36 @@ namespace OurTests
         {
             var columns = new List<ColumnDefinition>();
             var table = new Table("TestTable", columns);
-            var row = new Row(columns, new List<string> { "Prueba"});
+            var row = new Row(columns, new List<string> { "Prueba" });
 
             table.AddRow(row);
-            Assert.Equal(1,table.NumRows());
+            Assert.Equal(1, table.NumRows());
+        }
+        [Fact]
+        public void Table_GetRow_ReturnsCorrectRow()
+        {
+            var columns = new List<ColumnDefinition> {
+            new ColumnDefinition(ColumnDefinition.DataType.String,"Nombre")
+            };
+
+            Table table = new Table("TestTable",columns);
+            var row1 = new Row(columns, new List<string> {"Mario"});
+            table.AddRow(row1);
+
+            Row result = table.GetRow(0);
+            Assert.NotNull(result);
+            Assert.Equal("Mario",result.Values[0]);
+            Assert.Equal(row1, result);
+
+            bool error = false;
+            try{table.GetRow(1);}
+            catch (ArgumentException){error = true;}
+            Assert.True(error); 
+
+            error = false;
+            try{table.GetRow(-1);}
+            catch (ArgumentException){error = true;}
+            Assert.True(error);
         }
     }
 }
