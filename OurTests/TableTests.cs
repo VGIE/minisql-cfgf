@@ -86,5 +86,31 @@ namespace OurTests
             var table2 = new Table("Test2", columns);
             Assert.Equal(2,table2.NumColumns());
         }
+        [Fact]
+        public void Table_GetColumn_ReturnsCorrectColumnAndHandlesErrors()
+        {
+            var columns = new List<ColumnDefinition> 
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String,"Nombre"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int,"Edad")
+            };
+
+            Table table = new Table("TestTable",columns);
+
+            ColumnDefinition col = table.GetColumn(1);
+            Assert.Equal("Edad",col.Name);
+            Assert.Equal(ColumnDefinition.DataType.Int,col.Type);
+
+            bool error = false;
+
+            try{table.GetColumn(5);}
+            catch (ArgumentException){error = true;}
+            Assert.True(error);
+
+            error = false;
+            try{table.GetColumn(-1);}
+            catch (ArgumentException){error = true;}
+            Assert.True(error);
+        }
     }
 }

@@ -23,6 +23,10 @@ namespace DbManager
         public Row GetRow(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th row
+            if (i < 0 || i >= NumRows())
+            {
+                throw new ArgumentException("Index is out of range, está fuera de los limites");
+            }
             return Rows[i];
             
         }
@@ -44,9 +48,11 @@ namespace DbManager
         public ColumnDefinition GetColumn(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th column
-            
-            return null;
-            
+            if (i < 0 || i >= NumColumns()) 
+            {
+                throw new ArgumentException("Index is out of range, está fuera de los limites");
+            }
+            return ColumnDefinitions[i];
         }
 
         public int NumColumns()
