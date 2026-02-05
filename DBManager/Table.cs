@@ -31,6 +31,7 @@ namespace DbManager
         public void AddRow(Row row)
         {
             //TODO DEADLINE 1.A: Add a new row
+            Rows.Add(row);
             
         }
 
