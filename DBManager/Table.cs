@@ -53,7 +53,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return the number of columns
             
-            return 0;
+            return ColumnDefinitions.Count;
             
         }
         

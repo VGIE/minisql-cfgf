@@ -25,6 +25,14 @@ namespace OurTests
         {
             var table = new Table("Test", new List<ColumnDefinition>());
             Assert.Equal(0, table.NumRows());
+
+            var columns = new List<ColumnDefinition> {new ColumnDefinition(ColumnDefinition.DataType.String, "Name")};
+            var table2 = new Table("Test2", columns);
+
+            var row = new Row(columns, new List<string> {"Mario"});
+            table2.AddRow(row);
+
+            Assert.Equal(1,table2.NumRows());
         }
         [Fact]
         public void Table_AddRow_IncreasesCounter()
@@ -34,7 +42,7 @@ namespace OurTests
             var row = new Row(columns, new List<string> { "Prueba" });
 
             table.AddRow(row);
-            Assert.Equal(1, table.NumRows());
+            Assert.Equal(1,table.NumRows());
         }
         [Fact]
         public void Table_GetRow_ReturnsCorrectRow()
@@ -61,6 +69,22 @@ namespace OurTests
             try{table.GetRow(-1);}
             catch (ArgumentException){error = true;}
             Assert.True(error);
+        }
+        [Fact]
+        public void Table_NumColumns_ReturnsCorrectNum()
+        {
+            var table = new Table("Test", new List<ColumnDefinition>());
+            Assert.Equal(0, table.NumColumns());
+
+            var columns = new List<ColumnDefinition>
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
+            };
+
+
+            var table2 = new Table("Test2", columns);
+            Assert.Equal(2,table2.NumColumns());
         }
     }
 }
