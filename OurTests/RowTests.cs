@@ -33,8 +33,9 @@ namespace OurTests
 			{
 				new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
 			};
-			var values = new List<String> { "Andrea"};
+			var values = new List<String> {"Andrea"};
             var row = new Row(columns, values);
+
             Assert.Same(values, row.Values);
 		}
         [Fact]
@@ -84,6 +85,40 @@ namespace OurTests
 
 			Assert.Equal("Ane", row.Values[0]);
 			Assert.Equal("21", row.Values[1]);
+		}
+
+        [Fact]
+        public void Row_GetValue_ReturnCorrectvalue()
+        {
+			var columns = new List<ColumnDefinition>
+			{
+				new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+				new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+				new ColumnDefinition(ColumnDefinition.DataType.Int, "Height")
+			};
+
+			var values = new List<String> { "Ane", "21", "1.65"};
+			var row = new Row(columns, values);
+
+			var result = row.GetValue("Age");
+
+			Assert.Equal("21", result);
+		}
+        [Fact]
+        public void Row_GetValue_ColumnNotExistReturnNull()
+        {
+			var columns = new List<ColumnDefinition>
+			{
+				new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+				new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+			};
+
+			var values = new List<String> {"Ane", "21"};
+			var row = new Row(columns, values);
+
+			var result = row.GetValue("Height");
+
+			Assert.Null(result);
 		}
     }
 }
