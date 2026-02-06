@@ -21,6 +21,18 @@ namespace OurTests
             Assert.Equal("Personas", table.Name);
         }
         [Fact]
+        public void Table_Constructor_NameShoulNotBeEmpty()
+        {
+            var table = new Table("", new List<ColumnDefinition>());
+            Assert.Null(table.Name);
+        }
+        [Fact]
+        public void Table_Constructor_NameShoulNotBeNull()
+        {
+			var table = new Table(null, new List<ColumnDefinition>());
+			Assert.Null(table.Name);
+		}
+        [Fact]
         public void Table_NumRows_ReturnsCorrectNum()
         {
             var table = new Table("Test", new List<ColumnDefinition>());
