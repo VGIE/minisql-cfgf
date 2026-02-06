@@ -15,7 +15,10 @@ namespace DbManager
         public Condition(string column, string op, string literalValue)
         {
             //TODO DEADLINE 1A: Initialize member variables
-            
+            if (string.IsNullOrWhiteSpace(column) || string.IsNullOrWhiteSpace(op)) { return; }
+            ColumnName = column;
+            Operator = op;
+            LiteralValue = literalValue;
         }
 
 
