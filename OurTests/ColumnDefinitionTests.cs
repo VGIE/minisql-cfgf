@@ -31,20 +31,31 @@ namespace OurTests
     //  //Assert
     //  Assert.Equal(expectedReturn, result);
     //}
-    [Fact]
-    public void ColumnDefinition_Constructor_TypeCorrecto() 
-    {
-        ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
-        Assert.Equal(ColumnDefinition.DataType.Int, column.Type);
-    }
-    
+        [Fact]
+        public void ColumnDefinition_Constructor_ShoulHaveTypeCorrecto() 
+        {
+            ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
+            Assert.Equal(ColumnDefinition.DataType.Int, column.Type);
+        }
+        [Fact]
+        public void ColumnDefinition_Constructor_ShouldHaveNameCorrecto() 
+        {
+            ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
+            Assert.Equal("Name", column.Name);
+        }
+        [Fact]
+        public void ColumnDefinition_Constructor_ShouldNotHaveNameVacio()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, " ");
+            Assert.Null(column.Name);
+        }
+        [Fact]
+        public void ColumnDefinition_Constructor_NameShoulNotBeNull()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, null);
+            Assert.Null(column.Name);
+        }
 
-    [Fact]
-    public void ColumnDefinition_Constructor_NameCorrecto() 
-    {
-        ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
-        Assert.Equal("Name", column.Name);
-    }
   }
 
 }
