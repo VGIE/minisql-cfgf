@@ -25,12 +25,8 @@ namespace DbManager
         public Row GetRow(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th row
-            if (i < 0 || i >= NumRows())
-            {
-                throw new ArgumentException("Index is out of range, está fuera de los limites");
-            }
+            if (i < 0 || i >= NumRows()) { return null; }
             return Rows[i];
-            
         }
 
         public void AddRow(Row row)
@@ -50,10 +46,7 @@ namespace DbManager
         public ColumnDefinition GetColumn(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th column
-            if (i < 0 || i >= NumColumns()) 
-            {
-                throw new ArgumentException("Index is out of range, está fuera de los limites");
-            }
+            if (i < 0 || i >= NumColumns()) { return null; }
             return ColumnDefinitions[i];
         }
 
@@ -75,7 +68,7 @@ namespace DbManager
                     return col;
                 }
             }
-            throw new ArgumentException("la columna " + column + " no existe"); 
+            return null; 
         }
         public int ColumnIndexByName(string columnName)
         {
@@ -87,7 +80,7 @@ namespace DbManager
                     return i;
                 }
             }
-            throw new ArgumentException("la columna " + columnName + " no existe");
+            return 0;
         }
 
         public override string ToString()
