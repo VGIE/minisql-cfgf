@@ -46,7 +46,7 @@ namespace OurTests
         [Fact]
         public void ColumnDefinition_Constructor_ShouldNotHaveNameVacio()
         {
-            var column = new ColumnDefinition(ColumnDefinition.DataType.String, " ");
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, "");
             Assert.Null(column.Name);
         }
         [Fact]

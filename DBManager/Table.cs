@@ -15,6 +15,7 @@ namespace DbManager
         public Table(string name, List<ColumnDefinition> columns)
         {
             //TODO DEADLINE 1.A: Initialize member variables
+            if (string.IsNullOrEmpty(name)) return;
             Name = name;
             ColumnDefinitions = columns;
             Rows = new List<Row>();

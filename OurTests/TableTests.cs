@@ -29,9 +29,9 @@ namespace OurTests
         [Fact]
         public void Table_Constructor_NameShoulNotBeNull()
         {
-			var table = new Table(null, new List<ColumnDefinition>());
-			Assert.Null(table.Name);
-		}
+			    var table = new Table(null, new List<ColumnDefinition>());
+			    Assert.Null(table.Name);
+		    }
         [Fact]
         public void Table_NumRows_ReturnsCorrectNum()
         {
