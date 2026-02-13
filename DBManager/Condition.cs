@@ -30,10 +30,39 @@ namespace DbManager
             //"9" > "10"
             //9 < 10
             //Convert first the strings to the appropriate type and then compare (depending on the operator of the condition)
+            if (value == null || LiteralValue == null || Operator == null) { return false; }
 
-            
-            return false;
-            
+            int cmp;
+
+            if (type == ColumnDefinition.DataType.String)
+            {
+                cmp = string.Compare(value, LiteralValue);
+            }
+            else if (type == ColumnDefinition.DataType.Int ||
+         type == ColumnDefinition.DataType.Double)
+            {
+                double v, lit;
+
+                string normalizedValue = value.Replace('.', ',');
+                string normalizedLiteral = LiteralValue.Replace('.', ',');
+
+                if (!double.TryParse(normalizedValue, out v)) return false;
+                if (!double.TryParse(normalizedLiteral, out lit)) return false;
+
+                cmp = v.CompareTo(lit);
+            }
+            else { return false; }
+
+            switch (Operator)
+            {
+                case "=": return cmp == 0;
+                case "!=": return cmp != 0;
+                case "<": return cmp < 0;
+                case "<=": return cmp <= 0;
+                case ">": return cmp > 0;
+                case ">=": return cmp >= 0;
+                default: return false;
+            }            
         }
     }
 }
