@@ -38,16 +38,13 @@ namespace DbManager
             {
                 cmp = string.Compare(value, LiteralValue);
             }
-            else if (type == ColumnDefinition.DataType.Int ||
-         type == ColumnDefinition.DataType.Double)
+            else if (type == ColumnDefinition.DataType.Int ||  type == ColumnDefinition.DataType.Double)
             {
                 double v, lit;
 
-                string normalizedValue = value.Replace('.', ',');
-                string normalizedLiteral = LiteralValue.Replace('.', ',');
+                if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out v)) { return false; }
 
-                if (!double.TryParse(normalizedValue, out v)) return false;
-                if (!double.TryParse(normalizedLiteral, out lit)) return false;
+                if (!double.TryParse(LiteralValue, NumberStyles.Float, CultureInfo.InvariantCulture, out lit)) { return false; }
 
                 cmp = v.CompareTo(lit);
             }
