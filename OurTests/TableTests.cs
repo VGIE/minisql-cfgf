@@ -14,41 +14,59 @@ namespace OurTests
         */
 
         [Fact]
-        public void Table_Constructor_GuardaNombreCorrecto() 
+        public void Table_Constructor_SavesCorrectName() 
         {
             var columns = new List<ColumnDefinition>();
             var table = new Table("Personas", columns);
             Assert.Equal("Personas", table.Name);
         }
         [Fact]
-        public void Table_NumRows_ReturnsCorrectNum()
+        public void Table_Constructor_NameShoulNotBeEmpty()
         {
-            var table = new Table("Test", new List<ColumnDefinition>());
-            Assert.Equal(0, table.NumRows());
-
-            var columns = new List<ColumnDefinition> {new ColumnDefinition(ColumnDefinition.DataType.String, "Name")};
-            var table2 = new Table("Test2", columns);
-
-            var row = new Row(columns, new List<string> {"Mario"});
-            table2.AddRow(row);
-
-            Assert.Equal(1,table2.NumRows());
+            var table = new Table("", new List<ColumnDefinition>());
+            Assert.Null(table.Name);
         }
         [Fact]
-        public void Table_AddRow_IncreasesCounter()
+        public void Table_Constructor_NameShoulNotBeNull()
         {
-            var columns = new List<ColumnDefinition>();
-            var table = new Table("TestTable", columns);
-            var row = new Row(columns, new List<string> { "Prueba" });
+			    var table = new Table(null, new List<ColumnDefinition>());
+			    Assert.Null(table.Name);
+		    }
+        [Fact]
+        public void Table_NumRows_EmptyTable_ReturnsZero()
+        {
+            var table = new Table("Test", new List<ColumnDefinition>());
+            Assert.Equal(0,table.NumRows());
+        }
+        [Fact]
+        public void Table_NumRows_NotEmptyTable_ReturnsOne()
+        {
+            var columns = new List<ColumnDefinition> {
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name")
+            };
+            var table = new Table("Test2", columns);
+            var row = new Row(columns, new List<string> { "Mario" });
 
             table.AddRow(row);
             Assert.Equal(1,table.NumRows());
         }
         [Fact]
-        public void Table_GetRow_ReturnsCorrectRow()
+        public void Table_AddRow_IncreasesCounter()
         {
             var columns = new List<ColumnDefinition> {
-            new ColumnDefinition(ColumnDefinition.DataType.String,"Nombre")
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name")
+            };
+            var table = new Table("TestTable", columns);
+            var row = new Row(columns, new List<string> { "Test" });
+
+            table.AddRow(row);
+            Assert.Equal(1,table.NumRows());
+        }
+        [Fact]
+        public void Table_GetRow_CorrectIndex_ReturnsCorrectRow()
+        {
+            var columns = new List<ColumnDefinition> {
+            new ColumnDefinition(ColumnDefinition.DataType.String,"Name")
             };
 
             Table table = new Table("TestTable",columns);
@@ -59,81 +77,110 @@ namespace OurTests
             Assert.NotNull(result);
             Assert.Equal("Mario",result.Values[0]);
             Assert.Equal(row1, result);
-
-            bool error = false;
-            try{table.GetRow(1);}
-            catch (ArgumentException){error = true;}
-            Assert.True(error); 
-
-            error = false;
-            try{table.GetRow(-1);}
-            catch (ArgumentException){error = true;}
-            Assert.True(error);
         }
         [Fact]
-        public void Table_NumColumns_ReturnsCorrectNum()
+        public void Table_GetRow_OutOfRange_ReturnsNull()
         {
-            var table = new Table("Test", new List<ColumnDefinition>());
-            Assert.Equal(0, table.NumColumns());
+            var columns = new List<ColumnDefinition> {
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name")
+            };
 
+            var table = new Table("TestTable", columns);
+            table.AddRow(new Row(columns, new List<string> { "Mario" }));
+
+            Assert.Null(table.GetRow(1));
+            Assert.Null(table.GetRow(-1));
+        }
+        [Fact]
+        public void Table_NumColumns_EmptyColumns_ReturnsZero()
+        {
+            var columns = new List<ColumnDefinition>();
+            var table = new Table("TestTable", columns);
+
+            Assert.Equal(0, table.NumColumns());
+        }
+        [Fact]
+        public void Table_NumColumns_NotEmptyColumns_ReturnsCorrectNumber()
+        {
+            var columns = new List<ColumnDefinition> {
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
+            };
+
+            var table = new Table("Test2", columns);
+            Assert.Equal(2,table.NumColumns());
+        }
+        [Fact]
+        public void Table_GetColumn_CorrectIndex_ReturnsCorrectColumn()
+        {
+            var columns = new List<ColumnDefinition> 
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String,"Name"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int,"Age")
+            };
+
+            Table table = new Table("TestTable",columns);
+            ColumnDefinition col = table.GetColumn(1);
+
+            Assert.NotNull(col);
+            Assert.Equal("Age", col.Name);
+            Assert.Equal(ColumnDefinition.DataType.Int,col.Type);
+        }
+        [Fact]
+        public void Table_GetColumn_OutOfRange_ReturnsNull()
+        {
             var columns = new List<ColumnDefinition>
             {
             new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
             new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
             };
 
+            Table table = new Table("TestTable", columns);
 
-            var table2 = new Table("Test2", columns);
-            Assert.Equal(2,table2.NumColumns());
+            Assert.Null(table.GetColumn(100));
+            Assert.Null(table.GetColumn(-1));
         }
         [Fact]
-        public void Table_GetColumn_ReturnsCorrectColumnAndHandlesErrors()
+        public void Table_ColumnByName_UnknownColumn_ReturnsNull()
         {
             var columns = new List<ColumnDefinition> 
             {
-            new ColumnDefinition(ColumnDefinition.DataType.String,"Nombre"),
-            new ColumnDefinition(ColumnDefinition.DataType.Int,"Edad")
+            new ColumnDefinition(ColumnDefinition.DataType.String,"Name"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int,"Age")
             };
 
-            Table table = new Table("TestTable",columns);
-
-            ColumnDefinition col = table.GetColumn(1);
-            Assert.Equal("Edad",col.Name);
-            Assert.Equal(ColumnDefinition.DataType.Int,col.Type);
-
-            bool error = false;
-
-            try{table.GetColumn(5);}
-            catch (ArgumentException){error = true;}
-            Assert.True(error);
-
-            error = false;
-            try{table.GetColumn(-1);}
-            catch (ArgumentException){error = true;}
-            Assert.True(error);
+            Table table = new Table("TestTable", columns);
+            Assert.Null(table.ColumnByName("jalkfjdlk"));
         }
         [Fact]
-        public void Table_ColumnByName_ReturnsCorrectColumn()
+        public void Table_ColumnByName_ExistingColumn_ReturnsCorrectColumn()
         {
-            var columns = new List<ColumnDefinition> 
+            var columns = new List<ColumnDefinition>
             {
-            new ColumnDefinition(ColumnDefinition.DataType.String,"Nombre"),
-            new ColumnDefinition(ColumnDefinition.DataType.Int,"Edad")
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
             };
 
-            Table table = new Table("TestTable",columns);
-
-            ColumnDefinition col = table.ColumnByName("Edad");
+            Table table = new Table("TestTable", columns);
+            var col = table.ColumnByName("Age");
             Assert.NotNull(col);
-            Assert.Equal("Edad", col.Name);
-
-            bool error = false;
-            try{table.ColumnByName("lasjfdlkaj");}
-            catch (ArgumentException){error = true;}
-            Assert.True(error); 
+            Assert.Equal("Age", col.Name);
         }
         [Fact]
-        public void Table_ColumnIndexByName_ReturnsCorrectColumnIndex()
+        public void Table_ColumnIndexByName_ExistingColumn_ReturnsCorrectIndex()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String,"Name"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int,"Age")
+            };
+
+            Table table = new Table("TestTable", columns);
+            int idx = table.ColumnIndexByName("Age");
+            Assert.Equal(1, idx);
+        }
+        [Fact]
+        public void Table_ColumnIndexByName_UnknownColumn_ReturnsZero()
         {
             var columns = new List<ColumnDefinition>
             {
@@ -142,14 +189,7 @@ namespace OurTests
             };
 
             Table table = new Table("TestTable", columns);
-
-            int index = table.ColumnIndexByName("Edad");
-            Assert.Equal(1, index);
-
-            bool error = false;
-            try { table.ColumnIndexByName("lasjfdlkaj"); }
-            catch (ArgumentException) { error = true; }
-            Assert.True(error);
+            Assert.Equal(0, table.ColumnIndexByName("jkajdfklj"));
         }
     }
 }

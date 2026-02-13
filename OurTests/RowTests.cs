@@ -56,7 +56,7 @@ namespace OurTests
 
     #endregion
     [Fact]
-    public void Row_SetValue_ExistColumnAndChangeValue()
+    public void Row_SetValue_ShouldChangeValueWhenExistColumn()
     {
     var columns = new List<ColumnDefinition>
     {
@@ -75,7 +75,7 @@ namespace OurTests
     Assert.Equal("1.65", row.Values[2]);
     }
     [Fact]
-    public void Row_SetValue_NoExistColumnDoNothing()
+    public void Row_SetValue_ShouldDoNothingWhenNoExistColumn()
     {
     var columns = new List<ColumnDefinition>
     {
@@ -93,7 +93,7 @@ namespace OurTests
     }
 
     [Fact]
-    public void Row_GetValue_ReturnCorrectvalue()
+    public void Row_GetValue_ShouldReturnCorrectvalue()
     {
     var columns = new List<ColumnDefinition>
     {
@@ -110,7 +110,7 @@ namespace OurTests
     Assert.Equal("21", result);
     }
     [Fact]
-    public void Row_GetValue_ColumnNotExistReturnNull()
+    public void Row_GetValue_SloulReturnNullWhenColumnNotExist()
     {
     var columns = new List<ColumnDefinition>
     {
