@@ -125,5 +125,45 @@ namespace OurTests
 
     Assert.Null(result);
     }
+
+    #region Row IsTrue Tests
+    [Fact]
+    public void Row_IsTrue_ShouldReturnTrue_WhenConditionIsSatisfied()
+    {
+      //Arrange
+      List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
+      {
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.String, "Name")),
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age"))
+      };
+      List<string> values = new List<string> { "Mikel", "30" };
+      DbManager.Row row = new DbManager.Row(columnDefinitions, values);
+
+      DbManager.Condition condition = new DbManager.Condition("Age", "=", "30");
+
+      //Act
+      bool result = row.IsTrue(condition);
+
+      //Assert
+      Assert.True(result);
+    }
+    [Fact]
+    public void Row_IsTrue_ShouldReturnFalse_WhenConditionIsNotSatisfied()
+    {
+      //Arrange
+      List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
+      {
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.String, "Name")),
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age"))
+      };
+      List<string> values = new List<string> { "Mikel", "30" };
+      DbManager.Row row = new DbManager.Row(columnDefinitions, values);
+      DbManager.Condition condition = new DbManager.Condition("Age", ">", "30");
+      //Act
+      bool result = row.IsTrue(condition);
+      //Assert
+      Assert.False(result);
+    }
+    #endregion
   }
 }
