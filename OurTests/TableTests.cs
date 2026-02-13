@@ -260,6 +260,45 @@ namespace OurTests
             */
         }
 
-        #endregion
+    #endregion
+
+    #region RowIndicesWhereConditionIsTrue Tests
+    [Fact]
+    public void Table_RowIndicesWhereConditionIsTrue_ShouldReturnCorrectIndexes()
+    {
+      //Arrange
+      string tableName = "People";
+      List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
+      {
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age"))
+      };
+
+      List<string> valuesRow1 = new List<string> { "30" };
+      List<string> valuesRow2 = new List<string> { "31" };
+      List<string> valuesRow3 = new List<string> { "21" };
+      List<string> valuesRow4 = new List<string> { "41" };
+
+      DbManager.Row row1 = new DbManager.Row(columnDefinitions, valuesRow1);
+      DbManager.Row row2 = new DbManager.Row(columnDefinitions, valuesRow2);
+      DbManager.Row row3 = new DbManager.Row(columnDefinitions, valuesRow3);
+      DbManager.Row row4 = new DbManager.Row(columnDefinitions, valuesRow4);
+
+      DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
+
+      table.AddRow(row1);
+      table.AddRow(row2);
+      table.AddRow(row3);
+      table.AddRow(row4);
+
+      var expectedList = new List<int> { 1, 3 };
+      var condition = new DbManager.Condition("Age", ">", "30");
+
+      //Act
+      var result = table.RowIndicesWhereConditionIsTrue(condition);
+
+      //Assert
+      Assert.Equal(expectedList, result);
     }
+    #endregion
+  }
 }

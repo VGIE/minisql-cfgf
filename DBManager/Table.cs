@@ -132,15 +132,21 @@ namespace DbManager
             
         }
 
-        private List<int> RowIndicesWhereConditionIsTrue(Condition condition)
+    public List<int> RowIndicesWhereConditionIsTrue(Condition condition)
+    {
+      //TODO DEADLINE 1.A: Returns the indices of all the rows where the condition is true. Check Row.IsTrue()
+      List<int> indexes = new List<int>();
+      foreach (Row row in Rows)
+      {
+        if (row.IsTrue(condition))
         {
-            //TODO DEADLINE 1.A: Returns the indices of all the rows where the condition is true. Check Row.IsTrue()
-            
-            return null;
-            
+          indexes.Add(Rows.IndexOf(row));
         }
+      }
+      return indexes;
+    }
 
-        public void DeleteWhere(Condition condition)
+    public void DeleteWhere(Condition condition)
         {
             //TODO DEADLINE 1.A: Delete all rows where the condition is true. Check RowIndicesWhereConditionIsTrue()
             
