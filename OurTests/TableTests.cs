@@ -185,6 +185,8 @@ namespace OurTests
             Assert.Equal(0, table.ColumnIndexByName("jkajdfklj"));
         }
 
+
+
         #region ToString validation
 
         [Fact]
@@ -592,6 +594,47 @@ namespace OurTests
       //Assert
       Assert.Equal(4, table.NumRows());
     }
-    #endregion
-  }
+        #endregion
+
+
+
+        #region DeleteIthRow validation
+        
+        [Fact]
+        public void Table_DeleteIthRow_RemovesCorrectRow()
+        {
+            var table = Table.CreateTestTable();
+            Assert.Equal(3, table.NumRows());
+
+            table.DeleteIthRow(1);
+            Assert.Equal(2, table.NumRows());
+
+            table.CheckForTesting(new System.Collections.Generic.List<System.Collections.Generic.List<string>>
+            {
+                new System.Collections.Generic.List<string> { "Rodolfo", "1.62", "25" },
+                new System.Collections.Generic.List<string> { "Pepe", "1.55", "51" }
+            });
+        }
+
+        [Fact]
+        public void Table_DeleteIthRow_WithNegativeIndex()
+        {
+            var table = Table.CreateTestTable();
+            table.DeleteIthRow(-1);
+            Assert.Equal(3, table.NumRows());
+        }
+
+        [Fact]
+        public void Table_DeleteIthRow_WithTooLargeIndex()
+        {
+            var table = Table.CreateTestTable();
+            table.DeleteIthRow(5);
+            Assert.Equal(3, table.NumRows());
+        }
+
+
+
+        #endregion
+
+    }
 }

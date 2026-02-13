@@ -129,7 +129,16 @@ namespace DbManager
         public void DeleteIthRow(int row)
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
-            
+            if (row < 0 || row >= NumRows()) { return; }
+            List<Row> newRows = new List<Row>();
+            for (int i = 0; i < NumRows(); i++)
+            {
+                if (i != row) 
+                { 
+                    newRows.Add(Rows[i]); 
+                }
+            }
+            Rows = newRows;
         }
 
     public List<int> RowIndicesWhereConditionIsTrue(Condition condition)
