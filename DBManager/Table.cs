@@ -91,9 +91,39 @@ namespace DbManager
             //"['Name','Age']{'Adolfo','23'}{'Jacinto','24'}" <- two columns, two rows
             //"" <- no columns, no rows
             //"['Name']" <- one column, no rows
-            
-            return null;
-            
+            // No columns => empty string (as in documentation examples)
+
+            if (NumColumns() == 0) { return ""; }
+
+            string result = "['";
+            string rows = "{'";
+
+            for (int c = 0; c < NumColumns(); c++)
+            {
+                result += GetColumn(c).Name;
+                if (c < NumColumns() - 1) { result += "','"; }
+            }
+
+            result += "']";
+
+            for (int r = 0; r < NumRows(); r++)
+            {
+                Row row = GetRow(r);
+                result += "{'";
+
+                for (int c = 0; c < NumColumns(); c++)
+                {
+                    string columnName = GetColumn(c).Name;
+                    string value = row.GetValue(columnName);
+
+                    result += value;
+
+                    if (c < NumColumns() - 1)
+                        result += "','";
+                }
+                result += "'}";
+            }
+            return result;
         }
 
         public void DeleteIthRow(int row)

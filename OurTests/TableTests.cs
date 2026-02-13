@@ -4,17 +4,10 @@ namespace OurTests
 {
     public class TableTests
     {
-        //TODO DEADLINE 1A : Create your own tests for Table
-        /*
-        [Fact]
-        public void Test1()
-        {
-
-        }
-        */
+        //TODO DEADLINE 1A : Create your own tests for Table     
 
         [Fact]
-        public void Table_Constructor_SavesCorrectName() 
+        public void Table_Constructor_SavesCorrectName()
         {
             var columns = new List<ColumnDefinition>();
             var table = new Table("Personas", columns);
@@ -29,14 +22,14 @@ namespace OurTests
         [Fact]
         public void Table_Constructor_NameShoulNotBeNull()
         {
-			    var table = new Table(null, new List<ColumnDefinition>());
-			    Assert.Null(table.Name);
-		    }
+            var table = new Table(null, new List<ColumnDefinition>());
+            Assert.Null(table.Name);
+        }
         [Fact]
         public void Table_NumRows_EmptyTable_ReturnsZero()
         {
             var table = new Table("Test", new List<ColumnDefinition>());
-            Assert.Equal(0,table.NumRows());
+            Assert.Equal(0, table.NumRows());
         }
         [Fact]
         public void Table_NumRows_NotEmptyTable_ReturnsOne()
@@ -48,7 +41,7 @@ namespace OurTests
             var row = new Row(columns, new List<string> { "Mario" });
 
             table.AddRow(row);
-            Assert.Equal(1,table.NumRows());
+            Assert.Equal(1, table.NumRows());
         }
         [Fact]
         public void Table_AddRow_IncreasesCounter()
@@ -60,7 +53,7 @@ namespace OurTests
             var row = new Row(columns, new List<string> { "Test" });
 
             table.AddRow(row);
-            Assert.Equal(1,table.NumRows());
+            Assert.Equal(1, table.NumRows());
         }
         [Fact]
         public void Table_GetRow_CorrectIndex_ReturnsCorrectRow()
@@ -69,13 +62,13 @@ namespace OurTests
             new ColumnDefinition(ColumnDefinition.DataType.String,"Name")
             };
 
-            Table table = new Table("TestTable",columns);
-            var row1 = new Row(columns, new List<string> {"Mario"});
+            Table table = new Table("TestTable", columns);
+            var row1 = new Row(columns, new List<string> { "Mario" });
             table.AddRow(row1);
 
             Row result = table.GetRow(0);
             Assert.NotNull(result);
-            Assert.Equal("Mario",result.Values[0]);
+            Assert.Equal("Mario", result.Values[0]);
             Assert.Equal(row1, result);
         }
         [Fact]
@@ -108,23 +101,23 @@ namespace OurTests
             };
 
             var table = new Table("Test2", columns);
-            Assert.Equal(2,table.NumColumns());
+            Assert.Equal(2, table.NumColumns());
         }
         [Fact]
         public void Table_GetColumn_CorrectIndex_ReturnsCorrectColumn()
         {
-            var columns = new List<ColumnDefinition> 
+            var columns = new List<ColumnDefinition>
             {
             new ColumnDefinition(ColumnDefinition.DataType.String,"Name"),
             new ColumnDefinition(ColumnDefinition.DataType.Int,"Age")
             };
 
-            Table table = new Table("TestTable",columns);
+            Table table = new Table("TestTable", columns);
             ColumnDefinition col = table.GetColumn(1);
 
             Assert.NotNull(col);
             Assert.Equal("Age", col.Name);
-            Assert.Equal(ColumnDefinition.DataType.Int,col.Type);
+            Assert.Equal(ColumnDefinition.DataType.Int, col.Type);
         }
         [Fact]
         public void Table_GetColumn_OutOfRange_ReturnsNull()
@@ -143,7 +136,7 @@ namespace OurTests
         [Fact]
         public void Table_ColumnByName_UnknownColumn_ReturnsNull()
         {
-            var columns = new List<ColumnDefinition> 
+            var columns = new List<ColumnDefinition>
             {
             new ColumnDefinition(ColumnDefinition.DataType.String,"Name"),
             new ColumnDefinition(ColumnDefinition.DataType.Int,"Age")
@@ -191,5 +184,82 @@ namespace OurTests
             Table table = new Table("TestTable", columns);
             Assert.Equal(0, table.ColumnIndexByName("jkajdfklj"));
         }
+
+        #region ToString validation
+
+        [Fact]
+        public void Table_ToString_NoColumnsNoRows_ReturnsEmptyString()
+        {
+            var table = new Table("T", new List<ColumnDefinition>());
+
+            Assert.Equal("", table.ToString());
+        }
+
+        [Fact]
+        public void Table_ToString_OneColumnNoRows_ReturnsOnlyHeader()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Name")
+            };
+
+            var table = new Table("T", columns);
+
+            Assert.Equal("['Name']", table.ToString());
+        }
+
+        [Fact]
+        public void Table_ToString_OneColumnTwoRows()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Name")
+            };
+
+            var table = new Table("T", columns);
+
+            table.AddRow(new Row(columns, new List<string> { "Adolfo" }));
+            table.AddRow(new Row(columns, new List<string> { "Jacinto" }));
+
+            Assert.Equal("['Name']{'Adolfo'}{'Jacinto'}", table.ToString());
+        }
+
+        [Fact]
+        public void Table_ToString_TwoColumnsTwoRows()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+            };
+
+            var table = new Table("T", columns);
+
+            table.AddRow(new Row(columns, new List<string> { "Adolfo", "23" }));
+            table.AddRow(new Row(columns, new List<string> { "Jacinto", "24" }));
+
+            Assert.Equal("['Name','Age']{'Adolfo','23'}{'Jacinto','24'}", table.ToString());
+        }
+
+        [Fact]
+        public void Table_ToString_UsingProjectConstants()
+        {
+            // This test will only work once Insert() is properly implemented,
+            // because CreateTestTable() internally uses table.Insert(...) to add rows.
+
+            /*
+            var table = Table.CreateTestTable();
+
+            string expected =
+                "['Name','Height','Age']" +
+                "{'Rodolfo','1.62','25'}" +
+                "{'Maider','1.67','67'}" +
+                "{'Pepe','1.55','51'}";
+
+            Assert.Equal(expected, table.ToString());
+            */
+        }
+
+        #endregion
     }
 }
