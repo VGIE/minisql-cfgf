@@ -246,10 +246,6 @@ namespace OurTests
         [Fact]
         public void Table_ToString_UsingProjectConstants()
         {
-            // This test will only work once Insert() is properly implemented,
-            // because CreateTestTable() internally uses table.Insert(...) to add rows.
-
-            /*
             var table = Table.CreateTestTable();
 
             string expected =
@@ -259,7 +255,6 @@ namespace OurTests
                 "{'Pepe','1.55','51'}";
 
             Assert.Equal(expected, table.ToString());
-            */
         }
 
     #endregion
