@@ -152,24 +152,69 @@ namespace DbManager
             
         }
 
-        public Table Select(List<string> columnNames, Condition condition)
-        {
-            //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
-            //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
-            
-            return null;
-            
-        }
+    public Table Select(List<string> columnNames, Condition condition)
+    {
+      //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
+      //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
+      Table newTable;
+      List<int> columnIndexes = new List<int>();
+      List<Row> newRows = new List<Row>();
+      List<ColumnDefinition> newColumnDefinitions = new List<ColumnDefinition>();
 
-        public bool Insert(List<string> values)
+      foreach (string columnName in columnNames)
+      {
+        newColumnDefinitions.Add(ColumnByName(columnName));
+        columnIndexes.Add(ColumnIndexByName(columnName));
+      }
+      if (condition == null)
+      {
+        foreach (Row row in Rows)
         {
-            //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
-            
-            return false;
-            
+          List<string> newValues = new List<string>();
+          foreach (int columnIndex in columnIndexes)
+          {
+            newValues.Add(row.Values[columnIndex]);
+          }
+          newRows.Add(new Row(newColumnDefinitions, newValues));
         }
+        newTable = new Table("Result", newColumnDefinitions);
+        foreach (Row row in newRows)
+        {
+          newTable.AddRow(row);
+        }
+        return newTable;
+      }
 
-        public bool Update(List<SetValue> setValues, Condition condition)
+      foreach (Row row in Rows)
+      {
+        if (row.IsTrue(condition))
+        {
+          List<string> newValues = new List<string>();
+          foreach (int columnIndex in columnIndexes)
+          {
+            newValues.Add(row.Values[columnIndex]);
+          }
+          newRows.Add(new Row(newColumnDefinitions, newValues));
+        }
+      }
+      newTable = new Table("Result", newColumnDefinitions);
+      foreach (Row row in newRows)
+      {
+        newTable.AddRow(row);
+      }
+      return newTable;
+    }
+
+    public bool Insert(List<string> values)
+    {
+      //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
+      if (values.Count != ColumnDefinitions.Count) return false;
+      Row newRow = new Row(ColumnDefinitions, values);
+      AddRow(newRow);
+      return true;
+    }
+
+    public bool Update(List<SetValue> setValues, Condition condition)
         {
             //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
             //return false, otherwise return true
