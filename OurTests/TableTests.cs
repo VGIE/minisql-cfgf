@@ -589,13 +589,54 @@ namespace OurTests
       //Assert
       Assert.Equal(4, table.NumRows());
     }
-        #endregion
+    #endregion
 
+    #region DeleteWhere Tests
+    [Fact]
+    public void Table_DeleteWhere_ShouldDeleteRows_WhenConditionIsTrue()
+    {
+      //Arrange
+      string tableName = "People";
+      List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
+      {
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age"))
+      };
 
+      List<string> valuesRow1 = new List<string> { "30" };
+      List<string> valuesRow2 = new List<string> { "31" };
+      List<string> valuesRow3 = new List<string> { "21" };
+      List<string> valuesRow4 = new List<string> { "41" };
 
-        #region DeleteIthRow validation
-        
-        [Fact]
+      DbManager.Row row1 = new DbManager.Row(columnDefinitions, valuesRow1);
+      DbManager.Row row2 = new DbManager.Row(columnDefinitions, valuesRow2);
+      DbManager.Row row3 = new DbManager.Row(columnDefinitions, valuesRow3);
+      DbManager.Row row4 = new DbManager.Row(columnDefinitions, valuesRow4);
+
+      DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
+
+      table.AddRow(row1);
+      table.AddRow(row2);
+      table.AddRow(row3);
+      table.AddRow(row4);
+
+      DbManager.Table expectedTable = new DbManager.Table(tableName, columnDefinitions);
+
+      expectedTable.AddRow(row1);
+      expectedTable.AddRow(row3);
+
+      var condition = new DbManager.Condition("Age", ">", "30");
+
+      //Act
+      table.DeleteWhere(condition);
+
+      //Assert
+      Assert.Equal(expectedTable.ToString(), table.ToString());
+    }
+    #endregion
+
+    #region DeleteIthRow validation
+
+    [Fact]
         public void Table_DeleteIthRow_RemovesCorrectRow()
         {
             var table = Table.CreateTestTable();
