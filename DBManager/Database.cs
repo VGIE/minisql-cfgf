@@ -37,14 +37,16 @@ namespace DbManager
         }
 
     public Table TableByName(string tableName)
-        {
-            //DEADLINE 1.B: Find and return the table with the given name
-            
-            return null;
-            
-        }
+    {
+      //DEADLINE 1.B: Find and return the table with the given name
+      foreach (Table table in Tables)
+      {
+        if (table.Name == tableName) return table;
+      }
+      return null;
+    }
 
-        public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition)
+    public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition)
         {
             //DEADLINE 1.B: Create and new table with the given name and columns. If there is already a table with that name,
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
