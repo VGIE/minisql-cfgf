@@ -187,7 +187,7 @@ namespace OurTests
 
 
 
-        #region ToString validation
+    #region ToString validation
 
         [Fact]
         public void Table_ToString_NoColumnsNoRows_ReturnsEmptyString()
