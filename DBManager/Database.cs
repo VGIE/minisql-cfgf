@@ -31,13 +31,12 @@ namespace DbManager
 
         public bool AddTable(Table table)
         {
-            //DEADLINE 1.B: Add a new table to the database
-            
-            return false;
-            
+          //DEADLINE 1.B: Add a new table to the database
+          Tables.Add(table);
+          return false;
         }
 
-        public Table TableByName(string tableName)
+    public Table TableByName(string tableName)
         {
             //DEADLINE 1.B: Find and return the table with the given name
             
