@@ -52,9 +52,19 @@ namespace DbManager
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
             //Do the same if no column is provided
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
-            return false;
-            
+            if (TableByName(tableName) != null)
+            {
+                LastErrorMessage = Constants.TableAlreadyExistsError;
+                return false;
+            }
+            else if (ColumnDefinition == null||ColumnDefinition.Count()==0)
+            {
+                LastErrorMessage = Constants.DatabaseCreatedWithoutColumnsError;
+                return false;
+            }
+            AddTable(new Table(tableName, ColumnDefinition));
+            LastErrorMessage = Constants.CreateTableSuccess;
+            return true;   
         }
 
         public bool DropTable(string tableName)
