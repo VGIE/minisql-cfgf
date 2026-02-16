@@ -225,7 +225,91 @@ namespace OurTests
                 new List<string> { "NewGuy", "1.80", "30" }
             });
         }
-    }
 
-    #endregion
+        #endregion
+
+
+
+        #region Select Tests
+        [Fact]
+            public void Database_Select_TableDoesNotExist()
+            {
+                var db = Database.CreateTestDatabase();
+                var result = db.Select("NoSuchTable", new List<string> { Table.TestColumn1Name }, null);
+                Assert.Null(result);
+                Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
+            }
+
+            [Fact]
+            public void Database_Select_ColumnDoesNotExist()
+            {
+                var db = Database.CreateTestDatabase();
+                var result = db.Select(Table.TestTableName, new List<string> { "NoSuchColumn" }, null);
+                Assert.Null(result);
+                Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+            }
+
+            [Fact]
+            public void Database_Select_ColumnsIsNull()
+            {
+                var db = Database.CreateTestDatabase();
+                var result = db.Select(Table.TestTableName, null, null);
+                Assert.Null(result);
+                Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+            }
+
+            [Fact]
+            public void Database_Select_ColumnsIsEmpty()
+            {
+                var db = Database.CreateTestDatabase();
+                var result = db.Select(Table.TestTableName, new List<string>(), null);
+                Assert.Null(result);
+                Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+            }
+
+            [Fact]
+            public void Database_Select_NoCondition()
+            {
+                var db = Database.CreateTestDatabase();
+                var cols = new List<string> { Table.TestColumn1Name, Table.TestColumn3Name };
+                var result = db.Select(Table.TestTableName, cols, null);
+                
+                Assert.NotNull(result);
+                Assert.Equal("Result", result.Name);
+                Assert.Equal(2, result.NumColumns());
+                Assert.Equal(3, result.NumRows());
+                Assert.Equal(Table.TestColumn1Name, result.GetColumn(0).Name);
+                Assert.Equal(Table.TestColumn3Name, result.GetColumn(1).Name);
+
+                result.CheckForTesting(new List<List<string>>
+                {
+                    new List<string> { Table.TestColumn1Row1, Table.TestColumn3Row1 }, 
+                    new List<string> { Table.TestColumn1Row2, Table.TestColumn3Row2 }, 
+                    new List<string> { Table.TestColumn1Row3, Table.TestColumn3Row3 }  
+                });
+            }
+
+            [Fact]
+            public void Database_Select_WithCondition()
+            {
+    
+                var db = Database.CreateTestDatabase();
+                var cols = new List<string> { Table.TestColumn1Name, Table.TestColumn3Name };
+                var condition = new Condition(Table.TestColumn3Name, ">", "50");
+                var result = db.Select(Table.TestTableName, cols, condition);
+
+                Assert.NotNull(result);
+                Assert.Equal("Result", result.Name);
+                Assert.Equal(2, result.NumColumns());
+                Assert.Equal(2, result.NumRows());
+
+                result.CheckForTesting(new List<List<string>>
+                {
+                    new List<string> { Table.TestColumn1Row2, Table.TestColumn3Row2 }, 
+                    new List<string> { Table.TestColumn1Row3, Table.TestColumn3Row3 }  
+                });
+            }
+        }
+
+        #endregion
 }
