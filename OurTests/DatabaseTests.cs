@@ -186,5 +186,46 @@ namespace OurTests
             Assert.NotNull(database.TableByName("Mario"));
         }
         #endregion
+
+
+
+        #region Insert Tests
+        [Fact]
+        public void Database_Insert_TableDoesNotExist()
+        {
+            var db = Database.CreateTestDatabase();
+            bool ok = db.Insert("NotExistingTable", new List<string> { "a", "b", "c" });
+            Assert.False(ok);
+            Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
+        }
+
+        [Fact]
+        public void Database_Insert_WrongNumberOfValues()
+        {
+            var db = Database.CreateTestDatabase();
+            bool ok = db.Insert(Table.TestTableName, new List<string> { "OnlyOneValue" });
+            Assert.False(ok);
+            Assert.Equal(Constants.ColumnCountsDontMatch, db.LastErrorMessage);
+        }
+
+        [Fact]
+        public void Database_Insert_CorrectInsert()
+        {
+            var db = Database.CreateTestDatabase();
+            var newRow = new List<string> { "NewGuy", "1.80", "30" };
+            bool ok = db.Insert(Table.TestTableName, newRow);
+            Assert.True(ok);
+            Assert.Equal(Constants.InsertSuccess, db.LastErrorMessage);
+
+            db.CheckForTesting(Table.TestTableName, new List<List<string>>
+            {
+                new List<string> { Table.TestColumn1Row1, Table.TestColumn2Row1, Table.TestColumn3Row1 },
+                new List<string> { Table.TestColumn1Row2, Table.TestColumn2Row2, Table.TestColumn3Row2 },
+                new List<string> { Table.TestColumn1Row3, Table.TestColumn2Row3, Table.TestColumn3Row3 },
+                new List<string> { "NewGuy", "1.80", "30" }
+            });
+        }
     }
+
+    #endregion
 }
