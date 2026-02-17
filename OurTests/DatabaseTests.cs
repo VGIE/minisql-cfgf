@@ -187,6 +187,26 @@ namespace OurTests
         }
         #endregion
 
+        #region DropTable Tests
+        [Fact]
+        public void Database_DropTable_TableDoesNotExist_ReturnsFalse_And_SetCorrectLastErrorMessage()
+        {
+            var database = DbManager.Database.CreateTestDatabase();
+            bool result = database.DropTable("DoesntExist");
+            Assert.False(result);
+            Assert.Equal(DbManager.Constants.TableDoesNotExistError, database.LastErrorMessage);
+        }
+        [Fact]
+        public void Database_DropTable_TableExists_ReturnsTrue_SetCorrectLastErrorMessage_And_RemovesTable()
+        {
+            var database = DbManager.Database.CreateTestDatabase();
+            bool result = database.DropTable("TestTable");
+            Assert.True(result);
+            Assert.Equal(DbManager.Constants.DropTableSuccess, database.LastErrorMessage);
+            Assert.Null(database.TableByName("TestTable"));
+        }
+
+        #endregion
 
 
         #region Insert Tests
