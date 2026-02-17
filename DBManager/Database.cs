@@ -36,17 +36,17 @@ namespace DbManager
           return false;
         }
 
-    public Table TableByName(string tableName)
-    {
-      //DEADLINE 1.B: Find and return the table with the given name
-      foreach (Table table in Tables)
-      {
+        public Table TableByName(string tableName)
+        {
+        //DEADLINE 1.B: Find and return the table with the given name
+        foreach (Table table in Tables)
+        {
         if (table.Name == tableName) return table;
-      }
-      return null;
-    }
+        }
+        return null;
+        }
 
-    public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition)
+        public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition)
         {
             //DEADLINE 1.B: Create and new table with the given name and columns. If there is already a table with that name,
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
@@ -71,8 +71,14 @@ namespace DbManager
         {
             //DEADLINE 1.B: Delete the table with the given name. If the table doesn't exist, return false and set LastErrorMessage
             //If everything goes ok, return true and set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
-            return false;
+            if (TableByName(tableName) == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+            Tables.Remove(TableByName(tableName));
+            LastErrorMessage = Constants.DropTableSuccess;
+            return true;
         }
 
         public bool Insert(string tableName, List<string> values)
