@@ -228,18 +228,28 @@ namespace DbManager
     }
 
     public bool Update(List<SetValue> setValues, Condition condition)
+    {
+      //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
+      //return false, otherwise return true
+
+      if (condition == null) return false;
+      List<int> rowIndexes = RowIndicesWhereConditionIsTrue(condition);
+      foreach (int rowIndex in rowIndexes)
+      {
+        Row row = GetRow(rowIndex);
+        foreach (SetValue setValue in setValues)
         {
-            //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
-            //return false, otherwise return true
-            
-            return false;
-            
+          int columnIndex = ColumnIndexByName(setValue.ColumnName);
+          row.Values[columnIndex] = setValue.Value;
         }
+      }
+      return true;
+    }
 
 
 
-        //Only for testing purposes
-        public const string TestTableName = "TestTable";
+    //Only for testing purposes
+    public const string TestTableName = "TestTable";
         public const string TestColumn1Name = "Name";
         public const string TestColumn2Name = "Height";
         public const string TestColumn3Name = "Age";
