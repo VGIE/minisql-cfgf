@@ -77,7 +77,7 @@ namespace OurTests
 
         #region CreateTable Tests
         [Fact]
-        public void Database_CreateTable_TableAlreadyExists_ReturnFalse()
+        public void Database_CreateTable_TableAlreadyExists_ReturnsFalse_AndSetsCorrectLastErrorMessage()
         {
             var columns = new List<DbManager.ColumnDefinition>
             {
@@ -90,58 +90,29 @@ namespace OurTests
             bool result = database.CreateTable("TestTable", columns);
 
             Assert.False(result);
-        }
-        [Fact]
-        public void Database_CreateTable_TableAlreadyExists_SetCorrectLastErrorMessage()
-        {
-            var columns = new List<DbManager.ColumnDefinition>
-            {
-                (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age")),
-                (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.String, "Name")),
-                (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Double, "Height"))
-            };
-
-            var database = DbManager.Database.CreateTestDatabase();
-            database.CreateTable("TestTable", columns);
-
             Assert.Equal(DbManager.Constants.TableAlreadyExistsError, database.LastErrorMessage);
         }
         [Fact]
-        public void Database_CreateTable_NullColumns_ReturnsFalse()
+        public void Database_CreateTable_NullColumns_ReturnsFalse_AndSetsCorrectLastErrorMessage()
         {
             var database = DbManager.Database.CreateTestDatabase();
             bool result=database.CreateTable("Mario", null);
 
             Assert.False(result);
-        }
-        [Fact]
-        public void Database_CreateTable_NullColumns_SetCorrectLastErrorMessage()
-        {
-            var database = DbManager.Database.CreateTestDatabase();
-            database.CreateTable("Mario", null);
-
             Assert.Equal(DbManager.Constants.DatabaseCreatedWithoutColumnsError, database.LastErrorMessage);
         }
         [Fact]
-        public void Database_CreateTable_ColumnDefinitionsListIsEmpty_ReturnsFalse()
+        public void Database_CreateTable_ColumnDefinitionsListIsEmpty_ReturnsFalse_AndSetsCorrectLastErrorMessage()
         {
             var database = DbManager.Database.CreateTestDatabase();
             var empty = new List<DbManager.ColumnDefinition>();
             bool result=database.CreateTable("Mario", empty);
 
             Assert.False(result);
-        }
-        [Fact]
-        public void Database_CreateTable_ColumnDefinitionsListIsEmpty_SetCorrectLastErrorMessage()
-        {
-            var database = DbManager.Database.CreateTestDatabase();
-            var empty = new List<DbManager.ColumnDefinition>();
-            database.CreateTable("Mario", empty);
-
             Assert.Equal(DbManager.Constants.DatabaseCreatedWithoutColumnsError, database.LastErrorMessage);
         }
         [Fact]
-        public void Database_CreateTable_EverythingCorrect_ReturnsTrue()
+        public void Database_CreateTable_EverythingCorrect_ReturnsTrue_AndSetsCorrectLastErrorMessage()
         {
             var columns = new List<DbManager.ColumnDefinition>
             {
@@ -154,20 +125,6 @@ namespace OurTests
             bool result = database.CreateTable("Mario", columns);
 
             Assert.True(result);
-        }
-        [Fact]
-        public void Database_CreateTable_EverythingCorrect_SetCorrectLastErrorMessage()
-        {
-            var columns = new List<DbManager.ColumnDefinition>
-            {
-                (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age")),
-                (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.String, "Name")),
-                (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Double, "Height"))
-            };
-
-            var database = DbManager.Database.CreateTestDatabase();
-            database.CreateTable("Mario", columns);
-
             Assert.Equal(DbManager.Constants.CreateTableSuccess, database.LastErrorMessage);
         }
         [Fact]
@@ -181,8 +138,9 @@ namespace OurTests
             };
 
             var database = DbManager.Database.CreateTestDatabase();
-            database.CreateTable("Mario", columns);
+            bool result = database.CreateTable("Mario", columns);
 
+            Assert.True(result);
             Assert.NotNull(database.TableByName("Mario"));
         }
         #endregion
