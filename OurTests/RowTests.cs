@@ -164,6 +164,60 @@ namespace OurTests
       //Assert
       Assert.False(result);
     }
-    #endregion
-  }
+        #endregion
+
+        #region Row AsText tests
+        [Fact]
+        public void Row_AsText_ReturnsCorrectResult()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+            new ColumnDefinition(ColumnDefinition.DataType.Double, "Height")
+            };
+            var values = new List<string> { "Ane", "20", "1.65" };
+            var row = new Row(columns, values);
+            var result = row.AsText();
+            Assert.Equal("Ane:20:1.65", result);
+        }
+        [Fact]
+        public void Row_AsText_ReturnsCorrectResult_SingleValue()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+            };
+            var values = new List<string> { "Ane"};
+            var row = new Row(columns, values);
+            var result = row.AsText();
+            Assert.Equal("Ane", result);
+        }
+        [Fact]
+        public void Row_AsText_ReturnsCorrectResult_NullValues()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+            };
+            var row = new Row(columns, null);
+            var result = row.AsText();
+            Assert.Null(result);
+        }
+        [Fact]
+        public void Row_AsText_ValuesContainsDelimiter_EncodesItCorrectly()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+            new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+            new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+            new ColumnDefinition(ColumnDefinition.DataType.Double, "Height")
+            };
+            var values = new List<string> { "Jone:Miren", "20", "1.65" };
+            var row = new Row(columns, values);
+            var result = row.AsText();
+            Assert.Equal("Jone[SEPARATOR]Miren:20:1.65", result);
+        }
+        #endregion
+    }
 }
