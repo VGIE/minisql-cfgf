@@ -159,37 +159,79 @@ namespace OurTests
             Assert.NotNull(col);
             Assert.Equal("Age", col.Name);
         }
-        [Fact]
-        public void Table_ColumnIndexByName_ExistingColumn_ReturnsCorrectIndex()
-        {
-            var columns = new List<ColumnDefinition>
-            {
-            new ColumnDefinition(ColumnDefinition.DataType.String,"Name"),
-            new ColumnDefinition(ColumnDefinition.DataType.Int,"Age")
-            };
+    #region Table ColumnIndexByName Tests
+    [Fact]
+    public void Table_ColumnIndexByName_ShouldReturnTheCorrectColumnIndex()
+    {
+      //Arrange
+      string tableName = "People";
 
-            Table table = new Table("TestTable", columns);
-            int idx = table.ColumnIndexByName("Age");
-            Assert.Equal(1, idx);
-        }
-        [Fact]
-        public void Table_ColumnIndexByName_UnknownColumn_ReturnsZero()
+      List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
         {
-            var columns = new List<ColumnDefinition>
-            {
-            new ColumnDefinition(ColumnDefinition.DataType.String,"Nombre"),
-            new ColumnDefinition(ColumnDefinition.DataType.Int,"Edad")
-            };
+          (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.String, "Name")),
+          (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age"))
+        };
 
-            Table table = new Table("TestTable", columns);
-            Assert.Equal(0, table.ColumnIndexByName("jkajdfklj"));
-        }
+      DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
+
+      //Act
+      int nameColumnIndex = table.ColumnIndexByName("Name");
+      int ageColumnIndex = table.ColumnIndexByName("Age");
+
+      //Assert
+      Assert.Equal(0, nameColumnIndex);
+      Assert.Equal(1, ageColumnIndex);
+    }
+    [Fact]
+    public void Table_ColumnIndexByName_ShouldReturn0_WhenColumnNameDoesNotExist()
+    {
+      //Arrange
+      string tableName = "People";
+
+      List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
+        {
+          (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.String, "Name")),
+          (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age"))
+        };
+
+      DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
+
+      //Act
+      var result = table.ColumnIndexByName("Height");
+
+      //Assert
+      Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Table_ColumnIndexByName_ShouldReturn0_WhenColumnNameIsEmptyOrNull()
+    {
+      //Arrange
+      string tableName = "People";
+
+      List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
+          {
+            (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.String, "Name")),
+            (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age"))
+          };
+
+      DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
+
+      //Act
+      var result = table.ColumnIndexByName("");
+      var result2 = table.ColumnIndexByName(null);
+
+      //Assert
+      Assert.Equal(0, result);
+      Assert.Equal(0, result2);
+    }
+    #endregion
 
 
 
     #region ToString validation
 
-        [Fact]
+    [Fact]
         public void Table_ToString_NoColumnsNoRows_ReturnsEmptyString()
         {
             var table = new Table("T", new List<ColumnDefinition>());
