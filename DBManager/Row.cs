@@ -16,6 +16,7 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
         {
             //TODO DEADLINE 1.A: Initialize member variables
+            if (columnDefinitions == null || values == null) { return; }
             //Check that the number of column definitions matches the number of values, otherwise return without doing anything
             if (columnDefinitions.Count() != values.Count()) { return; }
             //Check that there is at least one column definition, otherwise return without doing anything
@@ -27,6 +28,7 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
+            if (Values == null) { return; }
             for (int i = 0; i < ColumnDefinitions.Count(); i++)
             {
                 if (ColumnDefinitions[i].Name == columnName)
@@ -39,6 +41,7 @@ namespace DbManager
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
+            if (Values == null) { return null; }
             for (int i = 0; i < ColumnDefinitions.Count(); i++)
             {
                 if (ColumnDefinitions[i].Name == columnName)
@@ -53,6 +56,7 @@ namespace DbManager
     {
       //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
       //for this row. Check Condition.IsTrue method
+      if (Values == null || condition == null) { return false; }
       foreach (ColumnDefinition column in ColumnDefinitions)
       {
         if (column.Name == condition.ColumnName)
@@ -72,8 +76,8 @@ namespace DbManager
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
-            
-            return null;
+            if (value == null) {return null; }
+            return value.Replace(Delimiter, DelimiterEncoded);
             
         }
 
@@ -88,9 +92,23 @@ namespace DbManager
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            
-            return null;
-            
+
+            string result = ""; 
+            if (Values == null) { return null; }
+            for (int i = 0; i < Values.Count(); i++) 
+            { 
+                string encodedValue = Encode(Values[i]); 
+                if (i == Values.Count - 1) 
+                { 
+                    result = result + encodedValue; 
+                } 
+                else 
+                { 
+                    result = result + encodedValue + Delimiter; 
+                } 
+            }
+            return result;
+
         }
 
         public static Row Parse(List<ColumnDefinition> columns, string value)
