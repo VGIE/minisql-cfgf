@@ -171,9 +171,12 @@ namespace DbManager
 
       foreach (string columnName in columnNames)
       {
-        newColumnDefinitions.Add(ColumnByName(columnName));
+        var originalCol = ColumnByName(columnName);
+        newColumnDefinitions.Add(new ColumnDefinition(originalCol.Type, originalCol.Name));
+
         columnIndexes.Add(ColumnIndexByName(columnName));
       }
+
       if (condition == null)
       {
         foreach (Row row in Rows)
