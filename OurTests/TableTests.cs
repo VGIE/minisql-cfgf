@@ -43,19 +43,61 @@ namespace OurTests
             table.AddRow(row);
             Assert.Equal(1, table.NumRows());
         }
-        [Fact]
-        public void Table_AddRow_IncreasesCounter()
-        {
-            var columns = new List<ColumnDefinition> {
-            new ColumnDefinition(ColumnDefinition.DataType.String, "Name")
-            };
-            var table = new Table("TestTable", columns);
-            var row = new Row(columns, new List<string> { "Test" });
+    #region Table AddRow Tests
+    [Fact]
+    public void Table_AddRow_ShouldAddRowToTable()
+    {
+      //Arrange
+      string tableName = "People";
 
-            table.AddRow(row);
-            Assert.Equal(1, table.NumRows());
-        }
-        [Fact]
+      List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
+      {
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.String, "Name")),
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age"))
+      };
+
+      DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
+
+      List<string> rowValues1 = new List<string> { "Mikel", "30" };
+      List<string> rowValues2 = new List<string> { "Ane", "25" };
+
+      DbManager.Row row1 = new DbManager.Row(columnDefinitions, rowValues1);
+      DbManager.Row row2 = new DbManager.Row(columnDefinitions, rowValues2);
+
+      //Act
+      table.AddRow(row1);
+      table.AddRow(row2);
+
+      //Assert
+      Assert.Equal(row1, table.GetRow(0));
+      Assert.Equal(row2, table.GetRow(1));
+    }
+    [Fact]
+    public void Table_AddRow_ShouldDoNothing_WhenRowColumnCountDoesNotMatch()
+    {
+      //Arrange
+      string tableName = "People";
+
+      List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
+      {
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.String, "Name")),
+        (new DbManager.ColumnDefinition(DbManager.ColumnDefinition.DataType.Int, "Age"))
+      };
+
+      DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
+
+      List<string> rowValues = new List<string> { "Mikel" };
+
+      DbManager.Row row = new DbManager.Row(columnDefinitions.Take(1).ToList(), rowValues);
+
+      //Act
+      table.AddRow(row);
+
+      //Assert
+      Assert.Equal(0, table.NumRows());
+    }
+    #endregion
+    [Fact]
         public void Table_GetRow_CorrectIndex_ReturnsCorrectRow()
         {
             var columns = new List<ColumnDefinition> {

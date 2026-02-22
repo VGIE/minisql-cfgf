@@ -27,13 +27,13 @@ namespace DbManager
             //TODO DEADLINE 1.A: Return the i-th row
             if (i < 0 || i >= NumRows()) { return null; }
             return Rows[i];
-        }
+        } 
 
         public void AddRow(Row row)
         {
-            //TODO DEADLINE 1.A: Add a new row
-            Rows.Add(row);
-            
+          //TODO DEADLINE 1.A: Add a new row
+          if (row.Values.Count != ColumnDefinitions.Count) { return; }
+          Rows.Add(row);
         }
 
         public int NumRows()
