@@ -15,6 +15,9 @@ namespace DbManager
         public Select(string table, List<string> columns, Condition condition=null)
         {
             //TODO DEADLINE 2: Initialize member variables
+            Table = table;
+            Columns = columns;
+            Where = condition;
             
         }
 
