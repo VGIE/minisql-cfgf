@@ -329,6 +329,111 @@ namespace OurTests
             Assert.True(result);
             Assert.Equal(expected.ToString(), db.TableByName("TestTable").ToString());
         }
+        #endregion
+
+        #region Update Test
+        [Fact]
+        public void Database_Update_ShouldReturnFalse_WhenTableDoesNotExist()
+        {
+            var db = Database.CreateTestDatabase();
+            var setValues = new List<DbManager.Parser.SetValue> 
+            { 
+                new DbManager.Parser.SetValue("Age", "60") 
+            };
+            var cond = new Condition("Age", ">", "60");
+
+            bool result = db.Update("Poblation", setValues, cond);
+            Assert.False(result);
+
+            Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
+        }
+        [Fact]
+        public void Dayabase_Update_ShouldReturnFalse_WhenConditionColumnDoesNotExist()
+        {
+			var db = Database.CreateTestDatabase();
+			var setValues = new List<DbManager.Parser.SetValue>
+			{
+				new DbManager.Parser.SetValue("Age", "60")
+			};
+			var cond = new Condition("Poblation", ">", "60");
+
+			bool result = db.Update(Table.TestTableName, setValues, cond);
+			
+            Assert.False(result);
+			Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+		}
+        [Fact]
+        public void Database_Update_ShouldReturnFalse_IfSetValueColumnDoesNotExist()
+        {
+			var db = Database.CreateTestDatabase();
+			var setValues = new List<DbManager.Parser.SetValue>
+			{
+				new DbManager.Parser.SetValue("Poblation", "60")
+			};
+			var cond = new Condition(Table.TestColumn1Name, ">", Table.TestColumn1Row1);
+
+			bool result = db.Update(Table.TestTableName, setValues, cond);
+
+			Assert.False(result);
+			Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+		}
+        [Fact]
+        public void Database_Update_ShouldReturnTrue_IfAllIsWellDone()
+        {
+			var db = Database.CreateTestDatabase();
+			var setValues = new List<DbManager.Parser.SetValue>
+			{
+				new DbManager.Parser.SetValue("Age", "60")
+			};
+			var cond = new Condition("Age", ">", "25");
+
+			bool result = db.Update("TestTable", setValues, cond);
+
+			Assert.True(result);
+			Assert.Equal(Constants.UpdateSuccess, db.LastErrorMessage);
+		}
+        [Fact]
+        public void Database_Update_ShouldUpdateCorrectly_IfAllIsWellDone()
+        {
+			var db = Database.CreateTestDatabase();
+			var setValues = new List<DbManager.Parser.SetValue>
+			{
+				new DbManager.Parser.SetValue(Table.TestColumn3Name, "60")
+			};
+			var cond = new Condition(Table.TestColumn1Name, "=", Table.TestColumn1Row3);
+
+			bool result = db.Update(Table.TestTableName, setValues, cond);
+
+			Assert.True(result);
+			Assert.Equal(Constants.UpdateSuccess, db.LastErrorMessage);
+
+            db.CheckForTesting(Table.TestTableName, new List<List<String>>
+            {
+                new List<String>{ Table.TestColumn1Row1, Table.TestColumn2Row1, Table.TestColumn3Row1 },
+				new List<String>{ Table.TestColumn1Row2, Table.TestColumn2Row2, Table.TestColumn3Row2 },
+				new List<String>{ Table.TestColumn1Row3, Table.TestColumn2Row3, "60" },
+			});
+		}
+        [Fact]
+        public void Database_update_SloudDoAnithing_WhenNoRowsMatch()
+        {
+			var db = Database.CreateTestDatabase();
+            string before = db.TableByName(Table.TestTableName).ToString();
+
+			var setValues = new List<DbManager.Parser.SetValue>
+			{
+				new DbManager.Parser.SetValue("Age", "60")
+			};
+			var cond = new Condition("Age", ">", "600"); //nadie cumple
+
+			bool result = db.Update(Table.TestTableName, setValues, cond);
+
+			Assert.True(result);
+			Assert.Equal(Constants.UpdateSuccess, db.LastErrorMessage);
+
+            string after = db.TableByName(Table.TestTableName).ToString();
+            Assert.Equal(before, after);
+		}
 		#endregion
 	}
 } 
