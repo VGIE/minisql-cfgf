@@ -164,30 +164,37 @@ namespace DbManager
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
             }
-            foreach (SetValue setValue in columnNames)
-            {
-                if (table.ColumnByName(setValue.ColumnName) == null)
-                {
-                    LastErrorMessage = Constants.ColumnDoesNotExistError;
-                    return false; 
-                }
-            }
-            if (columnCondition != null && table.ColumnByName(columnCondition.ColumnName)==null)
+            
+            if(columnCondition == null)
             {
                 LastErrorMessage = Constants.ColumnDoesNotExistError;
                 return false;
             }
 
-            bool type = false;
-
-            for (int i = 0; i < table.NumRows(); i++)
+            if (table.ColumnByName(columnCondition.ColumnName)==null)
             {
-                Row row = table.GetRow(i);
-                
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return false;
             }
 
-            return false;
-            
+			if (columnNames == null || columnNames.Count==0)
+            {
+				LastErrorMessage = Constants.ColumnDoesNotExistError;
+				return false;
+			}
+
+			foreach (SetValue setValue in columnNames)
+			{
+				if (setValue == null || table.ColumnByName(setValue.ColumnName) == null)
+				{
+					LastErrorMessage = Constants.ColumnDoesNotExistError;
+					return false;
+				}
+			}
+
+            table.Update(columnNames, columnCondition);
+            LastErrorMessage = Constants.UpdateSuccess;
+            return true;   
         }
 
         
