@@ -34,9 +34,10 @@ namespace DbManager
         private static string Decode(string value)
         {
             //TODO DEADLINE 1.C: Decode the delimiter in the value
-            
-            return null;
-            
+            if (value == null)
+            { return null;
+            }
+            return value.Replace(DelimiterEncoded, Delimiter);
         }
 
         public string AsText()
