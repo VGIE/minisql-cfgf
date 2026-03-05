@@ -244,7 +244,17 @@ namespace DbManager
       return true;
     }
 
-
+    public string ColumnTypesToString()
+    {
+      var result = "";
+      foreach (var column in ColumnDefinitions)
+      {
+        var type = column.Type.ToString();
+        if (ColumnIndexByName(column.Name) == NumColumns() - 1) result += type;
+        else result += type + ",";
+      }
+      return result;
+    }
 
     //Only for testing purposes
     public const string TestTableName = "TestTable";
