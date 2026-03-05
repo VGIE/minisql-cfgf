@@ -218,8 +218,6 @@ namespace DbManager
           }
           writer.WriteLine("USER");
           writer.WriteLine(m_username);
-          writer.WriteLine("MANAGER");
-          SecurityManager.Save(writer);
         }
         return true;
       }
@@ -274,7 +272,8 @@ namespace DbManager
             return database;
         }
 
-        public void AddTuplesForTesting(string tableName, List<List<string>> rows)
+
+    public void AddTuplesForTesting(string tableName, List<List<string>> rows)
         {
             Table table = TableByName(tableName);
             foreach (List<string> row in rows)
