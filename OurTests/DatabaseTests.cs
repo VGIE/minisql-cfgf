@@ -477,5 +477,65 @@ namespace OurTests
       Assert.Contains("USER", lines[3]);
     }
     #endregion
+
+    #region Load Tests
+    [Fact]
+    public void Database_Load_ShoulLoadCorrectlyAllData()
+    {
+      //Arrange
+      var user = new DbManager.Security.User(Database.AdminUsername, Database.AdminPassword);
+      var profile = new DbManager.Security.Profile();
+      profile.Users.Add(user);
+      profile.Name = "Engineers";
+      profile.PrivilegesOn.Add("TestTable", new List<DbManager.Security.Privilege>
+      {
+        DbManager.Security.Privilege.Select,
+        DbManager.Security.Privilege.Update
+      });
+
+      var database = Database.CreateOtherTestDatabase();
+      database.SecurityManager.AddProfile(profile);
+      var fileName = "test_db_load.txt";
+
+      if (File.Exists(fileName)) File.Delete(fileName);
+
+      database.Save(fileName);
+
+      //Act
+      var resultDatabase = Database.Load(fileName, Database.AdminUsername, Database.AdminPassword);
+
+      //Assert
+      Assert.NotNull(resultDatabase);
+
+      var table = resultDatabase.TableByName(Table.TestTableName);
+      Assert.NotNull(table);
+
+      Assert.Equal(3, table.NumRows());
+      Assert.Equal(3, table.NumColumns());
+
+      Assert.Equal("Rodolfo", table.GetRow(0).Values[0]);
+      Assert.Equal("1.62", table.GetRow(0).Values[1]);
+      Assert.Equal("25", table.GetRow(0).Values[2]);
+
+      Assert.Equal("Maider", table.GetRow(1).Values[0]);
+      Assert.Equal("Pepe", table.GetRow(2).Values[0]);
+
+      var manager = resultDatabase.SecurityManager;
+
+      Assert.NotNull(manager);
+      Assert.Equal(1, manager.Profiles.Count);
+
+      var profileResult = manager.Profiles[0];
+      Assert.Equal(1, profileResult.Users.Count);
+
+      var userResult = profileResult.Users[0];
+      Assert.Equal(Database.AdminUsername, userResult.Username);
+
+      Assert.True(profile.IsGrantedPrivilege("TestTable", DbManager.Security.Privilege.Select));
+      Assert.True(profile.IsGrantedPrivilege("TestTable", DbManager.Security.Privilege.Update));
+      Assert.False(profile.IsGrantedPrivilege("TestTable", DbManager.Security.Privilege.Delete));
+
+    }
+    #endregion
   }
 } 
