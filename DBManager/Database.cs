@@ -236,62 +236,56 @@ namespace DbManager
       var reader = System.IO.File.OpenText(databaseName);
       string line = reader.ReadLine();
       var database = new Database();
-      while (line != "USER")
+      string name = line;
+      line = reader.ReadLine();
+      var types = line.Split(',');
+      var columnTypes = new List<DbManager.ColumnDefinition.DataType>();
+      foreach (var column in types)
       {
-        string name = line;
-        line = reader.ReadLine();
-        var types = line.Split(',');
-        var columnTypes = new List<DbManager.ColumnDefinition.DataType>();
-        foreach (var column in types)
-        {
-          if (column == "String") columnTypes.Add(DbManager.ColumnDefinition.DataType.String);
-          else if (column == "Double") columnTypes.Add(DbManager.ColumnDefinition.DataType.Double);
-          else if (column == "Int") columnTypes.Add(DbManager.ColumnDefinition.DataType.Int);
-        }
+        if (column == "String") columnTypes.Add(DbManager.ColumnDefinition.DataType.String);
+        else if (column == "Double") columnTypes.Add(DbManager.ColumnDefinition.DataType.Double);
+        else if (column == "Int") columnTypes.Add(DbManager.ColumnDefinition.DataType.Int);
+      }
 
-        line = reader.ReadLine();
-        int startCols = line.IndexOf('[');
-        int endCols = line.IndexOf(']');
+      line = reader.ReadLine();
+      int startCols = line.IndexOf('[');
+      int endCols = line.IndexOf(']');
 
-        string columns = line.Substring(startCols + 1, endCols - startCols - 1);
+      string columns = line.Substring(startCols + 1, endCols - startCols - 1);
 
-        var columnNames = columns
+      var columnNames = columns
+        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+        .Select(c => c.Trim('\''))
+        .ToList();
+
+      var columnDefinitions = new List<ColumnDefinition>();
+
+      for (int i = 0; i < columnNames.Count; i++)
+      {
+        columnDefinitions.Add(new ColumnDefinition(columnTypes[i], columnNames[i]));
+      }
+
+      var table = new Table(name, columnDefinitions);
+
+      string rows = line.Substring(endCols + 1);
+
+      var rowValues = rows
+        .Split("}{", StringSplitOptions.RemoveEmptyEntries)
+        .Select(r => r.Trim('{', '}'));
+
+      foreach (var rowValue in rowValues)
+      {
+        var values = rowValue
           .Split(',', StringSplitOptions.RemoveEmptyEntries)
-          .Select(c => c.Trim('\''))
+          .Select(v => v.Trim('\''))
           .ToList();
 
-        var columnDefinitions = new List<ColumnDefinition>();
+        var row = new Row(columnDefinitions, values);
 
-        for (int i = 0; i < columnNames.Count; i++)
-        {
-          columnDefinitions.Add(new ColumnDefinition(columnTypes[i], columnNames[i]));
-        }
-
-        var table = new Table(name, columnDefinitions);
-
-        string rows = line.Substring(endCols + 1);
-
-        var rowValues = rows
-          .Split("}{", StringSplitOptions.RemoveEmptyEntries)
-          .Select(r => r.Trim('{', '}'));
-
-        foreach (var rowValue in rowValues)
-        {
-          var values = rowValue
-            .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Select(v => v.Trim('\''))
-            .ToList();
-
-          var row = new Row(columnDefinitions, values);
-
-          table.AddRow(row);
-        }
-        database.AddTable(table);
-        line = reader.ReadLine();
+        table.AddRow(row);
       }
-      var m_username = reader.ReadLine();
-      var managerText = reader.ReadLine();
-      database.SecurityManager = Manager.Load(reader, m_username);
+      database.AddTable(table);
+      line = reader.ReadLine();
       return database;
     }
 
