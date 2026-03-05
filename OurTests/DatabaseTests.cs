@@ -434,6 +434,80 @@ namespace OurTests
             string after = db.TableByName(Table.TestTableName).ToString();
             Assert.Equal(before, after);
 		}
-		#endregion
-	}
+    #endregion
+
+    #region Save Tests
+    [Fact]
+    public void Database_Save_ShouldCreateAFileWithDatabaseName()
+    {
+      //Arrange
+      var user = new DbManager.Security.User(Database.AdminUsername, Database.AdminPassword);
+      var profile = new DbManager.Security.Profile();
+      profile.Users.Add(user);
+      profile.Name = "Engineers";
+      profile.PrivilegesOn.Add("TestTable", new List<DbManager.Security.Privilege>
+      {
+        DbManager.Security.Privilege.Select,
+        DbManager.Security.Privilege.Update
+      });
+
+
+      var database = Database.CreateTestDatabase();
+      database.SecurityManager.AddProfile(profile);
+      var fileName = "TestTable.txt";
+
+      if (File.Exists(fileName)) File.Delete(fileName);
+
+      //Act
+      var result = database.Save(fileName);
+
+      //Assert
+      Assert.True(result);
+      Assert.True(File.Exists(fileName));
+    }
+    [Fact]
+    public void Database_Save_ShouldCorrectlySaveAllData()
+    {
+      //Arrange
+      var user = new DbManager.Security.User(Database.AdminUsername, Database.AdminPassword);
+      var profile = new DbManager.Security.Profile();
+      profile.Users.Add(user);
+      profile.Name = "Engineers";
+      profile.PrivilegesOn.Add("TestTable", new List<DbManager.Security.Privilege>
+      {
+        DbManager.Security.Privilege.Select,
+        DbManager.Security.Privilege.Update
+      });
+
+      var database = Database.CreateOtherTestDatabase();
+      database.SecurityManager.AddProfile(profile);
+      var fileName = "TestTable.txt";
+
+      if (File.Exists(fileName)) File.Delete(fileName);
+
+      //Act
+      database.Save(fileName);
+      var lines = File.ReadAllLines(fileName);
+
+      //Assert
+      Assert.NotEmpty(lines);
+      Assert.Equal(1, database.SecurityManager.Profiles.Count);
+      Assert.Equal(11, lines.Length);
+      Assert.Equal("TestTable", lines[0]);
+      Assert.Equal("String,Double,Int", lines[1]);
+      Assert.Contains("['Name','Height','Age']", lines[2]);
+      Assert.Contains("Rodolfo", lines[2]);
+      Assert.Contains("Maider", lines[2]);
+      Assert.Contains("Pepe", lines[2]);
+      Assert.Contains("USER", lines[3]);
+      Assert.Contains("MANAGER", lines[5]);
+      Assert.Contains("Engineers", lines[6]);
+      Assert.Contains(Database.AdminUsername, lines[7]);
+      Assert.Contains(DbManager.Security.Encryption.Encrypt(Database.AdminPassword), lines[8]);
+      Assert.Contains("TestTable", lines[9]);
+      Assert.Contains("Select", lines[10]);
+      Assert.Contains("Update", lines[10]);
+    }
+    #endregion
+  }
 } 
