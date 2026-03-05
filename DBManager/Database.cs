@@ -197,21 +197,39 @@ namespace DbManager
             return true;   
         }
 
-        
-        
 
-        
-        public bool Save(string databaseName)
+
+
+
+    public bool Save(string databaseName)
+    {
+      //DEADLINE 1.C: Save this database to disk with the given name
+      //If everything goes ok, return true, false otherwise.
+      //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
+      try
+      {
+        using (var writer = File.CreateText(databaseName))
         {
-            //DEADLINE 1.C: Save this database to disk with the given name
-            //If everything goes ok, return true, false otherwise.
-            //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
-            
-            return false;
-            
+          foreach (var table in Tables)
+          {
+            writer.WriteLine(table.Name);
+            writer.WriteLine(table.ColumnTypesToString());
+            writer.WriteLine(table.ToString());
+          }
+          writer.WriteLine("USER");
+          writer.WriteLine(m_username);
+          writer.WriteLine("MANAGER");
+          SecurityManager.Save(writer);
         }
+        return true;
+      }
+      catch
+      {
+        return false;
+      }
+    }
 
-        public static Database Load(string databaseName, string username, string password)
+    public static Database Load(string databaseName, string username, string password)
         {
             //DEADLINE 1.C: Load the (previously saved) database of name databaseName
             //If everything goes ok, return the loaded database (a new instance), null otherwise.
