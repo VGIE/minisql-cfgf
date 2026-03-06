@@ -32,6 +32,7 @@ namespace DbManager
         public void AddRow(Row row)
         {
           //TODO DEADLINE 1.A: Add a new row
+          if (row == null) { return; }
           if (row.Values.Count != ColumnDefinitions.Count) { return; }
           Rows.Add(row);
         }
@@ -73,9 +74,15 @@ namespace DbManager
         public int ColumnIndexByName(string columnName)
         {
             //TODO DEADLINE 1.A: Return the zero-based index of the column named columnName
-            if (string.IsNullOrEmpty(columnName)) { return 0; }
-            if (!ColumnDefinitions.Exists(colDef => colDef.Name == columnName)) return 0;
-            return ColumnDefinitions.FindIndex(colDef => colDef.Name == columnName);
+            if (string.IsNullOrEmpty(columnName)) { return -1; }
+            for (int i = 0; i < ColumnDefinitions.Count; i++) 
+            {
+                if (ColumnDefinitions[i].Name == columnName) 
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public override string ToString()

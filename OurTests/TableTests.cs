@@ -205,7 +205,6 @@ namespace OurTests
     [Fact]
     public void Table_ColumnIndexByName_ShouldReturnTheCorrectColumnIndex()
     {
-      //Arrange
       string tableName = "People";
 
       List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
@@ -216,18 +215,15 @@ namespace OurTests
 
       DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
 
-      //Act
       int nameColumnIndex = table.ColumnIndexByName("Name");
       int ageColumnIndex = table.ColumnIndexByName("Age");
 
-      //Assert
       Assert.Equal(0, nameColumnIndex);
       Assert.Equal(1, ageColumnIndex);
     }
     [Fact]
-    public void Table_ColumnIndexByName_ShouldReturn0_WhenColumnNameDoesNotExist()
+    public void Table_ColumnIndexByName_ShouldReturnMinusOne_WhenColumnNameDoesNotExist()
     {
-      //Arrange
       string tableName = "People";
 
       List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
@@ -238,17 +234,14 @@ namespace OurTests
 
       DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
 
-      //Act
       var result = table.ColumnIndexByName("Height");
 
-      //Assert
-      Assert.Equal(0, result);
+      Assert.Equal(-1, result);
     }
 
     [Fact]
-    public void Table_ColumnIndexByName_ShouldReturn0_WhenColumnNameIsEmptyOrNull()
+    public void Table_ColumnIndexByName_ShouldReturnMinusOne_WhenColumnNameIsEmptyOrNull()
     {
-      //Arrange
       string tableName = "People";
 
       List<DbManager.ColumnDefinition> columnDefinitions = new List<DbManager.ColumnDefinition>
@@ -259,13 +252,11 @@ namespace OurTests
 
       DbManager.Table table = new DbManager.Table(tableName, columnDefinitions);
 
-      //Act
       var result = table.ColumnIndexByName("");
       var result2 = table.ColumnIndexByName(null);
 
-      //Assert
-      Assert.Equal(0, result);
-      Assert.Equal(0, result2);
+      Assert.Equal(-1, result);
+      Assert.Equal(-1, result2);
     }
     #endregion
 
