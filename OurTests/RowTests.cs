@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Security.Cryptography.X509Certificates;
 using DbManager;
 
 namespace OurTests
@@ -126,8 +127,8 @@ namespace OurTests
     Assert.Null(result);
     }
 
-    #region Row IsTrue Tests
-    [Fact]
+		#region Row IsTrue Tests
+		[Fact]
     public void Row_IsTrue_ShouldReturnTrue_WhenConditionIsSatisfied()
     {
       //Arrange
@@ -218,6 +219,113 @@ namespace OurTests
             var result = row.AsText();
             Assert.Equal("Jone[SEPARATOR]Miren:20:1.65", result);
         }
-        #endregion
-    }
+		#endregion
+
+		#region Row Parse Tests
+		[Fact]
+		public void Row_Parse_ShouldCreateRowCorrectly_WhenValueIsValid()
+		{
+            var columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+                new ColumnDefinition(ColumnDefinition.DataType.Double, "Heigh")
+            };
+            string text = "Ane:21:1.68";
+
+            Row result = Row.Parse(columns, text);
+
+            Assert.Equal("Ane", result.Values[0]);
+			Assert.Equal("21", result.Values[1]);
+			Assert.Equal("1.68", result.Values[2]);
+		}
+
+        [Fact]
+        public void Row_Parse_ShouldDecodeEncodedSeparatorCorrectly()
+        {
+			var columns = new List<ColumnDefinition>
+			{
+				new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+				new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+				new ColumnDefinition(ColumnDefinition.DataType.Double, "Heigh")
+			};
+
+			string text = "Ane[SEPARATOR]Andrea:21:1.68";
+
+			Row result = Row.Parse(columns, text);
+
+			Assert.Equal("Ane:Andrea", result.Values[0]);
+			Assert.Equal("21", result.Values[1]);
+			Assert.Equal("1.68", result.Values[2]);
+		}
+
+        [Fact]
+        public void Row_Parse_ShouldReturnRowCorrectly_WhenAsTextThenParse()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+				new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+				new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+				new ColumnDefinition(ColumnDefinition.DataType.Double, "Heigh")
+			};
+
+            var row = new Row(columns, new List<String> { "Ane:Andrea", "21", "1.68" });
+			string text = row.AsText();
+
+            Row result = Row.Parse(columns, text);
+
+            Assert.Equal(row.Values[0], result.Values[0]);
+			Assert.Equal(row.Values[1], result.Values[1]);
+			Assert.Equal(row.Values[2], result.Values[2]);
+		}
+
+        [Fact]
+        public void Row_ShouldReturnRowWithNullValues_WhenValueIsNull()
+        {
+			var columns = new List<ColumnDefinition>
+			{
+				new ColumnDefinition(ColumnDefinition.DataType.String, "Name")
+			};
+
+			Row result = Row.Parse(columns, null);
+
+            Assert.NotNull(result);
+            Assert.Null(result.Values);
+		}
+
+        [Fact]
+        public void Row_Parse_shouldReturnWowWithNull_WhenNumberOfValuesIsless()
+        {
+			var columns = new List<ColumnDefinition>
+			{
+				new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+				new ColumnDefinition(ColumnDefinition.DataType.Int, "Age"),
+				new ColumnDefinition(ColumnDefinition.DataType.Double, "Heigh")
+			};
+
+			string text = "Abe:21";
+
+			Row result = Row.Parse(columns, text);
+
+            Assert.NotNull(result);
+            Assert.Null(result.Values);
+		}
+
+        [Fact]
+        public void Row_Parse_ShouldReturnRowCorrectly_WhenThereIsOnlyOneValue()
+        {
+            var columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Name")
+             };
+
+			string text = "Ane";
+
+			Row result = Row.Parse(columns, text);
+
+			Assert.Equal("Ane", result.Values[0]);
+		}
+
+		#endregion
+	}
 }
