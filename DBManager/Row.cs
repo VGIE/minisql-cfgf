@@ -91,7 +91,6 @@ namespace DbManager
             }
 
              return value.Replace(DelimiterEncoded, Delimiter);
-            
         }
 
         public string AsText()
@@ -124,14 +123,14 @@ namespace DbManager
                 return new Row(columns, null);
             }
 
-            string[] parts = value.Split(Delimiter);
+            string[] parts = value.Split(new[] { Delimiter }, StringSplitOptions.None);
 
             if (parts.Length != columns.Count)
             {
                 return new Row(columns, null);
             }
 
-            List<String> decodedValues = new List<String>;
+            List<String> decodedValues = new List<String>();
 
             foreach (string part in parts)
             {
