@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -114,9 +115,25 @@ namespace DbManager
         public static Row Parse(List<ColumnDefinition> columns, string value)
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
-            
-            return null;
-            
+            if (value == null)
+            {
+                return new Row(columns, null);
+            }
+
+            string[] parts = value.Split(Delimiter);
+
+            if (parts.Length != columns.Count)
+            {
+                return new Row(columns, null);
+            }
+
+            List<String> decodedValues = new List<String>;
+
+            foreach (string part in parts)
+            {
+                decodedValues.Add(Decode(part));
+            }
+            return new Row(columns, decodedValues);   
         }
     }
 }
