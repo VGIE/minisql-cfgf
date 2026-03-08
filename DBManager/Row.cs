@@ -85,8 +85,12 @@ namespace DbManager
         private static string Decode(string value)
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
-            
-            return null;
+            if (value == null)
+            {
+                return null;
+            }
+
+             return value.Replace(DelimiterEncoded, Delimiter);
             
         }
 
