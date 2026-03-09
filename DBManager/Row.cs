@@ -29,12 +29,14 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            if (Values == null) { return; }
+            if (Values == null || ColumnDefinitions == null || columnName == null) { return; }
             for (int i = 0; i < ColumnDefinitions.Count(); i++)
             {
                 if (ColumnDefinitions[i].Name == columnName)
                 {
+                    if (i >= Values.Count) { return; }
                     Values[i] = value;
+                    return;
                 }
             }
         }
@@ -42,11 +44,12 @@ namespace DbManager
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-            if (Values == null) { return null; }
+            if (Values == null || ColumnDefinitions == null || columnName == null) { return null; }
             for (int i = 0; i < ColumnDefinitions.Count(); i++)
             {
                 if (ColumnDefinitions[i].Name == columnName)
                 {
+                    if (i >= Values.Count) { return null; }
                     return Values[i];
                 }
             }
