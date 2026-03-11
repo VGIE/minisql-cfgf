@@ -226,7 +226,9 @@ namespace DbManager
         return false;
       }
     }
-
+    private const string String = "String";
+    private const string Double = "Double";
+    private const string Int = "Int";
     public static Database Load(string databaseName, string username, string password)
     {
       //DEADLINE 1.C: Load the (previously saved) database of name databaseName
@@ -242,9 +244,9 @@ namespace DbManager
       var columnTypes = new List<DbManager.ColumnDefinition.DataType>();
       foreach (var column in types)
       {
-        if (column == "String") columnTypes.Add(DbManager.ColumnDefinition.DataType.String);
-        else if (column == "Double") columnTypes.Add(DbManager.ColumnDefinition.DataType.Double);
-        else if (column == "Int") columnTypes.Add(DbManager.ColumnDefinition.DataType.Int);
+        if (column == String) columnTypes.Add(DbManager.ColumnDefinition.DataType.String);
+        else if (column == Double) columnTypes.Add(DbManager.ColumnDefinition.DataType.Double);
+        else if (column == Int) columnTypes.Add(DbManager.ColumnDefinition.DataType.Int);
       }
 
       line = reader.ReadLine();
