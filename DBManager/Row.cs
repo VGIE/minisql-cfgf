@@ -19,7 +19,7 @@ namespace DbManager
             //TODO DEADLINE 1.A: Initialize member variables
             if (columnDefinitions == null || values == null) { return; }
             //Check that the number of column definitions matches the number of values, otherwise return without doing anything
-            if (columnDefinitions.Count() != values.Count()) { return; }
+            //if (columnDefinitions.Count() != values.Count()) { return; } (luego en el getValue me aseguro de que haya menos valores que columnas)
             //Check that there is at least one column definition, otherwise return without doing anything
             if (columnDefinitions.Count() == 0) { return; }
             ColumnDefinitions = columnDefinitions;
