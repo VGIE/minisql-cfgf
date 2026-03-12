@@ -114,15 +114,20 @@ namespace DbManager
                 return null;
             }
 
-            if (columns != null || columns.Count > 0)
+            if (columns == null || columns.Count == 0)
             {
-                foreach (string colName in columns)
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return null;
+            }
+
+            foreach (string colName in columns)
+            {
+                if (table.ColumnByName(colName) == null)
                 {
-                    if (table.ColumnByName(colName) == null)
-                    {
-                        LastErrorMessage = Constants.ColumnDoesNotExistError;
-                        return null;
-                    }
+                
+                    LastErrorMessage = Constants.ColumnDoesNotExistError;
+                    return null;
+                    
                 }
             }
             LastErrorMessage = null;
