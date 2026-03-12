@@ -56,6 +56,49 @@ namespace OurTests
             Assert.Null(column.Name);
         }
 
-  }
+
+        #region AsText Tests
+        [Fact]
+        public void ColumnDefinition_AsText_ReturnsCorrectString()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
+            var result = column.AsText();
+            Assert.Equal("Name->String", result);
+        }
+
+        [Fact]
+        public void ColumnDefinition_AsText_ReturnsCorrectInt()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
+            var result = column.AsText();
+            Assert.Equal("Age->Int", result);
+        }
+
+        [Fact]
+        public void ColumnDefinition_AsText_ReturnsCorrectDouble()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.Double, "Height");
+            var result = column.AsText();
+            Assert.Equal("Height->Double", result);
+        }
+
+        [Fact]
+        public void ColumnDefinition_AsText_ReturnsNullWhenNameIsNull()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, null);
+            var result = column.AsText();
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void ColumnDefinition_AsText_EncodesDelimiterCorrectly()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, "Price->USD");
+            var result = column.AsText();
+            Assert.Equal("Price[ARROW]USD->String", result);
+        }
+
+        #endregion
+    }
 
 }

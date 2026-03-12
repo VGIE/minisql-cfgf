@@ -45,9 +45,13 @@ namespace DbManager
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the column as a string with the name and the type separated by the delimiter
-            
-            return null;
-            
+            if (Name == null)
+            {
+                return null;
+            }
+
+            string encodedName = Encode(Name);
+            return encodedName + Delimiter + Type.ToString();
         }
 
         public static ColumnDefinition Parse(string value)
