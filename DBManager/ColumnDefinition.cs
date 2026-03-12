@@ -26,9 +26,12 @@ namespace DbManager
         private static string Encode(string value)
         {
             //TODO DEADLINE 1.C: Encode the delimiter in the value
-            
-            return null;
-            
+            if (value == null)
+            {
+                return null;
+            }
+
+            return value.Replace(Delimiter, DelimiterEncoded);
         }
 
         private static string Decode(string value)
