@@ -100,6 +100,96 @@ namespace OurTests
         }
 
         #endregion
+
+
+        #region Parse Tests
+
+        [Fact]
+        public void ColumnDefinition_Parse_ReturnsStringTypeCorrectly()
+        {
+            string text = "Name->String";
+            ColumnDefinition result = ColumnDefinition.Parse(text);
+
+            Assert.NotNull(result);
+            Assert.Equal("Name", result.Name);
+            Assert.Equal(ColumnDefinition.DataType.String, result.Type);
+        }
+
+        [Fact]
+        public void ColumnDefinition_Parse_ReturnsIntTypeCorrectly()
+        {
+            string text = "Age->Int";
+            ColumnDefinition result = ColumnDefinition.Parse(text);
+
+            Assert.NotNull(result);
+            Assert.Equal("Age", result.Name);
+            Assert.Equal(ColumnDefinition.DataType.Int, result.Type);
+        }
+
+        [Fact]
+        public void ColumnDefinition_Parse_ReturnsDoubleTypeCorrectly()
+        {
+            string text = "Height->Double";
+            ColumnDefinition result = ColumnDefinition.Parse(text);
+
+            Assert.NotNull(result);
+            Assert.Equal("Height", result.Name);
+            Assert.Equal(ColumnDefinition.DataType.Double, result.Type);
+        }
+
+        [Fact]
+        public void ColumnDefinition_Parse_ReturnsDelimiterCorrectly()
+        {
+            string text = "Price[ARROW]USD->String";
+            ColumnDefinition result = ColumnDefinition.Parse(text);
+
+            Assert.NotNull(result);
+            Assert.Equal("Price->USD", result.Name);
+            Assert.Equal(ColumnDefinition.DataType.String, result.Type);
+        }
+
+        [Fact]
+        public void ColumnDefinition_Parse_WhenAsTextThenParse()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.Double, "Price->USD");
+            string text = column.AsText();
+            ColumnDefinition result = ColumnDefinition.Parse(text);
+
+            Assert.NotNull(result);
+            Assert.Equal(column.Name, result.Name);
+            Assert.Equal(column.Type, result.Type);
+        }
+
+        [Fact]
+        public void ColumnDefinition_Parse_WhenValueIsNull()
+        {
+            ColumnDefinition result = ColumnDefinition.Parse(null);
+
+            Assert.NotNull(result);
+            Assert.Null(result.Name);
+        }
+
+        [Fact]
+        public void ColumnDefinition_Parse_WhenFormatIsInvalid()
+        {
+            string text = "InvalidFormat";
+            ColumnDefinition result = ColumnDefinition.Parse(text);
+
+            Assert.NotNull(result);
+            Assert.Null(result.Name);
+        }
+
+        [Fact]
+        public void ColumnDefinition_Parse_WhenTypeIsInvalid()
+        {
+            string text = "Name->Boolean";
+            ColumnDefinition result = ColumnDefinition.Parse(text);
+
+            Assert.NotNull(result);
+            Assert.Null(result.Name);
+        }
+
+        #endregion
     }
 
 }
