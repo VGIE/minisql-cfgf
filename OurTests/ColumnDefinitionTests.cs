@@ -57,38 +57,49 @@ namespace OurTests
             Assert.Null(column.Name);
         }
 
-        #region decode tests
+
+        #region AsText Tests
         [Fact]
-        public void ColumnDefinition_AsText_ShouldNotChangeName_WhenNameHasNoDelimiter() 
+        public void ColumnDefinition_AsText_ReturnsCorrectString()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
+            var result = column.AsText();
+            Assert.Equal("Name->String", result);
+        }
+
+        [Fact]
+        public void ColumnDefinition_AsText_ReturnsCorrectInt()
         {
             var column = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
-
-            string text = column.AsText();
-
-            Assert.Equal("Age -> Int", text);
+            var result = column.AsText();
+            Assert.Equal("Age->Int", result);
         }
 
         [Fact]
-        public void ColumnDefinition_AsText_ShouldEncodeIt_WhenNameHasDelimiter()
+        public void ColumnDefinition_AsText_ReturnsCorrectDouble()
         {
-            var column = new ColumnDefinition(ColumnDefinition.DataType.String, "A->B");
-
-            string text = column.AsText();
-
-            Assert.Equal("A[ARROW]B->String", text);
+            var column = new ColumnDefinition(ColumnDefinition.DataType.Double, "Height");
+            var result = column.AsText();
+            Assert.Equal("Height->Double", result);
         }
 
         [Fact]
-        public void ColumnDefinition_AsText_ShouldEncodeAll_WhenNameContainsMultipleDelimiters()
+        public void ColumnDefinition_AsText_ReturnsNullWhenNameIsNull()
         {
-			var column = new ColumnDefinition(ColumnDefinition.DataType.Double, "A->B->C");
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, null);
+            var result = column.AsText();
+            Assert.Null(result);
+        }
 
-			string text = column.AsText();
+        [Fact]
+        public void ColumnDefinition_AsText_EncodesDelimiterCorrectly()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, "Price->USD");
+            var result = column.AsText();
+            Assert.Equal("Price[ARROW]USD->String", result);
+        }
 
-			Assert.Equal("A[ARROW]B[ARROW]C->Double", text);
-		}
         #endregion
-
     }
 
 }

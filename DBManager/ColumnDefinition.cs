@@ -26,9 +26,12 @@ namespace DbManager
         private static string Encode(string value)
         {
             //TODO DEADLINE 1.C: Encode the delimiter in the value
-            
-            return null;
-            
+            if (value == null)
+            {
+                return null;
+            }
+
+            return value.Replace(Delimiter, DelimiterEncoded);
         }
 
         private static string Decode(string value)
@@ -43,9 +46,13 @@ namespace DbManager
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the column as a string with the name and the type separated by the delimiter
-            
-            return null;
-            
+            if (Name == null)
+            {
+                return null;
+            }
+
+            string encodedName = Encode(Name);
+            return encodedName + Delimiter + Type.ToString();
         }
 
         public static ColumnDefinition Parse(string value)
