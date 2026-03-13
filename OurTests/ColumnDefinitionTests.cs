@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using DbManager;
 namespace OurTests
 {
@@ -56,6 +57,38 @@ namespace OurTests
             Assert.Null(column.Name);
         }
 
-  }
+        #region decode tests
+        [Fact]
+        public void ColumnDefinition_AsText_ShouldNotChangeName_WhenNameHasNoDelimiter() 
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
+
+            string text = column.AsText();
+
+            Assert.Equal("Age -> Int", text);
+        }
+
+        [Fact]
+        public void ColumnDefinition_AsText_ShouldEncodeIt_WhenNameHasDelimiter()
+        {
+            var column = new ColumnDefinition(ColumnDefinition.DataType.String, "A->B");
+
+            string text = column.AsText();
+
+            Assert.Equal("A[ARROW]B->String", text);
+        }
+
+        [Fact]
+        public void ColumnDefinition_AsText_ShouldEncodeAll_WhenNameContainsMultipleDelimiters()
+        {
+			var column = new ColumnDefinition(ColumnDefinition.DataType.Double, "A->B->C");
+
+			string text = column.AsText();
+
+			Assert.Equal("A[ARROW]B[ARROW]C->Double", text);
+		}
+        #endregion
+
+    }
 
 }
