@@ -1,4 +1,5 @@
 ﻿using DbManager;
+using DbManager.Parser;
 
 namespace OurTests
 {
@@ -62,7 +63,6 @@ namespace OurTests
             Assert.Null(result);
         }
         #endregion
-
 
         #region parse create table tests
         [Fact]
@@ -169,6 +169,176 @@ namespace OurTests
             Assert.Null(result3);
         }
 
+        #endregion
+
+        #region parse delete tests
+        [Fact]
+        public void Parse_Delete_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age=12");
+            Assert.NotNull(result);
+            Assert.IsType<Delete>(result);
+
+            var delete = (Delete)result;
+            Assert.Equal("TestTable", delete.Table);
+            Assert.Equal("age", delete.Where.ColumnName);
+            Assert.Equal("=", delete.Where.Operator);
+            Assert.Equal("12", delete.Where.LiteralValue);
+        }
+        [Fact]
+        public void Parse_Delete_ShouldAcceptAnyCapitalization()
+        {
+            var result1 = MiniSQLParser.Parse("DELETE FROM T3_stTable WHERE a23 > x");
+            var result2 = MiniSQLParser.Parse("DELETE FROM  Test6Table WHERE NaMe=AlFonSo");
+            var result3 = MiniSQLParser.Parse("DELETE FROM Te_st4Tabl_e WHERE yeAr<2025");
+
+            Assert.NotNull(result1);
+            Assert.NotNull(result2);
+            Assert.NotNull(result3);
+
+            Assert.IsType<Delete>(result1);
+            Assert.IsType<Delete>(result2);
+            Assert.IsType<Delete>(result3);
+
+            var delete = (Delete)result1;
+            Assert.Equal("T3_stTable", delete.Table);
+            Assert.Equal("a23", delete.Where.ColumnName);
+            Assert.Equal(">", delete.Where.Operator);
+            Assert.Equal("x", delete.Where.LiteralValue);
+
+            delete = (Delete)result2;
+            Assert.Equal("Test6Table", delete.Table);
+            Assert.Equal("NaMe", delete.Where.ColumnName);
+            Assert.Equal("=", delete.Where.Operator);
+            Assert.Equal("AlFonSo", delete.Where.LiteralValue);
+
+            delete = (Delete)result3;
+            Assert.Equal("Te_st4Tabl_e", delete.Table);
+            Assert.Equal("yeAr", delete.Where.ColumnName);
+            Assert.Equal("<", delete.Where.Operator);
+            Assert.Equal("2025", delete.Where.LiteralValue);
+        }
+        [Fact]
+        public void Parse_Delete_NotAcceptedSyntax_ShouldReturnNull()
+        {
+            var result1 = MiniSQLParser.Parse("delete from TestTable where age=12");
+            var result2 = MiniSQLParser.Parse(" ");
+            var result3 = MiniSQLParser.Parse("DELETE TABLE TestTable WHER age=12");
+            var result4 = MiniSQLParser.Parse("Delete Table TestTable where age=12");
+            var result5 = MiniSQLParser.Parse("DELET TABLE TestTable WHERE age=12");
+            var result6 = MiniSQLParser.Parse("DELETE TABL TestTable where age=12");
+
+            Assert.Null(result1);
+            Assert.Null(result2);
+            Assert.Null(result3);
+            Assert.Null(result4);
+            Assert.Null(result5);
+            Assert.Null(result6);
+        }
+        [Fact]
+        public void Parse_Delete_FirstTableCharacterIsANumber_ShouldReturnNull()
+        {
+            var result = MiniSQLParser.Parse("DELETE FROM 1TestTable WHERE age=12");
+
+            Assert.Null(result);
+        }
+        [Fact]
+        public void Parse_Delete_CombinedOperators_ShouldReturnNull()
+        {
+            var result1 = MiniSQLParser.Parse("DELETE FROM 1TestTable WHERE age=>12");
+            var result2 = MiniSQLParser.Parse("DELETE FROM 1TestTable WHERE age=<12");
+            var result3 = MiniSQLParser.Parse("DELETE FROM 1TestTable WHERE age>=12");
+            var result4 = MiniSQLParser.Parse("DELETE FROM 1TestTable WHERE age<=12");
+
+            Assert.Null(result1);
+            Assert.Null(result2);
+            Assert.Null(result3);
+            Assert.Null(result4);
+        }
+        [Fact]
+        public void Parse_Delete_SpacesAtTheBeginingAndInTheEnd_ShouldReturnNull()
+        {
+            var result1 = MiniSQLParser.Parse(" DELETE FROM TestTable WHERE age=>12");
+            var result2 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age=<12 ");
+
+            Assert.Null(result1);
+            Assert.Null(result2);
+        }
+        [Fact]
+        public void Parse_Delete_TableOr__ColumnOr_OperatorOr_LiteralValue_Missing_ShouldReturnNull()
+        {
+            var result1 = MiniSQLParser.Parse("DELETE FROM WHERE age=12");//table
+            var result2 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE=12");//column
+            var result3 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age 12");//operator
+            var result4 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age=");//literalvalue
+
+            Assert.Null(result1);
+            Assert.Null(result2);
+            Assert.Null(result3);
+            Assert.Null(result4);
+        }
+        [Fact]
+        public void Parse_Delete_WithExtraTextAtTheEnd_ShouldReturnNull()
+        {
+            var result1 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age=12 AJLDJF");
+            var result2 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age=12;");
+            var result3 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age=12 and year=2015");
+
+            Assert.Null(result1);
+            Assert.Null(result2);
+            Assert.Null(result3);
+        }
+        [Fact]
+        public void Parse_Delete_LiteralValueOrColumnWithNumbersAndUnderscores_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age=value_123");//because we are using \w*
+            var result1 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE a_g2e=12");
+
+            Assert.NotNull(result);
+            Assert.NotNull(result1);
+
+            Assert.IsType<Delete>(result);
+            Assert.IsType<Delete>(result1);
+
+            var delete = (Delete)result;
+            Assert.Equal("value_123", delete.Where.LiteralValue);
+
+            delete = (Delete)result1;
+            Assert.Equal("a_g2e", delete.Where.ColumnName);
+        }
+        [Fact]
+        public void Parse_Delete_SpacesAfterBeforeOperator_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age= 12");
+            var result1 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age =12");
+            var result2 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age = 12");
+
+            Assert.NotNull(result);
+            Assert.NotNull(result1);
+            Assert.NotNull(result2);
+
+            Assert.IsType<Delete>(result);
+            Assert.IsType<Delete>(result1);
+            Assert.IsType<Delete>(result2);
+
+            var delete = (Delete)result;
+            Assert.Equal("TestTable", delete.Table);
+            Assert.Equal("age", delete.Where.ColumnName);
+            Assert.Equal("=", delete.Where.Operator);
+            Assert.Equal("12", delete.Where.LiteralValue);
+
+            delete = (Delete)result1;
+            Assert.Equal("TestTable", delete.Table);
+            Assert.Equal("age", delete.Where.ColumnName);
+            Assert.Equal("=", delete.Where.Operator);
+            Assert.Equal("12", delete.Where.LiteralValue);
+
+            delete = (Delete)result2;
+            Assert.Equal("TestTable", delete.Table);
+            Assert.Equal("age", delete.Where.ColumnName);
+            Assert.Equal("=", delete.Where.Operator);
+            Assert.Equal("12", delete.Where.LiteralValue);
+        }
         #endregion
 
     }
