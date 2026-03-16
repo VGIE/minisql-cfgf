@@ -1,4 +1,5 @@
 using DbManager.Parser;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -17,8 +18,8 @@ namespace DbManager
 
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = null;
-            
+            const string createTablePattern = @"^CREATE\s+TABLE\s+([a-zA-Z]\w*)\s*\((.*)\)$";
+
             const string updateTablePattern = null;
             
             const string deletePattern = null;
@@ -50,6 +51,37 @@ namespace DbManager
             {
                 var table = match.Groups[1].Value;
                 return new DropTable(table);
+            }
+
+            // create table
+            match = Regex.Match(miniSQLQuery, createTablePattern);
+            if (match.Success)
+            {
+                string tableName = match.Groups[1].Value;
+                string columnsText = match.Groups[2].Value;
+                List<ColumnDefinition> columns = new List<ColumnDefinition>();
+
+                if (columnsText != "")
+                {
+                    List<string> columnParts = CommaSeparatedNames(columnsText);
+                    foreach (string columnPart in columnParts)
+                    {
+                        Match columnMatch = Regex.Match(columnPart, @"^\s*([a-zA-Z]\w*)\s+(String|Int|Double)\s*$");
+                        if (!columnMatch.Success)
+                        {
+                            return null;
+                        }
+
+                        string columnName = columnMatch.Groups[1].Value;
+                        string typeText = columnMatch.Groups[2].Value;
+
+                        ColumnDefinition.DataType type;
+                        Enum.TryParse(typeText, out type);
+
+                        columns.Add(new ColumnDefinition(type, columnName));
+                    }
+                }
+                return new CreateTable(tableName, columns);
             }
 
             //TODO DEADLINE 4
