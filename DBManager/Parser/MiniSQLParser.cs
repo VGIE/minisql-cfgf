@@ -22,8 +22,8 @@ namespace DbManager
 
             const string updateTablePattern = null;
             
-            const string deletePattern = null;
-            
+            const string deletePattern = @"^DELETE\s+FROM\s+([a-zA-Z]\w*)\s+WHERE\s+(\w+)\s*([<=>])\s*(\w+)$";
+
 
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = null;
@@ -82,6 +82,14 @@ namespace DbManager
                     }
                 }
                 return new CreateTable(tableName, columns);
+            }
+            //delete
+            match = Regex.Match(miniSQLQuery, deletePattern);
+            if (match.Success)
+            {
+                var table = match.Groups[1].Value;
+                var condition = new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value);
+                return new Delete(table, condition);
             }
 
             //TODO DEADLINE 4
