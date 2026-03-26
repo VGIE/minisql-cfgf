@@ -353,21 +353,21 @@ namespace OurTests
             Assert.Equal(3, insert.Values.Count);
 			Assert.Equal("Ane", insert.Values[0]);
 			Assert.Equal("21", insert.Values[1]);
-			Assert.Equal("12", insert.Values[2]);
+			Assert.Equal("1.68", insert.Values[2]);
 		}
 
 		[Fact]
 		public void Parse_Insert_AcceptsSpaces()
 		{
-			var result = MiniSQLParser.Parse("INSERT   INTO   Users   ('Ane',   21,   1.68)");
+			var result = MiniSQLParser.Parse("INSERT   INTO   Users  VALUES ('Ane',   21,   1.68)");
 			Assert.NotNull(result);
-			Assert.IsType<CreateTable>(result);
+			Assert.IsType<Insert>(result);
 
 			var insert = (Insert)result;
 			Assert.Equal("Users", insert.Table);
 			Assert.Equal(3, insert.Values.Count);
 			Assert.Equal("21", insert.Values[1]);
-			Assert.Equal("12", insert.Values[2]);
+			Assert.Equal("1.68", insert.Values[2]);
 		}
 
 		[Fact]
@@ -462,7 +462,7 @@ namespace OurTests
 
 			var insert = (Insert)result;
 			Assert.Equal("Users", insert.Table);
-			Assert.Equal(2, insert.Values.Count);
+			Assert.Equal(3, insert.Values.Count);
 			Assert.Equal("Ane, Lete", insert.Values[0]);
             Assert.Equal("21", insert.Values[1]);
             Assert.Equal("1.68", insert.Values[2]);
