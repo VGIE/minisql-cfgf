@@ -12,7 +12,7 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = null;
             
-            const string insertPattern = null;
+            const string insertPattern = @"^INSERT\s+INTO\s+([a-zA-Z]\w*)\s+VALUES\s*\((.*)\)$";
             
             const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z]\w*)$";
 
@@ -91,11 +91,26 @@ namespace DbManager
                 var condition = new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value);
                 return new Delete(table, condition);
             }
+			//insert
+			match = Regex.Match(miniSQLQuery, insertPattern); 
+            if (match.Success)
+			{
+				string tableName = match.Groups[1].Value; 
+                string valuesText = match.Groups[2].Value; 
+                List<string> values = ParseInsertValues(valuesText);
 
-            //TODO DEADLINE 4
-            //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+				if (values == null) 
+                { 
+                    return null; 
+                }
+				return new Insert(tableName, values);
+			}
 
-            return null;
+
+			//TODO DEADLINE 4
+			//Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+
+			return null;
            
         }
 
@@ -109,6 +124,37 @@ namespace DbManager
             }
             return commaSeparator;
         }
-        
-    }
+
+		static List<string> ParseInsertValues(string text)
+		{
+			List<string> values = new List<string>(); 
+            bool dentroComillas = false; 
+            string x = ""; 
+
+            for (int i = 0; i < text.Length; i++)
+			{
+				if (text[i] == '\'') 
+                { 
+                    dentroComillas = !dentroComillas; 
+                }
+				else if (text[i] == ',' && !dentroComillas) 
+                { 
+                    values.Add(x); x = ""; 
+                } 
+                else if (text[i] != ' ' || dentroComillas) 
+                { 
+                    x += text[i]; 
+                }
+			}
+			if (dentroComillas) 
+            { 
+                return null; 
+            }
+			if (x != "") 
+            { 
+                values.Add(x); 
+            }
+			return values;
+		}
+	}
 }
