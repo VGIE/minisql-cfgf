@@ -20,10 +20,10 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = @"^CREATE\s+TABLE\s+([a-zA-Z]\w*)\s*\((.*)\)$";
 
-            const string updateTablePattern = null;
-            
-            const string deletePattern = @"^DELETE\s+FROM\s+([a-zA-Z]\w*)\s+WHERE\s+(\w+)\s*([<=>])\s*(\w+)$";
+            const string updateTablePattern = @"^UPDATE\s+([a-zA-Z]\w*)\s+SET\s+(.+)\s+WHERE\s+(\w+)\s*([<=>])\s*(\w+|\d+(?:\.\d+)?|'[^']*')$";
 
+            const string deletePattern = @"^DELETE\s+FROM\s+([a-zA-Z]\w*)\s+WHERE\s+(\w+)\s*([<=>])\s*(\w+)$";
+                
 
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = null;
@@ -106,11 +106,32 @@ namespace DbManager
 				return new Insert(tableName, values);
 			}
 
+            //update
+            match = Regex.Match(miniSQLQuery, updateTablePattern);
+            if (match.Success)
+            {
+                List<SetValue> setValues = new List<SetValue>();
+                List<string> setParts = CommaSeparatedNames(match.Groups[2].Value);
 
-			//TODO DEADLINE 4
-			//Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+                foreach (string setPart in setParts)
+                {
+                    Match setMatch = Regex.Match(setPart, @"^\s*([a-zA-Z]\w*)\s*=\s*([a-zA-Z_]\w*|\d+(?:\.\d+)?|'[^']*')\s*$");
+                    if (!setMatch.Success)
+                    {
+                        return null;
+                    }
+                    SetValue newValue = new SetValue(setMatch.Groups[1].Value, setMatch.Groups[2].Value);
+                    setValues.Add(newValue);
+                }
 
-			return null;
+                Condition updateCondition = new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
+                return new Update(match.Groups[1].Value, setValues, updateCondition);
+            }
+
+                //TODO DEADLINE 4
+                //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+
+                return null;
            
         }
 
