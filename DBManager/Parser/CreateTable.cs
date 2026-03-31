@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using DbManager.Parser;
 
@@ -21,8 +22,9 @@ namespace DbManager
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //CreateTableSuccess or the last error in the database
-            
-            return null;
+            var createTable = database.CreateTable(Table, ColumnsParameters);
+            if (createTable == false) { return database.LastErrorMessage; }
+            return Constants.CreateTableSuccess;
             
         }
 
