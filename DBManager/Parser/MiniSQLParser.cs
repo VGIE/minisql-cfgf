@@ -97,12 +97,10 @@ namespace DbManager
 			{
 				string tableName = match.Groups[1].Value; 
                 string valuesText = match.Groups[2].Value; 
-                List<string> values = ParseInsertValues(valuesText);
 
-				if (values == null) 
-                { 
-                    return null; 
-                }
+                List<string> valuesComma = CommaSeparatedNames(valuesText);
+                List<String> values = RemoveComillas(valuesComma);
+
 				return new Insert(tableName, values);
 			}
 
@@ -125,36 +123,18 @@ namespace DbManager
             return commaSeparator;
         }
 
-		static List<string> ParseInsertValues(string text)
-		{
-			List<string> values = new List<string>(); 
-            bool dentroComillas = false; 
-            string x = ""; 
+        static List<String> RemoveComillas(List<string> values)
+        {
+            List<string> result = new List<string>();
 
-            for (int i = 0; i < text.Length; i++)
-			{
-				if (text[i] == '\'') 
-                { 
-                    dentroComillas = !dentroComillas; 
-                }
-				else if (text[i] == ',' && !dentroComillas) 
-                { 
-                    values.Add(x); x = ""; 
-                } 
-                else if (text[i] != ' ' || dentroComillas) 
-                { 
-                    x += text[i]; 
-                }
-			}
-			if (dentroComillas) 
+            foreach (string value in values)
             { 
-                return null; 
+                string i = value.Substring(1, value.Length - 2);
+                i = i.Trim();
+                result.Add(i);
             }
-			if (x != "") 
-            { 
-                values.Add(x); 
-            }
-			return values;
-		}
+            return result;
+        }
+
 	}
 }
