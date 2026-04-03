@@ -340,6 +340,7 @@ namespace OurTests
             Assert.Equal("12", delete.Where.LiteralValue);
         }
         #endregion
+
         #region parse-insertquery tests
         [Fact]
         public void Parse_Insert_ShouldParse() 
@@ -453,7 +454,140 @@ namespace OurTests
             Assert.Equal("Lete", insert.Values[1]);
 		}
 
-		#endregion
+        #endregion
 
-	}
+        #region parse update tests
+
+        [Fact]
+        public void Parse_Update_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("UPDATE TestTable SET age=13 WHERE age=12");
+            Assert.IsType<Update>(result);
+
+            var update = (Update)result;
+            Assert.Equal("TestTable", update.Table);
+            Assert.Equal("age", update.Columns[0].ColumnName);
+            Assert.Equal("13", update.Columns[0].Value);
+            Assert.Equal("age", update.Where.ColumnName);
+            Assert.Equal("=", update.Where.Operator);
+            Assert.Equal("12", update.Where.LiteralValue);
+        }
+
+        [Fact]
+        public void Parse_Update_AcceptsMultipleSetValues()
+        {
+            var result = MiniSQLParser.Parse("UPDATE TestTable SET age=13,height=1.70,name=Ane WHERE age=12");
+            Assert.IsType<Update>(result);
+
+            var update = (Update)result;
+            Assert.Equal("TestTable", update.Table);
+            Assert.Equal("age", update.Columns[0].ColumnName);
+            Assert.Equal("13", update.Columns[0].Value);
+            Assert.Equal("height", update.Columns[1].ColumnName);
+            Assert.Equal("1.70", update.Columns[1].Value);
+            Assert.Equal("name", update.Columns[2].ColumnName);
+            Assert.Equal("Ane", update.Columns[2].Value);
+
+            Assert.Equal("age", update.Where.ColumnName);
+            Assert.Equal("=", update.Where.Operator);
+            Assert.Equal("12", update.Where.LiteralValue);
+        }
+
+        [Fact]
+        public void Parse_Update_AcceptsSpaces()
+        {
+            var result1 = MiniSQLParser.Parse("UPDATE TestTable SET age = 13 WHERE age=12");
+            var result2 = MiniSQLParser.Parse("UPDATE TestTable SET age=13 WHERE age =12");
+            var result3 = MiniSQLParser.Parse("UPDATE TestTable SET age = 13 , height = 1.70 WHERE age = 12");
+            Assert.IsType<Update>(result1);
+            Assert.IsType<Update>(result2);
+            Assert.IsType<Update>(result3);
+
+            var update = (Update)result1;
+            Assert.Equal("TestTable", update.Table);
+            Assert.Equal("age", update.Columns[0].ColumnName);
+            Assert.Equal("13", update.Columns[0].Value);
+            Assert.Equal("age", update.Where.ColumnName);
+            Assert.Equal("=", update.Where.Operator);
+            Assert.Equal("12", update.Where.LiteralValue);
+
+            update = (Update)result2;
+            Assert.Equal("TestTable", update.Table);
+            Assert.Equal("age", update.Columns[0].ColumnName);
+            Assert.Equal("13", update.Columns[0].Value);
+            Assert.Equal("age", update.Where.ColumnName);
+            Assert.Equal("=", update.Where.Operator);
+            Assert.Equal("12", update.Where.LiteralValue);
+
+            update = (Update)result3;
+            Assert.Equal("TestTable", update.Table);
+            Assert.Equal("age", update.Columns[0].ColumnName);
+            Assert.Equal("13", update.Columns[0].Value);
+            Assert.Equal("height", update.Columns[1].ColumnName);
+            Assert.Equal("1.70", update.Columns[1].Value);
+            Assert.Equal("age", update.Where.ColumnName);
+            Assert.Equal("=", update.Where.Operator);
+            Assert.Equal("12", update.Where.LiteralValue);
+        }
+
+        [Fact]
+        public void Parse_Update_AcceptsStringsAndDoublesInWhere()
+        {
+            var result = MiniSQLParser.Parse("UPDATE TestTable SET name='Ane' WHERE name='Jon'");
+            var result1 = MiniSQLParser.Parse("UPDATE TestTable SET height=1.80 WHERE height=1.70");
+            Assert.IsType<Update>(result);
+            Assert.IsType<Update>(result1);
+
+            var update = (Update)result;
+            Assert.Equal("TestTable", update.Table);
+            Assert.Equal("name", update.Columns[0].ColumnName);
+            Assert.Equal("'Ane'", update.Columns[0].Value);
+            Assert.Equal("name", update.Where.ColumnName);
+            Assert.Equal("=", update.Where.Operator);
+            Assert.Equal("'Jon'", update.Where.LiteralValue);
+
+
+            var update1 = (Update)result1;
+            Assert.Equal("height", update1.Columns[0].ColumnName);
+            Assert.Equal("1.80", update1.Columns[0].Value);
+            Assert.Equal("height", update1.Where.ColumnName);
+            Assert.Equal("=", update1.Where.Operator);
+            Assert.Equal("1.70", update1.Where.LiteralValue);
+        }
+
+        [Fact]
+        public void Parse_Update_NotAcceptedSyntax()
+        {
+            var result1 = MiniSQLParser.Parse("update TestTable SET age=13 WHERE age=12");
+            var result2 = MiniSQLParser.Parse("");
+            var result3 = MiniSQLParser.Parse("UPDATE TABLE TestTable SET age=13 WHERE age=12");
+            var result4 = MiniSQLParser.Parse("UPDATE 1TestTable SET age=13 WHERE age=12");
+            var result5 = MiniSQLParser.Parse("UPDATE TestTable SET age=13 kkj WHERE age=12");
+            var result6 = MiniSQLParser.Parse("UPDATE TestTable SET age=13 WHERE age=12 and year=2015");
+            var result7 = MiniSQLParser.Parse("UPDATE TestTable SET age=13 WHERE age=12 AJLDJF");
+
+            Assert.Null(result1);
+            Assert.Null(result2);
+            Assert.Null(result3);
+            Assert.Null(result4);
+            Assert.Null(result5);
+            Assert.Null(result6);
+            Assert.Null(result7);
+
+
+
+        }
+
+        [Fact]
+        public void Parse_Update_SpacesAtTheBeginingAndInTheEnd_ShouldReturnNull()
+        {
+            var result1 = MiniSQLParser.Parse(" UPDATE TestTable SET age=13 WHERE age=12");
+            var result2 = MiniSQLParser.Parse("UPDATE TestTable SET age=13 WHERE age=12 ");
+
+            Assert.Null(result1);
+            Assert.Null(result2);
+        }
+
+        #endregion
+    }
 }
