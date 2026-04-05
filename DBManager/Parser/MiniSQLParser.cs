@@ -22,7 +22,7 @@ namespace DbManager
 
             const string updateTablePattern = @"^UPDATE\s+([a-zA-Z]\w*)\s+SET\s+(.+)\s+WHERE\s+(\w+)\s*([<=>])\s*(\w+|\d+(?:\.\d+)?|'[^']*')$";
 
-            const string deletePattern = @"^DELETE\s+FROM\s+([a-zA-Z]\w*)\s+WHERE\s+(\w+)\s*([<=>])\s*(\d+|\d+\.\d+|'[^']*')$";
+            const string deletePattern = @"^DELETE\s+FROM\s+([a-zA-Z]\w*)\s+WHERE\s+(\w+)\s*([<=>])\s*('[^']+')$";
                 
 
             //TODO DEADLINE 4
