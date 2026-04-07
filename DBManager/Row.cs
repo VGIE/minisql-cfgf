@@ -18,8 +18,6 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Initialize member variables
             if (columnDefinitions == null || values == null) { return; }
-            //Check that the number of column definitions matches the number of values, otherwise return without doing anything
-            if (columnDefinitions.Count() != values.Count()) { return; } 
             //Check that there is at least one column definition, otherwise return without doing anything
             if (columnDefinitions.Count() == 0) { return; }
             ColumnDefinitions = columnDefinitions;
@@ -29,12 +27,15 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            if (Values == null || ColumnDefinitions == null || columnName == null) { return; }
-            for (int i = 0; i < ColumnDefinitions.Count(); i++)
+            if (columnName == null || ColumnDefinitions == null || Values == null) { return; }
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
                 if (ColumnDefinitions[i].Name == columnName)
                 {
-                    if (i >= Values.Count) { return; }
+                    while (Values.Count <= i) 
+                    {
+                        Values.Add(null);
+                    }
                     Values[i] = value;
                     return;
                 }

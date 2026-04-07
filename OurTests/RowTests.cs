@@ -25,23 +25,6 @@ namespace OurTests
       Assert.Equal(values, row.Values);
     }
     [Fact]
-    public void Row_Constructor_ShouldNotInitializeIfColumnValueCountMismatch() 
-    {
-      //Arrange
-      var columns = new List<ColumnDefinition>
-      {
-        new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
-        new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
-      };
-      var values = new List<String> { "Ane" };
-
-      //Act
-      var row = new Row(columns, values);
-
-      //Assert
-      Assert.Null(row.Values);
-    }
-    [Fact]
     public void Row_Constructor_ShouldNotInitializeIfColumnsIsEmpty() 
     {
       //Arrange
@@ -76,6 +59,24 @@ namespace OurTests
     Assert.Equal("1.65", row.Values[2]);
     }
     [Fact]
+	public void Row_SetValue_ShouldChangeValue_WhenNotEnoughValues()
+	{
+		var columns = new List<ColumnDefinition>
+	    {
+	        new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+	        new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
+	    };
+
+		var values = new List<String> { "Ane"};
+		var row = new Row(columns, values);
+
+			row.SetValue("Age", "21");
+
+			Assert.Equal("21", row.Values[1]);
+			Assert.Equal("Ane", row.Values[0]);
+		}
+
+		[Fact]
     public void Row_SetValue_ShouldDoNothingWhenNoExistColumn()
     {
     var columns = new List<ColumnDefinition>
@@ -92,8 +93,54 @@ namespace OurTests
     Assert.Equal("Ane", row.Values[0]);
     Assert.Equal("21", row.Values[1]);
     }
-
     [Fact]
+    public void Row_SetValue_ShouldDoNothing_WhenColumnNameIsNull()
+    {
+		var columns = new List<ColumnDefinition>
+	    {
+	        new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+	    };
+
+		var values = new List<String> { "Ane" };
+		var row = new Row(columns, values);
+
+		row.SetValue(null, "Ane");
+
+		Assert.Equal("Ane", row.Values[0]);
+	}
+    [Fact]
+	public void Row_SetValue_ShouldDoNothing_WhenColumnNameIsEmpty()
+	{
+		var columns = new List<ColumnDefinition>
+	{
+		new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+	};
+
+		var values = new List<String> { "Ane" };
+		var row = new Row(columns, values);
+
+		row.SetValue("", "Ane");
+
+		Assert.Equal("Ane", row.Values[0]);
+	}
+
+	[Fact]
+	public void Row_SetValue_ShouldDoNothing_WhenColumnNameIsWithSpace()
+	{
+		var columns = new List<ColumnDefinition>
+        {
+	        new ColumnDefinition(ColumnDefinition.DataType.String, "Name"),
+        };
+
+		var values = new List<String> { "Ane" };
+		var row = new Row(columns, values);
+
+		row.SetValue(" ", "Ane");
+
+		Assert.Equal("Ane", row.Values[0]);
+	}
+
+		[Fact]
     public void Row_GetValue_ShouldReturnCorrectvalue()
     {
     var columns = new List<ColumnDefinition>
