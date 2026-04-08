@@ -510,6 +510,40 @@ namespace OurTests
       Assert.Equal("Maider", table.GetRow(1).Values[0]);
       Assert.Equal("Pepe", table.GetRow(2).Values[0]);
     }
+
+    [Fact]
+    public void Database_Load_ShouldLoadAllTablesWhenMultipleTablesAreSaved()
+    {
+      //Arrange
+      var database = Database.CreateTestDatabase();
+      var secondTableCols = new List<ColumnDefinition>
+      {
+        new ColumnDefinition(ColumnDefinition.DataType.String, "City"),
+        new ColumnDefinition(ColumnDefinition.DataType.Int, "Population")
+      };
+      database.AddTable(new Table("Cities", secondTableCols));
+      database.Insert("Cities", new List<string> { "Bilbao", "350000" });
+
+      var fileName = "test_db_load_multi.txt";
+      if (File.Exists(fileName)) File.Delete(fileName);
+      database.Save(fileName);
+
+      //Act
+      var resultDatabase = Database.Load(fileName, Database.AdminUsername, Database.AdminPassword);
+
+      //Assert
+      Assert.NotNull(resultDatabase);
+
+      var firstTable = resultDatabase.TableByName(Table.TestTableName);
+      Assert.NotNull(firstTable);
+      Assert.Equal(3, firstTable.NumRows());
+
+      var secondTable = resultDatabase.TableByName("Cities");
+      Assert.NotNull(secondTable);
+      Assert.Equal(1, secondTable.NumRows());
+      Assert.Equal("Bilbao", secondTable.GetRow(0).Values[0]);
+      Assert.Equal("350000", secondTable.GetRow(0).Values[1]);
+    }
     #endregion
 
     #region Constants Tests
