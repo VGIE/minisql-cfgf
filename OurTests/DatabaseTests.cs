@@ -31,9 +31,10 @@ namespace OurTests
             var database = DbManager.Database.CreateTestDatabase();
 
             //Act
-            database.AddTable(table);
+            bool result = database.AddTable(table);
 
             //Assert
+            Assert.True(result);
             Assert.Equal(table, database.TableByName(tableName));
         }
         #endregion

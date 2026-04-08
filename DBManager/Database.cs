@@ -33,7 +33,7 @@ namespace DbManager
         {
           //DEADLINE 1.B: Add a new table to the database
           Tables.Add(table);
-          return false;
+          return true;
         }
 
         public Table TableByName(string tableName)
