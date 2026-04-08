@@ -511,5 +511,16 @@ namespace OurTests
       Assert.Equal("Pepe", table.GetRow(2).Values[0]);
     }
     #endregion
+
+    #region Constructor Tests
+    [Fact]
+    public void Database_Constructor_ShouldInitializeSecurityManager()
+    {
+        var database = new Database(Database.AdminUsername, Database.AdminPassword);
+        // SecurityManager must be initialized; calling IsUserAdmin() must not throw NullReferenceException
+        var exception = Record.Exception(() => database.IsUserAdmin());
+        Assert.Null(exception);
+    }
+    #endregion
   }
 } 

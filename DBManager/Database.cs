@@ -27,6 +27,7 @@ namespace DbManager
         {
           //DEADLINE 1.B: Initalize the member variables
           m_username = adminUsername;
+          SecurityManager = new Manager(adminUsername);
         }
 
         public bool AddTable(Table table)
