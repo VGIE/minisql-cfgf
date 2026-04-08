@@ -512,6 +512,14 @@ namespace OurTests
     }
     #endregion
 
+    #region Constants Tests
+    [Fact]
+    public void Constants_UserDoesNotExistError_ShouldContainCorrectMessage()
+    {
+        Assert.Equal("ERROR: User does not exist", Constants.UserDoesNotExistError);
+    }
+    #endregion
+
     #region Constructor Tests
     [Fact]
     public void Database_Constructor_ShouldInitializeSecurityManager()
