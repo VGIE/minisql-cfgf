@@ -546,6 +546,32 @@ namespace OurTests
     }
     #endregion
 
+    #region ExecuteMiniSQLQuery Tests
+    [Fact]
+    public void Database_ExecuteMiniSQLQuery_InvalidSyntax_ShouldReturnSyntaxError()
+    {
+        var database = Database.CreateTestDatabase();
+        var result = database.ExecuteMiniSQLQuery("THIS IS NOT VALID SQL");
+        Assert.Equal(Constants.SyntaxError, result);
+    }
+
+    [Fact]
+    public void Database_ExecuteMiniSQLQuery_ValidCreateTable_ShouldReturnSuccess()
+    {
+        var database = Database.CreateTestDatabase();
+        var result = database.ExecuteMiniSQLQuery("CREATE TABLE Cities(City String,Population Int)");
+        Assert.Equal(Constants.CreateTableSuccess, result);
+    }
+
+    [Fact]
+    public void Database_ExecuteMiniSQLQuery_ValidDropTable_ShouldReturnSuccess()
+    {
+        var database = Database.CreateTestDatabase();
+        var result = database.ExecuteMiniSQLQuery("DROP TABLE " + Table.TestTableName);
+        Assert.Equal(Constants.DropTableSuccess, result);
+    }
+    #endregion
+
     #region Constants Tests
     [Fact]
     public void Constants_UserDoesNotExistError_ShouldContainCorrectMessage()
