@@ -31,9 +31,10 @@ namespace OurTests
             var database = DbManager.Database.CreateTestDatabase();
 
             //Act
-            database.AddTable(table);
+            bool result = database.AddTable(table);
 
             //Assert
+            Assert.True(result);
             Assert.Equal(table, database.TableByName(tableName));
         }
         #endregion
@@ -508,6 +509,85 @@ namespace OurTests
 
       Assert.Equal("Maider", table.GetRow(1).Values[0]);
       Assert.Equal("Pepe", table.GetRow(2).Values[0]);
+    }
+
+    [Fact]
+    public void Database_Load_ShouldLoadAllTablesWhenMultipleTablesAreSaved()
+    {
+      //Arrange
+      var database = Database.CreateTestDatabase();
+      var secondTableCols = new List<ColumnDefinition>
+      {
+        new ColumnDefinition(ColumnDefinition.DataType.String, "City"),
+        new ColumnDefinition(ColumnDefinition.DataType.Int, "Population")
+      };
+      database.AddTable(new Table("Cities", secondTableCols));
+      database.Insert("Cities", new List<string> { "Bilbao", "350000" });
+
+      var fileName = "test_db_load_multi.txt";
+      if (File.Exists(fileName)) File.Delete(fileName);
+      database.Save(fileName);
+
+      //Act
+      var resultDatabase = Database.Load(fileName, Database.AdminUsername, Database.AdminPassword);
+
+      //Assert
+      Assert.NotNull(resultDatabase);
+
+      var firstTable = resultDatabase.TableByName(Table.TestTableName);
+      Assert.NotNull(firstTable);
+      Assert.Equal(3, firstTable.NumRows());
+
+      var secondTable = resultDatabase.TableByName("Cities");
+      Assert.NotNull(secondTable);
+      Assert.Equal(1, secondTable.NumRows());
+      Assert.Equal("Bilbao", secondTable.GetRow(0).Values[0]);
+      Assert.Equal("350000", secondTable.GetRow(0).Values[1]);
+    }
+    #endregion
+
+    #region ExecuteMiniSQLQuery Tests
+    [Fact]
+    public void Database_ExecuteMiniSQLQuery_InvalidSyntax_ShouldReturnSyntaxError()
+    {
+        var database = Database.CreateTestDatabase();
+        var result = database.ExecuteMiniSQLQuery("THIS IS NOT VALID SQL");
+        Assert.Equal(Constants.SyntaxError, result);
+    }
+
+    [Fact]
+    public void Database_ExecuteMiniSQLQuery_ValidCreateTable_ShouldReturnSuccess()
+    {
+        var database = Database.CreateTestDatabase();
+        var result = database.ExecuteMiniSQLQuery("CREATE TABLE Cities(City String,Population Int)");
+        Assert.Equal(Constants.CreateTableSuccess, result);
+    }
+
+    [Fact]
+    public void Database_ExecuteMiniSQLQuery_ValidDropTable_ShouldReturnSuccess()
+    {
+        var database = Database.CreateTestDatabase();
+        var result = database.ExecuteMiniSQLQuery("DROP TABLE " + Table.TestTableName);
+        Assert.Equal(Constants.DropTableSuccess, result);
+    }
+    #endregion
+
+    #region Constants Tests
+    [Fact]
+    public void Constants_UserDoesNotExistError_ShouldContainCorrectMessage()
+    {
+        Assert.Equal("ERROR: User does not exist", Constants.UserDoesNotExistError);
+    }
+    #endregion
+
+    #region Constructor Tests
+    [Fact]
+    public void Database_Constructor_ShouldInitializeSecurityManager()
+    {
+        var database = new Database(Database.AdminUsername, Database.AdminPassword);
+        // SecurityManager must be initialized; calling IsUserAdmin() must not throw NullReferenceException
+        var exception = Record.Exception(() => database.IsUserAdmin());
+        Assert.Null(exception);
     }
     #endregion
   }

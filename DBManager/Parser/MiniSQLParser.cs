@@ -1,6 +1,7 @@
 using DbManager.Parser;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace DbManager
@@ -10,7 +11,7 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = null;
+            const string selectPattern = @"^SELECT\s+([a-zA-Z]\w*(?:\s*,\s*[a-zA-Z]\w*)*)\s+FROM\s+([a-zA-Z]\w*)(?:\s+WHERE\s+([a-zA-Z]\w*)\s*([<=>])\s*(\w+(?:\.\w+)?|'[^']*'))?$";
             
             const string insertPattern = @"^INSERT\s+INTO\s+([a-zA-Z]\w*)\s+VALUES\s*\((.*)\)$";
             
@@ -45,8 +46,22 @@ namespace DbManager
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
 
+            // select
+            var match = Regex.Match(miniSQLQuery, selectPattern);
+            if (match.Success)
+            {
+                List<string> columns = CommaSeparatedNames(match.Groups[1].Value)
+                    .Select(c => c.Trim())
+                    .ToList();
+                string tableName = match.Groups[2].Value;
+                Condition condition = null;
+                if (match.Groups[3].Value != "")
+                    condition = new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
+                return new Select(tableName, columns, condition);
+            }
+
             //drop table
-            var match = Regex.Match(miniSQLQuery, dropTablePattern);
+            match = Regex.Match(miniSQLQuery, dropTablePattern);
             if (match.Success)
             {
                 var table = match.Groups[1].Value;

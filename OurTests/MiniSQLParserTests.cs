@@ -627,5 +627,100 @@ namespace OurTests
         }
 
         #endregion
+
+        #region parse select tests
+        [Fact]
+        public void Parse_Select_SingleColumn_NoWhere_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("SELECT Name FROM People");
+
+            Assert.NotNull(result);
+            Assert.IsType<Select>(result);
+
+            var select = (Select)result;
+            Assert.Equal("People", select.Table);
+            Assert.Equal(new List<string> { "Name" }, select.Columns);
+            Assert.Null(select.Where);
+        }
+
+        [Fact]
+        public void Parse_Select_MultipleColumns_NoWhere_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("SELECT Name,Age FROM People");
+
+            Assert.NotNull(result);
+            Assert.IsType<Select>(result);
+
+            var select = (Select)result;
+            Assert.Equal("People", select.Table);
+            Assert.Equal(new List<string> { "Name", "Age" }, select.Columns);
+            Assert.Null(select.Where);
+        }
+
+        [Fact]
+        public void Parse_Select_SingleColumn_WithWhereEquals_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Age=25");
+
+            Assert.NotNull(result);
+            Assert.IsType<Select>(result);
+
+            var select = (Select)result;
+            Assert.Equal("People", select.Table);
+            Assert.Equal(new List<string> { "Name" }, select.Columns);
+            Assert.NotNull(select.Where);
+            Assert.Equal("Age", select.Where.ColumnName);
+            Assert.Equal("=", select.Where.Operator);
+            Assert.Equal("25", select.Where.LiteralValue);
+        }
+
+        [Fact]
+        public void Parse_Select_WithWhereLessThan_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Age<30");
+
+            Assert.NotNull(result);
+            Assert.IsType<Select>(result);
+
+            var select = (Select)result;
+            Assert.NotNull(select.Where);
+            Assert.Equal("<", select.Where.Operator);
+        }
+
+        [Fact]
+        public void Parse_Select_WithWhereGreaterThan_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Age>18");
+
+            Assert.NotNull(result);
+            Assert.IsType<Select>(result);
+
+            var select = (Select)result;
+            Assert.NotNull(select.Where);
+            Assert.Equal(">", select.Where.Operator);
+        }
+
+        [Fact]
+        public void Parse_Select_WithWhereStringValue_ShouldParse()
+        {
+            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Name='Mario'");
+
+            Assert.NotNull(result);
+            Assert.IsType<Select>(result);
+
+            var select = (Select)result;
+            Assert.NotNull(select.Where);
+            Assert.Equal("Name", select.Where.ColumnName);
+            Assert.Equal("'Mario'", select.Where.LiteralValue);
+        }
+
+        [Fact]
+        public void Parse_Select_InvalidSyntax_ShouldReturnNull()
+        {
+            Assert.Null(MiniSQLParser.Parse("SELECT FROM People"));
+            Assert.Null(MiniSQLParser.Parse("SELECT Name People"));
+            Assert.Null(MiniSQLParser.Parse("select Name FROM People"));
+        }
+        #endregion
     }
 }
