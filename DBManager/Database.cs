@@ -238,6 +238,7 @@ namespace DbManager
       //If everything goes ok, return the loaded database (a new instance), null otherwise.
       //DEADLINE 5: When the Database object is created, set the username (create a new method if you must)
       //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
+      if (!System.IO.File.Exists(databaseName)) return null;
       var database = new Database();
       using (var reader = System.IO.File.OpenText(databaseName))
       {
