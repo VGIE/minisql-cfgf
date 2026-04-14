@@ -183,7 +183,7 @@ namespace OurTests
             Assert.Equal("TestTable", delete.Table);
             Assert.Equal("age", delete.Where.ColumnName);
             Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'12'", delete.Where.LiteralValue);
+            Assert.Equal("12", delete.Where.LiteralValue);
         }
         [Fact]
         public void Parse_Delete_ShouldAcceptAnyCapitalization()
@@ -204,19 +204,19 @@ namespace OurTests
             Assert.Equal("T3_stTable", delete.Table);
             Assert.Equal("a23", delete.Where.ColumnName);
             Assert.Equal(">", delete.Where.Operator);
-            Assert.Equal("'x'", delete.Where.LiteralValue);
+            Assert.Equal("x", delete.Where.LiteralValue);
 
             delete = (Delete)result2;
             Assert.Equal("Test6Table", delete.Table);
             Assert.Equal("NaMe", delete.Where.ColumnName);
             Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'AlFonSo'", delete.Where.LiteralValue);
+            Assert.Equal("AlFonSo", delete.Where.LiteralValue);
 
             delete = (Delete)result3;
             Assert.Equal("Te_st4Tabl_e", delete.Table);
             Assert.Equal("yeAr", delete.Where.ColumnName);
             Assert.Equal("<", delete.Where.Operator);
-            Assert.Equal("'2025'", delete.Where.LiteralValue);
+            Assert.Equal("2025", delete.Where.LiteralValue);
         }
         [Fact]
         public void Parse_Delete_NotAcceptedSyntax_ShouldReturnNull()
@@ -304,13 +304,13 @@ namespace OurTests
             Assert.IsType<Delete>(result2);
 
             var delete = (Delete)result;
-            Assert.Equal("'value_123'", delete.Where.LiteralValue);
+            Assert.Equal("value_123", delete.Where.LiteralValue);
 
             delete = (Delete)result1;
             Assert.Equal("a_g2e", delete.Where.ColumnName);
 
             delete = (Delete)result2;
-            Assert.Equal("'Adolfo Sanchez'", delete.Where.LiteralValue);
+            Assert.Equal("Adolfo Sanchez", delete.Where.LiteralValue);
         }
         
         [Fact]
@@ -329,13 +329,13 @@ namespace OurTests
             Assert.Equal("TestTable", delete.Table);
             Assert.Equal("height", delete.Where.ColumnName);
             Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'1.2'", delete.Where.LiteralValue);
+            Assert.Equal("1.2", delete.Where.LiteralValue);
 
             delete = (Delete)result2;
             Assert.Equal("TestTable", delete.Table);
             Assert.Equal("place", delete.Where.ColumnName);
             Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'Galdeano'", delete.Where.LiteralValue);
+            Assert.Equal("Galdeano", delete.Where.LiteralValue);
         }
         [Fact]
         public void Parse_Delete_WithoutConditionMultipleTables_ShouldReturnNull()
