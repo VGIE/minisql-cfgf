@@ -13,9 +13,9 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = @"^SELECT\s+([a-zA-Z]\w*(?:\s*,\s*[a-zA-Z]\w*)*)\s+FROM\s+([a-zA-Z]\w*)(?:\s+WHERE\s+([a-zA-Z]\w*)\s*([<=>])\s*(\w+(?:\.\w+)?|'[^']*'))?$";
             
-            const string insertPattern = @"^INSERT\s+INTO\s+([a-zA-Z]\w*)\s+VALUES\s*\((.*)\)$";
-            
-            const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z]\w*)$";
+            const string insertPattern = @"^\s*INSERT\s+INTO\s+(?<table>[a-zA-Z]\w*)\s+VALUES\s*\((?<values>.*)\)\s*$";
+
+			const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z]\w*)$";
 
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
