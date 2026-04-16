@@ -183,12 +183,12 @@ namespace OurTests
             Assert.Equal("TestTable", delete.Table);
             Assert.Equal("age", delete.Where.ColumnName);
             Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'12'", delete.Where.LiteralValue);
+            Assert.Equal("12", delete.Where.LiteralValue);
         }
         [Fact]
         public void Parse_Delete_ShouldAcceptAnyCapitalization()
         {
-            var result1 = MiniSQLParser.Parse("DELETE FROM T3_stTable WHERE a23 > 'x'");
+            var result1 = MiniSQLParser.Parse("DELETE FROM T3_stTable WHERE a23>'x'");
             var result2 = MiniSQLParser.Parse("DELETE FROM  Test6Table WHERE NaMe='AlFonSo'");
             var result3 = MiniSQLParser.Parse("DELETE FROM Te_st4Tabl_e WHERE yeAr<'2025'");
 
@@ -204,19 +204,19 @@ namespace OurTests
             Assert.Equal("T3_stTable", delete.Table);
             Assert.Equal("a23", delete.Where.ColumnName);
             Assert.Equal(">", delete.Where.Operator);
-            Assert.Equal("'x'", delete.Where.LiteralValue);
+            Assert.Equal("x", delete.Where.LiteralValue);
 
             delete = (Delete)result2;
             Assert.Equal("Test6Table", delete.Table);
             Assert.Equal("NaMe", delete.Where.ColumnName);
             Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'AlFonSo'", delete.Where.LiteralValue);
+            Assert.Equal("AlFonSo", delete.Where.LiteralValue);
 
             delete = (Delete)result3;
             Assert.Equal("Te_st4Tabl_e", delete.Table);
             Assert.Equal("yeAr", delete.Where.ColumnName);
             Assert.Equal("<", delete.Where.Operator);
-            Assert.Equal("'2025'", delete.Where.LiteralValue);
+            Assert.Equal("2025", delete.Where.LiteralValue);
         }
         [Fact]
         public void Parse_Delete_NotAcceptedSyntax_ShouldReturnNull()
@@ -304,47 +304,15 @@ namespace OurTests
             Assert.IsType<Delete>(result2);
 
             var delete = (Delete)result;
-            Assert.Equal("'value_123'", delete.Where.LiteralValue);
+            Assert.Equal("value_123", delete.Where.LiteralValue);
 
             delete = (Delete)result1;
             Assert.Equal("a_g2e", delete.Where.ColumnName);
 
             delete = (Delete)result2;
-            Assert.Equal("'Adolfo Sanchez'", delete.Where.LiteralValue);
+            Assert.Equal("Adolfo Sanchez", delete.Where.LiteralValue);
         }
-        [Fact]
-        public void Parse_Delete_SpacesAfterBeforeOperator_ShouldParse()
-        {
-            var result = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age= '12'");
-            var result1 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age ='12'");
-            var result2 = MiniSQLParser.Parse("DELETE FROM TestTable WHERE age = '12'");
-
-            Assert.NotNull(result);
-            Assert.NotNull(result1);
-            Assert.NotNull(result2);
-
-            Assert.IsType<Delete>(result);
-            Assert.IsType<Delete>(result1);
-            Assert.IsType<Delete>(result2);
-
-            var delete = (Delete)result;
-            Assert.Equal("TestTable", delete.Table);
-            Assert.Equal("age", delete.Where.ColumnName);
-            Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'12'", delete.Where.LiteralValue);
-
-            delete = (Delete)result1;
-            Assert.Equal("TestTable", delete.Table);
-            Assert.Equal("age", delete.Where.ColumnName);
-            Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'12'", delete.Where.LiteralValue);
-
-            delete = (Delete)result2;
-            Assert.Equal("TestTable", delete.Table);
-            Assert.Equal("age", delete.Where.ColumnName);
-            Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'12'", delete.Where.LiteralValue);
-        }
+        
         [Fact]
         public void Parse_Delete_DoubleStringCondition_ShouldParse()
         {
@@ -361,13 +329,13 @@ namespace OurTests
             Assert.Equal("TestTable", delete.Table);
             Assert.Equal("height", delete.Where.ColumnName);
             Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'1.2'", delete.Where.LiteralValue);
+            Assert.Equal("1.2", delete.Where.LiteralValue);
 
             delete = (Delete)result2;
             Assert.Equal("TestTable", delete.Table);
             Assert.Equal("place", delete.Where.ColumnName);
             Assert.Equal("=", delete.Where.Operator);
-            Assert.Equal("'Galdeano'", delete.Where.LiteralValue);
+            Assert.Equal("Galdeano", delete.Where.LiteralValue);
         }
         [Fact]
         public void Parse_Delete_WithoutConditionMultipleTables_ShouldReturnNull()

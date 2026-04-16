@@ -2,6 +2,7 @@ using DbManager.Parser;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 
 namespace DbManager
 {
@@ -33,7 +34,7 @@ namespace DbManager
         {
           //TODO DEADLINE 1.A: Add a new row
           if (row == null) { return; }
-          if (row.Values.Count != ColumnDefinitions.Count) { return; }
+          if (row.Values == null || row.Values.Count != ColumnDefinitions.Count) { return; }
           Rows.Add(row);
         }
 
@@ -171,6 +172,8 @@ namespace DbManager
     {
       //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
       //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
+      if (columnNames == null) columnNames = ColumnDefinitions.Select(c => c.Name).ToList();
+
       Table newTable;
       List<int> columnIndexes = new List<int>();
       List<Row> newRows = new List<Row>();
@@ -179,6 +182,7 @@ namespace DbManager
       foreach (string columnName in columnNames)
       {
         var originalCol = ColumnByName(columnName);
+        if (originalCol == null) continue;
         newColumnDefinitions.Add(new ColumnDefinition(originalCol.Type, originalCol.Name));
 
         columnIndexes.Add(ColumnIndexByName(columnName));
