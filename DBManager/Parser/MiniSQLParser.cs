@@ -123,22 +123,27 @@ namespace DbManager
             match = Regex.Match(miniSQLQuery, updateTablePattern);
             if (match.Success)
             {
-                List<SetValue> setValues = new List<SetValue>();
-                List<string> setParts = CommaSeparatedNames(match.Groups[2].Value);
+                string tableName = match.Groups[1].Value;
+                string valuesText = match.Groups[2].Value;
 
-                foreach (string setPart in setParts)
+                List<SetValue> setValues = new List<SetValue>();
+
+                foreach (string setPart in CommaSeparatedNames(valuesText))
                 {
                     Match setMatch = Regex.Match(setPart, @"^\s*([a-zA-Z]\w*)\s*=\s*([a-zA-Z_]\w*|\d+(?:\.\d+)?|'[^']*')\s*$");
                     if (!setMatch.Success)
                     {
                         return null;
                     }
-                    SetValue newValue = new SetValue(setMatch.Groups[1].Value, setMatch.Groups[2].Value);
-                    setValues.Add(newValue);
-                }
+                    string columnName= setMatch.Groups[1].Value;
+                    string value = RemoveComillas(new List<string> { setMatch.Groups[2].Value })[0];
 
-                Condition updateCondition = new Condition(match.Groups[3].Value, match.Groups[4].Value, match.Groups[5].Value);
-                return new Update(match.Groups[1].Value, setValues, updateCondition);
+                    setValues.Add(new SetValue(columnName, value));
+                }
+         
+                string whereValue = RemoveComillas(new List<string> { match.Groups[5].Value })[0];
+                Condition updateCondition = new Condition(match.Groups[3].Value, match.Groups[4].Value, whereValue);
+                return new Update(tableName, setValues, updateCondition);
             }
 
                 //TODO DEADLINE 4
