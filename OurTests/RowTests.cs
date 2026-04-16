@@ -67,7 +67,7 @@ namespace OurTests
 	        new ColumnDefinition(ColumnDefinition.DataType.Int, "Age")
 	    };
 
-		var values = new List<String> { "Ane"};
+		var values = new List<String> { "Ane", null};
 		var row = new Row(columns, values);
 
 			row.SetValue("Age", "21");

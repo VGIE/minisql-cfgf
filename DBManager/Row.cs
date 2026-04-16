@@ -27,15 +27,11 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            if (columnName == null || ColumnDefinitions == null || Values == null) { return; }
-            for (int i = 0; i < ColumnDefinitions.Count; i++)
+            foreach (ColumnDefinition column in ColumnDefinitions)
             {
-                if (ColumnDefinitions[i].Name == columnName)
+                if (column.Name == columnName)
                 {
-                    while (Values.Count <= i) 
-                    {
-                        Values.Add(null);
-                    }
+                    int i = ColumnDefinitions.IndexOf(column);
                     Values[i] = value;
                     return;
                 }
@@ -45,12 +41,10 @@ namespace DbManager
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-            if (Values == null || ColumnDefinitions == null || columnName == null) { return null; }
-            for (int i = 0; i < ColumnDefinitions.Count(); i++)
-            {
-                if (ColumnDefinitions[i].Name == columnName)
+            foreach (ColumnDefinition column in ColumnDefinitions){ 
+                if (column.Name == columnName)
                 {
-                    if (i >= Values.Count) { return null; }
+                    int i = ColumnDefinitions.IndexOf(column);
                     return Values[i];
                 }
             }
