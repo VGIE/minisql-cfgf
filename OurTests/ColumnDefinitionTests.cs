@@ -33,19 +33,19 @@ namespace OurTests
     //  Assert.Equal(expectedReturn, result);
     //}
         [Fact]
-        public void ColumnDefinition_Constructor_ShoulHaveTypeCorrecto() 
+        public void ColumnDefinition_Constructor_ShoulHaveCorrectType() 
         {
             ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
             Assert.Equal(ColumnDefinition.DataType.Int, column.Type);
         }
         [Fact]
-        public void ColumnDefinition_Constructor_ShouldHaveNameCorrecto() 
+        public void ColumnDefinition_Constructor_ShouldHaveCorrectName() 
         {
             ColumnDefinition column = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
             Assert.Equal("Name", column.Name);
         }
         [Fact]
-        public void ColumnDefinition_Constructor_ShouldNotHaveNameVacio()
+        public void ColumnDefinition_Constructor_ShouldNotHaveEmptyName()
         {
             var column = new ColumnDefinition(ColumnDefinition.DataType.String, "");
             Assert.Null(column.Name);
