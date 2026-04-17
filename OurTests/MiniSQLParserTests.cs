@@ -235,7 +235,9 @@ namespace OurTests
             Assert.Null(result5);
             Assert.Null(result6);
         }
-        [Fact]
+
+
+			[Fact]
         public void Parse_Delete_FirstTableCharacterIsANumber_ShouldReturnNull()
         {
             var result = MiniSQLParser.Parse("DELETE FROM 1TestTable WHERE age='12'");
@@ -376,6 +378,7 @@ namespace OurTests
 			Assert.Equal("21", insert.Values[1]);
 			Assert.Equal("1.68", insert.Values[2]);
 		}
+
 		[Fact]
 		public void Parse_Insert_WithExtraTextAtTheEnd_ShouldReturnNull()
 		{
@@ -449,7 +452,7 @@ namespace OurTests
 			Assert.Equal("Ane", insert.Values[0]);
 		}
         [Fact]
-        public void Parse_Insert_AcceptsComma() 
+        public void Parse_Insert_shouldParsewithcomma() 
         {
 			var result = MiniSQLParser.Parse("INSERT INTO Users VALUES('Ane','Lete')");
 			Assert.NotNull(result);
@@ -462,11 +465,29 @@ namespace OurTests
             Assert.Equal("Lete", insert.Values[1]);
 		}
 
-        #endregion
+		[Fact]
+		public void Parse_Insert_WithoutComma_ShouldReturnNull()
+		{
+			var result1 = MiniSQLParser.Parse("INSERT INTO Users VALUES (Ane, '21', '1.68')");
+			var result2= MiniSQLParser.Parse("INSERT INTO Users VALUES (Ane, 21, 1.68)");
+			var result3 = MiniSQLParser.Parse("INSERT INTO Users VALUES ('Ane', 21, '1.68')");
+			var result4 = MiniSQLParser.Parse("INSERT INTO Users VALUES ('Ane', '21', 1.68)");
 
-        #region parse update tests
 
-        [Fact]
+
+			Assert.Null(result1);
+			Assert.Null(result2);
+			Assert.Null(result3);
+			Assert.Null(result4);
+
+
+		}
+
+		#endregion
+
+		#region parse update tests
+
+		[Fact]
         public void Parse_Update_ShouldParse()
         {
             var result = MiniSQLParser.Parse("UPDATE TestTable SET age='13' WHERE age='12'");

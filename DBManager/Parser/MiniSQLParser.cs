@@ -114,8 +114,15 @@ namespace DbManager
                 string valuesText = match.Groups[2].Value; 
 
                 List<string> valuesComma = CommaSeparatedNames(valuesText);
+                foreach (string value in valuesComma) 
+                {
+                    Match valueMatch = Regex.Match(value, @"^\s*'[^']*'\s*$");
+                    if (!valueMatch.Success)
+                    {
+                        return null;
+                    }
+                }
                 List<String> values = RemoveComillas(valuesComma);
-
 				return new Insert(tableName, values);
 			}
 
