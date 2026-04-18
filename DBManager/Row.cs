@@ -27,13 +27,11 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            foreach (ColumnDefinition column in ColumnDefinitions)
+            for (int i=0; i< ColumnDefinitions.Count; i++)
             {
-                if (column.Name == columnName)
+                if (ColumnDefinitions[i].Name == columnName)
                 {
-                    int i = ColumnDefinitions.IndexOf(column);
                     Values[i] = value;
-                    return;
                 }
             }
         }
@@ -41,14 +39,14 @@ namespace DbManager
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-            foreach (ColumnDefinition column in ColumnDefinitions){ 
-                if (column.Name == columnName)
+            string resultado = null;
+            for (int i=0; i< ColumnDefinitions.Count; i++){ 
+                if (ColumnDefinitions[i].Name == columnName)
                 {
-                    int i = ColumnDefinitions.IndexOf(column);
-                    return Values[i];
+                    resultado = Values[i];
                 }
             }
-            return null;       
+            return resultado;       
         }
 
     public bool IsTrue(Condition condition)
