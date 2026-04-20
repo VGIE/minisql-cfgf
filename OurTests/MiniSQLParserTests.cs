@@ -68,7 +68,7 @@ namespace OurTests
         [Fact]
         public void Parse_CreateTable_ShouldParse()
         {
-            var result = MiniSQLParser.Parse("CREATE TABLE TestTable (Name String,Age Int,Height Double)");
+            var result = MiniSQLParser.Parse("CREATE TABLE TestTable (Name TEXT,Age INT,Height DOUBLE)");
             Assert.NotNull(result);
             Assert.IsType<CreateTable>(result);
 
@@ -85,11 +85,25 @@ namespace OurTests
             Assert.Equal("Height", createTable.ColumnsParameters[2].Name);
             Assert.Equal(ColumnDefinition.DataType.Double, createTable.ColumnsParameters[2].Type);
         }
-
         [Fact]
+        public void Parse_CreateTable_ShouldParse_SimpleOneColumn()
+        {
+            var result = MiniSQLParser.Parse("CREATE TABLE TestTable (Name TEXT)");
+            Assert.NotNull(result);
+            Assert.IsType<CreateTable>(result);
+
+            var createTable = (CreateTable)result;
+            Assert.Equal("TestTable", createTable.Table);
+            Assert.Single(createTable.ColumnsParameters);
+
+            Assert.Equal("Name", createTable.ColumnsParameters[0].Name);
+            Assert.Equal(ColumnDefinition.DataType.String, createTable.ColumnsParameters[0].Type);
+        }
+
+			[Fact]
         public void Parse_CreateTable_AcceptsValidIdentifiers()
         {
-            var result = MiniSQLParser.Parse("CREATE TABLE Tes2t_Tab3le (Col_1 String,Age2 Int)");
+            var result = MiniSQLParser.Parse("CREATE TABLE Tes2t_Tab3le (Col_1 TEXT,Age2 INT)");
             Assert.NotNull(result);
             Assert.IsType<CreateTable>(result);
 
@@ -156,7 +170,10 @@ namespace OurTests
             Assert.Null(result7);
             var result8 = MiniSQLParser.Parse("CREATE TABLE TestTable (Name String Age Int)");
             Assert.Null(result8);
-        }
+			var result9 = MiniSQLParser.Parse("CREATE TABLE  (Name String, Age Int)");
+			Assert.Null(result9);
+
+		}
 
         [Fact]
         public void Parse_CreateTable_NotAcceptedTypes()
@@ -525,9 +542,9 @@ namespace OurTests
         [Fact]
         public void Parse_Update_AcceptsSpaces()
         {
-            var result1 = MiniSQLParser.Parse("UPDATE TestTable SET age = '13' WHERE age='12'");
-            var result2 = MiniSQLParser.Parse("UPDATE TestTable SET age='13' WHERE age ='12'");
-            var result3 = MiniSQLParser.Parse("UPDATE TestTable SET age = '13' , height = '1.70' WHERE age = '12'");
+            var result1 = MiniSQLParser.Parse("UPDATE            TestTable SET age = '13' WHERE age='12'");
+            var result2 = MiniSQLParser.Parse("UPDATE TestTable           SET age='13' WHERE age ='12'");
+            var result3 = MiniSQLParser.Parse("UPDATE TestTable SET age = '13', height = '1.70'           WHERE age = '12'");
             Assert.IsType<Update>(result1);
             Assert.IsType<Update>(result2);
             Assert.IsType<Update>(result3);
@@ -559,7 +576,19 @@ namespace OurTests
             Assert.Equal("12", update.Where.LiteralValue);
         }
 
-        [Fact]
+		public void Parse_Update_WithoutComma_ShouldReturnNull()
+		{
+			var result1 = MiniSQLParser.Parse("UPDATE TestTable SET age=13 WHERE age=12");
+			var result2 = MiniSQLParser.Parse("UPDATE TestTable SET age=13 WHERE age='12'");
+			var result3 = MiniSQLParser.Parse("UPDATE TestTable SET age='13' WHERE age=12");
+
+
+			Assert.Null(result1);
+			Assert.Null(result2);
+			Assert.Null(result3);
+		}
+
+		[Fact]
         public void Parse_Update_AcceptsStringsAndDoublesInWhere()
         {
             var result = MiniSQLParser.Parse("UPDATE TestTable SET name='Ane' WHERE name='Jon'");
@@ -607,15 +636,7 @@ namespace OurTests
 
         }
 
-        [Fact]
-        public void Parse_Update_SpacesAtTheBeginingAndInTheEnd_ShouldReturnNull()
-        {
-            var result1 = MiniSQLParser.Parse(" UPDATE TestTable SET age='13' WHERE age='12'");
-            var result2 = MiniSQLParser.Parse("UPDATE TestTable SET age='13' WHERE age='12' ");
-
-            Assert.Null(result1);
-            Assert.Null(result2);
-        }
+       
 
         #endregion
 

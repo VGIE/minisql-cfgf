@@ -13,7 +13,7 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = @"^SELECT\s+([a-zA-Z]\w*(?:\s*,\s*[a-zA-Z]\w*)*)\s+FROM\s+([a-zA-Z]\w*)(?:\s+WHERE\s+([a-zA-Z]\w*)\s*([<=>])\s*(\w+(?:\.\w+)?|'[^']*'))?$";
             
-            const string insertPattern = @"^\s*INSERT\s+INTO\s+(?<table>[a-zA-Z]\w*)\s+VALUES\s*\((?<values>.*)\)\s*$";
+            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>[a-zA-Z]\w*)\s+VALUES\s*\((?<values>.*)\)\s*$";
 
 			const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z]\w*)$";
 
