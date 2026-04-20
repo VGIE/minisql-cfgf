@@ -399,9 +399,9 @@ namespace OurTests
 		[Fact]
 		public void Parse_Insert_WithExtraTextAtTheEnd_ShouldReturnNull()
 		{
-			var result1 = MiniSQLParser.Parse("INSERT INTO Users VALUES ('Ane', '21', '1.68') AJLDJF");
-			var result2 = MiniSQLParser.Parse("INSERT INTO Users VALUES('Ane', '21', '1.68');");
-			var result3 = MiniSQLParser.Parse("INSERT INTO Users VALUES('Ane', '21', '1.68') and");
+			var result1 = MiniSQLParser.Parse("INSERT INTO Users VALUES ('Ane','21','1.68') AJLDJF");
+			var result2 = MiniSQLParser.Parse("INSERT INTO Users VALUES('Ane','21','1.68');");
+			var result3 = MiniSQLParser.Parse("INSERT INTO Users VALUES('Ane','21','1.68') and");
 
 			Assert.Null(result1);
 			Assert.Null(result2);
@@ -415,7 +415,7 @@ namespace OurTests
 			Assert.Null(result1);
 			var result2 = MiniSQLParser.Parse("INSERT INTO Users");
 			Assert.Null(result2);
-			var result3 = MiniSQLParser.Parse("INSERT IN Users VALUES('Ane', '21', '1.68')");
+			var result3 = MiniSQLParser.Parse("INSERT IN Users VALUES('Ane','21','1.68')");
 			Assert.Null(result3);
 			var result4 = MiniSQLParser.Parse("insert into Users VALUES('Ane')");
 			Assert.Null(result4);
@@ -426,7 +426,7 @@ namespace OurTests
         [Fact]
 		public void Parse_Insert_TableOr_Missing_ShouldReturnNull()
 		{
-			var result1 = MiniSQLParser.Parse("INSERT INTO VALUES('Ane', '21', '1.68')");//table
+			var result1 = MiniSQLParser.Parse("INSERT INTO VALUES('Ane','21','1.68')");//table
 
 			Assert.Null(result1);
 		}
@@ -441,7 +441,7 @@ namespace OurTests
 		[Fact]
 		public void Parse_Insert_FirstTableCharacterIsANumber_ShouldReturnNull()
 		{
-			var result = MiniSQLParser.Parse("INSERT INTO 1Users VALUES ('Ane', '21', '1.68')");
+			var result = MiniSQLParser.Parse("INSERT INTO 1Users VALUES ('Ane','21','1.68')");
 			Assert.Null(result);
 		}
 
@@ -459,7 +459,7 @@ namespace OurTests
 		[Fact]
 		public void Parse_CreateTable_AcceptsHalfValue()
 		{
-			var result = MiniSQLParser.Parse("INSERT INTO Users VALUES('Ane', '21')");
+			var result = MiniSQLParser.Parse("INSERT INTO Users VALUES('Ane','21')");
 			Assert.NotNull(result);
 			Assert.IsType<Insert>(result);
 
@@ -485,10 +485,10 @@ namespace OurTests
 		[Fact]
 		public void Parse_Insert_WithoutComma_ShouldReturnNull()
 		{
-			var result1 = MiniSQLParser.Parse("INSERT INTO Users VALUES (Ane, '21', '1.68')");
-			var result2= MiniSQLParser.Parse("INSERT INTO Users VALUES (Ane, 21, 1.68)");
-			var result3 = MiniSQLParser.Parse("INSERT INTO Users VALUES ('Ane', 21, '1.68')");
-			var result4 = MiniSQLParser.Parse("INSERT INTO Users VALUES ('Ane', '21', 1.68)");
+			var result1 = MiniSQLParser.Parse("INSERT INTO Users VALUES (Ane,'21','1.68')");
+			var result2= MiniSQLParser.Parse("INSERT INTO Users VALUES (Ane,21,1.68)");
+			var result3 = MiniSQLParser.Parse("INSERT INTO Users VALUES ('Ane',21,'1.68')");
+			var result4 = MiniSQLParser.Parse("INSERT INTO Users VALUES ('Ane','21',1.68)");
 
 
 
