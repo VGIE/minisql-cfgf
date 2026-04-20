@@ -72,7 +72,12 @@ namespace DbManager
             match = Regex.Match(miniSQLQuery, createTablePattern);
             if (match.Success)
             {
-                string tableName = match.Groups[1].Value;
+                const string TYPE_TEXT = "TEXT";
+				const string TYPE_INT = "INT";
+				const string TYPE_DOUBLE = "DOUBLE";
+
+
+				string tableName = match.Groups[1].Value;
                 string columnsText = match.Groups[2].Value;
                 List<ColumnDefinition> columns = new List<ColumnDefinition>();
 
@@ -91,15 +96,15 @@ namespace DbManager
                         string typeText = columnMatch.Groups[2].Value;
 
                         ColumnDefinition.DataType type;
-                        if (typeText == "TEXT")
+                        if (typeText == TYPE_TEXT)
                         {
                             type = ColumnDefinition.DataType.String;
                         }
-                        else if (typeText == "INT")
+                        else if (typeText == TYPE_INT)
                         {
                             type = ColumnDefinition.DataType.Int;
                         }
-                        else if (typeText == "DOUBLE")
+                        else if (typeText == TYPE_DOUBLE)
                         {
                             type = ColumnDefinition.DataType.Double;
                         }
