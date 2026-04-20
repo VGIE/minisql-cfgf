@@ -81,7 +81,7 @@ namespace DbManager
                     List<string> columnParts = CommaSeparatedNames(columnsText);
                     foreach (string columnPart in columnParts)
                     {
-                        Match columnMatch = Regex.Match(columnPart, @"^\s*([a-zA-Z]\w*)\s+(String|Int|Double)\s*$");
+                        Match columnMatch = Regex.Match(columnPart, @"^\s*([a-zA-Z]\w*)\s+(TEXT|INT|DOUBLE)\s*$");
                         if (!columnMatch.Success)
                         {
                             return null;
@@ -91,7 +91,22 @@ namespace DbManager
                         string typeText = columnMatch.Groups[2].Value;
 
                         ColumnDefinition.DataType type;
-                        Enum.TryParse(typeText, out type);
+                        if (typeText == "TEXT")
+                        {
+                            type = ColumnDefinition.DataType.String;
+                        }
+                        else if (typeText == "INT")
+                        {
+                            type = ColumnDefinition.DataType.Int;
+                        }
+                        else if (typeText == "DOUBLE")
+                        {
+                            type = ColumnDefinition.DataType.Double;
+                        }
+                        else 
+                        {
+                            return null;
+                        }
 
                         columns.Add(new ColumnDefinition(type, columnName));
                     }

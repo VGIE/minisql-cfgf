@@ -40,7 +40,8 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
             string resultado = null;
-            for (int i=0; i< ColumnDefinitions.Count; i++){ 
+            for (int i=0; i< ColumnDefinitions.Count; i++)
+            { 
                 if (ColumnDefinitions[i].Name == columnName)
                 {
                     resultado = Values[i];

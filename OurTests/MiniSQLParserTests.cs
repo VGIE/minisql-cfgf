@@ -133,7 +133,7 @@ namespace OurTests
         [Fact]
         public void Parse_CreateTable_AcceptsSpaces()
         {
-            var result = MiniSQLParser.Parse("CREATE   TABLE   TestTable   (Name   String,   Age   Int,   Height   Double)");
+            var result = MiniSQLParser.Parse("CREATE   TABLE   TestTable   (Name TEXT,Age INT,Height DOUBLE)");
             Assert.NotNull(result);
             Assert.IsType<CreateTable>(result);
 
@@ -158,19 +158,19 @@ namespace OurTests
             Assert.Null(result1);
             var result2 = MiniSQLParser.Parse("CREATE TABLE TestTable");
             Assert.Null(result2);
-            var result3 = MiniSQLParser.Parse("CREATE TABL TestTable (Name String)");
+            var result3 = MiniSQLParser.Parse("CREATE TABL TestTable (Name TEXT)");
             Assert.Null(result3);
-            var result4 = MiniSQLParser.Parse("create table TestTable (Name String)");
+            var result4 = MiniSQLParser.Parse("create table TestTable (Name TEXT)");
             Assert.Null(result4);
             var result5 = MiniSQLParser.Parse(" ");
             Assert.Null(result5);
-            var result6 = MiniSQLParser.Parse("CREATE TABLE 1TestTable (Name String)");
+            var result6 = MiniSQLParser.Parse("CREATE TABLE 1TestTable (Name TEXT)");
             Assert.Null(result6);
-            var result7 = MiniSQLParser.Parse("CREATE TABLE TestTable (1Name String)");
+            var result7 = MiniSQLParser.Parse("CREATE TABLE TestTable (1Name TEXT)");
             Assert.Null(result7);
-            var result8 = MiniSQLParser.Parse("CREATE TABLE TestTable (Name String Age Int)");
+            var result8 = MiniSQLParser.Parse("CREATE TABLE TestTable (Name TEXT Age INT)");
             Assert.Null(result8);
-			var result9 = MiniSQLParser.Parse("CREATE TABLE  (Name String, Age Int)");
+			var result9 = MiniSQLParser.Parse("CREATE TABLE  (Name TEXT,Age INT)");
 			Assert.Null(result9);
 
 		}

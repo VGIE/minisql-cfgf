@@ -559,7 +559,7 @@ namespace OurTests
     public void Database_ExecuteMiniSQLQuery_ValidCreateTable_ShouldReturnSuccess()
     {
         var database = Database.CreateTestDatabase();
-        var result = database.ExecuteMiniSQLQuery("CREATE TABLE Cities(City String,Population Int)");
+        var result = database.ExecuteMiniSQLQuery("CREATE TABLE Cities (City TEXT,Population INT)");
         Assert.Equal(Constants.CreateTableSuccess, result);
     }
 
