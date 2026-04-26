@@ -61,5 +61,58 @@ namespace OurTests
 
 		}
 		#endregion
+		#region  RevokePrivilege Tests
+		[Fact]
+		public void Profile_RevokePrivilege_shouldReturnTrue_WhenPrivilegeExists()
+		{
+			var profile = new Profile { Name = "User" };
+
+			profile.GrantPrivilege("Students", Privilege.Select);
+
+			var result = profile.RevokePrivilege("Students", Privilege.Select);
+
+			Assert.True(result);
+			Assert.False(profile.IsGrantedPrivilege("Students", Privilege.Select));
+		}
+		[Fact]
+		public void Profile_RevokePrivilege_shouldReturnFalse_WhenTableDoesNotExists()
+		{
+			var profile = new Profile { Name = "User" };
+
+			var result = profile.RevokePrivilege("Students", Privilege.Select);
+
+			Assert.False(result);
+		}
+		[Fact]
+		public void Profile_RevokePrivilege_shouldReturnFalse_WhenTableIsNull()
+		{
+			var profile = new Profile { Name = "User" };
+
+			var result = profile.RevokePrivilege(null, Privilege.Select);
+
+			Assert.False(result);
+		}
+		[Fact]
+		public void Profile_RevokePrivilege_shouldReturnFalse_WhenTableIsEmpty()
+		{
+			var profile = new Profile { Name = "User" };
+
+			var result = profile.RevokePrivilege("", Privilege.Select);
+
+			Assert.False(result);
+		}
+		[Fact]
+		public void Profile_RevokePrivilege_shouldReturnFalse_WhenPrivilegeDoesNotExists()
+		{
+			var profile = new Profile { Name = "User" };
+
+			profile.GrantPrivilege("Students", Privilege.Select);
+
+			var result = profile.RevokePrivilege("Students", Privilege.Insert);
+
+			Assert.False(result);
+			Assert.True(profile.IsGrantedPrivilege("Students", Privilege.Select));
+		}
+		#endregion
 	}
 }

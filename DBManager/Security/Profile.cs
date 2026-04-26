@@ -37,11 +37,24 @@ namespace DbManager.Security
 
         public bool RevokePrivilege(string table, Privilege privilege)
         {
-            //TODO DEADLINE 5: Revoke this privilege on this table. Return false if there is an error, true otherwise
-            
-            return false;
-            
-        }
+			//TODO DEADLINE 5: Revoke this privilege on this table. Return false if there is an error, true otherwise
+
+			if (string.IsNullOrEmpty(table))
+			{
+				return false;
+			}
+			if (!PrivilegesOn.ContainsKey(table))
+			{
+                return false;
+
+			}
+			if (!PrivilegesOn[table].Contains(privilege))
+			{
+				return false;
+			}
+			PrivilegesOn[table].Remove(privilege);
+			return true;
+		}
 
         public bool IsGrantedPrivilege(string table, Privilege privilege)
         {
@@ -49,7 +62,7 @@ namespace DbManager.Security
 
 			if(string.IsNullOrEmpty(table))
 
-	{
+	        {
 				return false;
 			}
 
