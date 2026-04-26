@@ -190,7 +190,7 @@ namespace OurTests
 		#endregion
 		
 		#region RevokePrivilege Tests
-		/*
+		
 		[Fact]
 		public void Manager_RevokePrivilege_ShouldRevokePrivilege_WhenProfileExists()
 		{
@@ -247,7 +247,7 @@ namespace OurTests
 			var result = profile.IsGrantedPrivilege("Students", Privilege.Select);
 			Assert.True(result);
 		}
-		*/
+		
 		#endregion
 		
 		#region IsGrantedPrivilege Tests
