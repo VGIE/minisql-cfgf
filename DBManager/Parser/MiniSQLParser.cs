@@ -11,17 +11,16 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"^SELECT\s+([a-zA-Z]\w*(?:\s*,\s*[a-zA-Z]\w*)*)\s+FROM\s+([a-zA-Z]\w*)(?:\s+WHERE\s+([a-zA-Z]\w*)\s*([<=>])\s*(\w+(?:\.\w+)?|'[^']*'))?$";
-            
-            const string insertPattern = @"^INSERT\s+INTO\s+(?<table>[a-zA-Z]\w*)\s+VALUES\s*\((?<values>.*)\)\s*$";
+            const string selectPattern = @"^SELECT\s+([a-zA-Z]\w*(?:,[a-zA-Z]\w*)*)\s+FROM\s+([a-zA-Z]\w*)(?:\s+WHERE\s+([a-zA-Z]\w*)\s*([<=>])\s*(\w+(?:\.\w+)?|'[^']*'))?$";
 
-			const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z]\w*)$";
+            const string insertPattern = @"^INSERT\s+INTO\s+([a-zA-Z]\w*)\s+VALUES\s*\(('[^']+'(?:,'[^']+')*)\)$";
+            const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z]\w*)$";
 
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = @"^CREATE\s+TABLE\s+([a-zA-Z]\w*)\s*\((.*)\)$";
 
-            const string updateTablePattern = @"^UPDATE\s+([a-zA-Z]\w*)\s+SET\s+(.+)\s+WHERE\s+(\w+)\s*([<=>])\s*(\w+|\d+(?:\.\d+)?|'[^']*')$";
+            const string updateTablePattern = @"^UPDATE\s+([a-zA-Z]\w*)\s+SET\s+(.+)\s+WHERE\s+(\w+)([<=>])'([^']+)'$";
 
             const string deletePattern = @"^DELETE\s+FROM\s+([a-zA-Z]\w*)\s+WHERE\s+(\w+)([<=>])'([^']+)'$";
 
@@ -83,10 +82,14 @@ namespace DbManager
 
                 if (columnsText != "")
                 {
+                    if (!Regex.IsMatch(columnsText, @"^[a-zA-Z]\w*\s+(TEXT|INT|DOUBLE)(,[a-zA-Z]\w*\s+(TEXT|INT|DOUBLE))*$"))
+                    {
+                        return null;
+                    }
                     List<string> columnParts = CommaSeparatedNames(columnsText);
                     foreach (string columnPart in columnParts)
                     {
-                        Match columnMatch = Regex.Match(columnPart, @"^\s*([a-zA-Z]\w*)\s+(TEXT|INT|DOUBLE)\s*$");
+                        Match columnMatch = Regex.Match(columnPart, @"^([a-zA-Z]\w*)\s+(TEXT|INT|DOUBLE)$");
                         if (!columnMatch.Success)
                         {
                             return null;
@@ -151,24 +154,24 @@ namespace DbManager
             if (match.Success)
             {
                 string tableName = match.Groups[1].Value;
-                string valuesText = match.Groups[2].Value;
+                string valuesText = match.Groups[2].Value.TrimEnd();
 
                 List<SetValue> setValues = new List<SetValue>();
 
                 foreach (string setPart in CommaSeparatedNames(valuesText))
                 {
-                    Match setMatch = Regex.Match(setPart, @"^\s*([a-zA-Z]\w*)\s*=\s*([a-zA-Z_]\w*|\d+(?:\.\d+)?|'[^']*')\s*$");
+                    Match setMatch = Regex.Match(setPart, @"^([a-zA-Z]\w*)='([^']+)'$");
                     if (!setMatch.Success)
                     {
                         return null;
                     }
                     string columnName= setMatch.Groups[1].Value;
-                    string value = RemoveComillas(new List<string> { setMatch.Groups[2].Value })[0];
+                    string value = setMatch.Groups[2].Value;
 
                     setValues.Add(new SetValue(columnName, value));
                 }
          
-                string whereValue = RemoveComillas(new List<string> { match.Groups[5].Value })[0];
+                string whereValue = match.Groups[5].Value;
                 Condition updateCondition = new Condition(match.Groups[3].Value, match.Groups[4].Value, whereValue);
                 return new Update(tableName, setValues, updateCondition);
             }
