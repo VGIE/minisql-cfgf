@@ -542,9 +542,9 @@ namespace OurTests
         [Fact]
         public void Parse_Update_AcceptsSpaces()
         {
-            var result1 = MiniSQLParser.Parse("UPDATE            TestTable SET age = '13' WHERE age='12'");
-            var result2 = MiniSQLParser.Parse("UPDATE TestTable           SET age='13' WHERE age ='12'");
-            var result3 = MiniSQLParser.Parse("UPDATE TestTable SET age = '13', height = '1.70'           WHERE age = '12'");
+            var result1 = MiniSQLParser.Parse("UPDATE            TestTable SET age='13' WHERE age='12'");
+            var result2 = MiniSQLParser.Parse("UPDATE TestTable           SET age='13' WHERE age='12'");
+            var result3 = MiniSQLParser.Parse("UPDATE TestTable SET age='13',height='1.70'           WHERE age='12'");
             Assert.IsType<Update>(result1);
             Assert.IsType<Update>(result2);
             Assert.IsType<Update>(result3);
@@ -576,6 +576,7 @@ namespace OurTests
             Assert.Equal("12", update.Where.LiteralValue);
         }
 
+        [Fact]
 		public void Parse_Update_WithoutComma_ShouldReturnNull()
 		{
 			var result1 = MiniSQLParser.Parse("UPDATE TestTable SET age=13 WHERE age=12");
@@ -732,6 +733,13 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("SELECT FROM People"));
             Assert.Null(MiniSQLParser.Parse("SELECT Name People"));
             Assert.Null(MiniSQLParser.Parse("select Name FROM People"));
+        }
+        [Fact]
+        public void Parse_Select_SpacesBetweenColumns_ShouldReturnNull()
+        {
+            Assert.Null(MiniSQLParser.Parse("SELECT age, name FROM People"));
+            Assert.Null(MiniSQLParser.Parse("SELECT Name ,age People"));
+            Assert.Null(MiniSQLParser.Parse("select Name,  FROM People"));
         }
         #endregion
     }

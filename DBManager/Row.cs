@@ -20,6 +20,7 @@ namespace DbManager
             if (columnDefinitions == null || values == null) { return; }
             //Check that there is at least one column definition, otherwise return without doing anything
             if (columnDefinitions.Count() == 0) { return; }
+            if (values.Count != columnDefinitions.Count) { return; }
             ColumnDefinitions = columnDefinitions;
             Values = values;
         }
@@ -27,6 +28,7 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
+            if (Values == null) { return; }
             for (int i=0; i< ColumnDefinitions.Count; i++)
             {
                 if (ColumnDefinitions[i].Name == columnName)
@@ -40,6 +42,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
             string resultado = null;
+            if (Values == null) { return null; }
             for (int i=0; i< ColumnDefinitions.Count; i++)
             { 
                 if (ColumnDefinitions[i].Name == columnName)
