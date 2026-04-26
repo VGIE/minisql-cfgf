@@ -114,5 +114,54 @@ namespace OurTests
 			Assert.True(profile.IsGrantedPrivilege("Students", Privilege.Select));
 		}
 		#endregion
+		#region IsGrantedPrivilege Tests
+		[Fact]
+		public void Profile_IsGrantedPrivilege_shouldReturnTrue_WhenPrivilegeExist()
+		{
+			var profile = new Profile { Name = "User" };
+
+			profile.GrantPrivilege("Students", Privilege.Select);
+			var result = profile.IsGrantedPrivilege("Students", Privilege.Select);
+
+			Assert.True(result);
+		}
+		[Fact]
+		public void Profile_IsGrantedPrivilege_shouldReturnFalse_WhenPrivilegeDoesNotExist()
+		{
+			var profile = new Profile { Name = "User" };
+
+			profile.GrantPrivilege("Students", Privilege.Select);
+			var result = profile.IsGrantedPrivilege("Students", Privilege.Insert);
+
+			Assert.False(result);
+		}
+		[Fact]
+		public void Profile_IsGrantedPrivilege_shouldReturnFalse_WhenTableDoesNotExist()
+		{
+			var profile = new Profile { Name = "User" };
+
+			var result = profile.IsGrantedPrivilege("Students", Privilege.Insert);
+
+			Assert.False(result);
+		}
+		[Fact]
+		public void Profile_IsGrantedPrivilege_shouldReturnFalse_WhenTableIsNull()
+		{
+			var profile = new Profile { Name = "User" };
+
+			var result = profile.IsGrantedPrivilege(null, Privilege.Insert);
+
+			Assert.False(result);
+		}
+		[Fact]
+		public void Profile_IsGrantedPrivilege_shouldReturnFalse_WhenTableIsEmpty()
+		{
+			var profile = new Profile { Name = "User" };
+
+			var result = profile.IsGrantedPrivilege("", Privilege.Insert);
+
+			Assert.False(result);
+		}
+		#endregion
 	}
 }

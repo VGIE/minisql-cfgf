@@ -61,16 +61,13 @@ namespace DbManager.Security
 			//TODO DEADLINE 5: Return whether this profile is granted this privilege on this table
 
 			if(string.IsNullOrEmpty(table))
-
 	        {
 				return false;
 			}
-
 			if (!PrivilegesOn.ContainsKey(table))
 			{
 				return false;
 			}
-
 			return PrivilegesOn[table].Contains(privilege);
 		}
     }
