@@ -11,9 +11,10 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"^SELECT\s+([a-zA-Z]\w*(?:,[a-zA-Z]\w*)*)\s+FROM\s+([a-zA-Z]\w*)(?:\s+WHERE\s+([a-zA-Z]\w*)\s*([<=>])\s*(\w+(?:\.\w+)?|'[^']*'))?$";
+            const string selectPattern = @"^SELECT\s+([a-zA-Z]\w*(?:,[a-zA-Z]\w*)*)\s+FROM\s+([a-zA-Z]\w*)(?:\s+WHERE\s+([a-zA-Z]\w*)([<=>])'([^']+)')?$";
 
             const string insertPattern = @"^INSERT\s+INTO\s+([a-zA-Z]\w*)\s+VALUES\s*\(('[^']+'(?:,'[^']+')*)\)$";
+
             const string dropTablePattern = @"^DROP\s+TABLE\s+([a-zA-Z]\w*)$";
 
             //Note: The parsing of CREATE TABLE should accept empty columns "()"

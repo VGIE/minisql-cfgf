@@ -20,9 +20,21 @@ namespace DbManager
             if (columnDefinitions == null || values == null) { return; }
             //Check that there is at least one column definition, otherwise return without doing anything
             if (columnDefinitions.Count() == 0) { return; }
-            if (values.Count != columnDefinitions.Count) { return; }
+            if (values.Count > columnDefinitions.Count) { return; }
             ColumnDefinitions = columnDefinitions;
-            Values = values;
+            Values = new List<string>();
+
+            for (int i = 0; i < columnDefinitions.Count; i++)
+            {
+                if (i < values.Count)
+                {
+                    Values.Add(values[i]);
+                }
+                else
+                {
+                    Values.Add(null);
+                }
+            }
         }
 
         public void SetValue(string columnName, string value)

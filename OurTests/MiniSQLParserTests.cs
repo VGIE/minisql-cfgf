@@ -673,7 +673,7 @@ namespace OurTests
         [Fact]
         public void Parse_Select_SingleColumn_WithWhereEquals_ShouldParse()
         {
-            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Age=25");
+            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Age='25'");
 
             Assert.NotNull(result);
             Assert.IsType<Select>(result);
@@ -690,7 +690,7 @@ namespace OurTests
         [Fact]
         public void Parse_Select_WithWhereLessThan_ShouldParse()
         {
-            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Age<30");
+            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Age<'30'");
 
             Assert.NotNull(result);
             Assert.IsType<Select>(result);
@@ -703,7 +703,7 @@ namespace OurTests
         [Fact]
         public void Parse_Select_WithWhereGreaterThan_ShouldParse()
         {
-            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Age>18");
+            var result = MiniSQLParser.Parse("SELECT Name FROM People WHERE Age>'18'");
 
             Assert.NotNull(result);
             Assert.IsType<Select>(result);
@@ -724,7 +724,7 @@ namespace OurTests
             var select = (Select)result;
             Assert.NotNull(select.Where);
             Assert.Equal("Name", select.Where.ColumnName);
-            Assert.Equal("'Mario'", select.Where.LiteralValue);
+            Assert.Equal("Mario", select.Where.LiteralValue);
         }
 
         [Fact]
