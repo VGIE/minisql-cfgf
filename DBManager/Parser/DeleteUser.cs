@@ -1,7 +1,8 @@
+using DbManager.Parser;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using DbManager.Parser;
 
 namespace DbManager
 {
@@ -19,10 +20,27 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, UserDoesNotExistError, DeleteUserSuccess
-            
-            return null;
-            
-        }
+            /*var profile = database.SecurityManager.ProfileByUser(Username);
 
+            if (profile == null)
+            {
+                return Constants.UserDoesNotExistError;
+            }
+
+            if (!database.SecurityManager.IsUserAdmin())
+            {
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+            }
+            for (int i = 0; i < profile.Users.Count; i++)
+            {
+                if (profile.Users[i].Username == Username)
+                {
+                    profile.Users.RemoveAt(i);
+                    return Constants.DeleteUserSuccess;
+                }
+            }
+            return Constants.UserDoesNotExistError;*/
+            return null;
+        }
     }
 }
