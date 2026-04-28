@@ -247,11 +247,11 @@ namespace OurTests
 			var result = profile.IsGrantedPrivilege("Students", Privilege.Select);
 			Assert.True(result);
 		}
-		
-		#endregion
-		
-		#region IsGrantedPrivilege Tests
-		/*
+
+        #endregion
+
+        #region IsGrantedPrivilege Tests
+        /*
 		[Fact]
 		public void Manager_IsGrantedPrivilege_ShouldReturnTrue_WhenUserHasPrivilege()
 		{
@@ -320,9 +320,73 @@ namespace OurTests
 			Assert.False(result);
 		}
 		*/
-		#endregion
-		
+        #endregion
 
+        #region ProfileByName Tests
 
-	}
+        [Fact]
+        public void Manager_ProfileByName_ShouldReturnProfile_WhenProfileExists()
+        {
+            var manager = new Manager("adminUser");
+            var profile = new Profile {Name = "User"};
+            manager.Profiles.Add(profile);
+
+            var result = manager.ProfileByName("User");
+            Assert.NotNull(result);
+            Assert.Equal("User", result.Name);
+        }
+
+        [Fact]
+        public void Manager_ProfileByName_ShouldReturnNull_WhenProfileDoesNotExist()
+        {
+            var manager = new Manager("adminUser");
+            var profile = new Profile {Name = "User"};
+            manager.Profiles.Add(profile);
+
+            var result = manager.ProfileByName("Admin");
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void Manager_ProfileByName_ShouldReturnCorrectProfile_WhenSeveralProfilesExist()
+        {
+            var manager = new Manager("adminUser");
+            var profile1 = new Profile {Name = "User"};
+            var profile2 = new Profile {Name = "Admin"};
+            manager.Profiles.Add(profile1);
+            manager.Profiles.Add(profile2);
+
+			var result = manager.ProfileByName("Admin");
+            Assert.NotNull(result);
+            Assert.Equal("Admin", result.Name);
+        }
+
+        [Fact]
+        public void Manager_ProfileByName_ShouldReturnNull_WhenProfileNameIsNull()
+        {
+            var manager = new Manager("adminUser");
+            var profile = new Profile {Name = "User"};
+            manager.Profiles.Add(profile);
+
+            var result = manager.ProfileByName(null);
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void Manager_ProfileByName_ShouldAcceptProfilesWithNullName()
+        {
+            var manager = new Manager("adminUser");
+            var profile1 = new Profile {Name = null};
+            var profile2 = new Profile {Name = "User"};
+            manager.Profiles.Add(profile1);
+            manager.Profiles.Add(profile2);
+
+            var result = manager.ProfileByName("User");
+            Assert.NotNull(result);
+            Assert.Equal("User", result.Name);
+        }
+
+        #endregion
+
+    }
 }
