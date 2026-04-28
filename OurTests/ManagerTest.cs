@@ -322,10 +322,59 @@ namespace OurTests
 		*/
         #endregion
 
-
-        #region UserByName Tests
+        #region AddProfile Tests
 
         [Fact]
+        public void Manager_AddProfile_ShouldAddProfile_WhenProfileDoesNotExist()
+        {
+            var manager = new Manager("adminUser");
+            var profile = new Profile {Name = "User"};
+            manager.AddProfile(profile);
+
+            Assert.Single(manager.Profiles);
+            Assert.Equal("User", manager.Profiles[0].Name);
+        }
+
+        [Fact]
+        public void Manager_AddProfile_ShouldDoNothing_WhenProfileIsNull()
+        {
+            var manager = new Manager("adminUser");
+            manager.AddProfile(null);
+            Assert.Empty(manager.Profiles);
+        }
+
+        [Fact]
+        public void Manager_AddProfile_ShouldDoNothing_WhenProfileAlreadyExists()
+        {
+            var manager = new Manager("adminUser");
+            var profile1 = new Profile {Name = "User"};
+            var profile2 = new Profile {Name = "User"};
+            manager.AddProfile(profile1);
+            manager.AddProfile(profile2);
+
+            Assert.Equal(1, manager.Profiles.Count);
+            Assert.Equal("User", manager.Profiles[0].Name);
+        }
+
+        [Fact]
+        public void Manager_AddProfile_ShouldAddSeveralProfiles_WhenNamesAreDifferent()
+        {
+            var manager = new Manager("adminUser");
+            var profile1 = new Profile {Name = "User"};
+            var profile2 = new Profile {Name = "Admin"};
+            manager.AddProfile(profile1);
+            manager.AddProfile(profile2);
+
+            Assert.Equal(2, manager.Profiles.Count);
+            Assert.Equal("User", manager.Profiles[0].Name);
+            Assert.Equal("Admin", manager.Profiles[1].Name);
+        }
+
+		#endregion
+
+		#region UserByName Tests
+
+		[Fact]
         public void Manager_UserByName_ShouldReturnUser_WhenUserExists()
         {
             var manager = new Manager("adminUser");
@@ -441,7 +490,6 @@ namespace OurTests
         }
 
         #endregion
-
 
         #region ProfileByUser Tests
 
