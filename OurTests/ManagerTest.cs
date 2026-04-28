@@ -388,5 +388,59 @@ namespace OurTests
 
         #endregion
 
+
+        #region ProfileByUser Tests
+
+        [Fact]
+        public void Manager_ProfileByUser_ShouldReturnProfile_WhenUserExists()
+        {
+            var manager = new Manager("adminUser");
+            var profile = new Profile {Name = "User"};
+            profile.Users.Add(new User("user1", "1234"));
+            manager.Profiles.Add(profile);
+
+            var result = manager.ProfileByUser("user1");
+            Assert.NotNull(result);
+            Assert.Equal("User", result.Name);
+        }
+
+        [Fact]
+        public void Manager_ProfileByUser_ShouldReturnNull_WhenUserDoesNotExist()
+        {
+            var manager = new Manager("adminUser");
+            var profile = new Profile {Name = "User"};
+            profile.Users.Add(new User("user1", "1234"));
+            manager.Profiles.Add(profile);
+
+            var result = manager.ProfileByUser("NoExiste");
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void Manager_ProfileByUser_ShouldReturnCorrectProfile_WhenSeveralProfilesExist()
+        {
+            var manager = new Manager("adminUser");
+            var profile1 = new Profile { Name = "User" };
+            profile1.Users.Add(new User("user1", "1234"));
+            var profile2 = new Profile { Name = "Admin" };
+            profile2.Users.Add(new User("admin", "1234"));
+            manager.Profiles.Add(profile1);
+            manager.Profiles.Add(profile2);
+
+            var result = manager.ProfileByUser("admin");
+            Assert.NotNull(result);
+            Assert.Equal("Admin", result.Name);
+        }
+
+        [Fact]
+        public void Manager_ProfileByUser_ShouldReturnNull_WhenNoProfilesExist()
+        {
+            var manager = new Manager("adminUser");
+            var result = manager.ProfileByUser("user1");
+            Assert.Null(result);
+        }
+
+        #endregion
+
     }
 }

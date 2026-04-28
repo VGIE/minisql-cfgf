@@ -131,9 +131,17 @@ namespace DbManager.Security
         public Profile ProfileByUser(string username)
         {
             //TODO DEADLINE 5: Return the profile by user. If the user doesn't exist, return null
-
-            return null;
-
+            foreach (var profile in Profiles)
+            {
+                foreach (var user in profile.Users)
+                {
+                    if (user.Username == username)
+                    {
+                        return profile;
+                    }
+                }
+            }
+                return null;
 		}
 
         public bool RemoveProfile(string profileName)
