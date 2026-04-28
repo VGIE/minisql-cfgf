@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DbManager.Parser;
+using DbManager.Security;
 
 namespace DbManager
 {
@@ -19,9 +20,24 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, DropSecurityProfileSuccess
-            
+            /*var profile = database.SecurityManager.ProfileByUser(ProfileName);
+            if (profile == null) 
+            {
+                return Constants.SecurityProfileDoesNotExistError;
+            }
+            if (!database.SecurityManager.IsUserAdmin())
+            {
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+            }
+            for (int i = 0; i < database.SecurityManager.Profiles.Count; i++) 
+            {
+                database.SecurityManager.Profiles.RemoveAt(i);
+                return Constants.DropSecurityProfileSuccess;
+            }
+            return Constants.SecurityProfileDoesNotExistError;*/
+
             return null;
-            
+
         }
 
     }

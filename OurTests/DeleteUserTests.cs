@@ -1,4 +1,5 @@
 ﻿using DbManager;
+using DbManager.Security;
 
 namespace OurTests
 {
@@ -15,16 +16,20 @@ namespace OurTests
         }
         #endregion
 
-        /*#region Execute Tests
-
+        #region Execute Tests
+        /*
         [Fact]
         public void DeleteUser_Execute_ShouldWork_WhenUserIsAdmin()
         {
             var database = Database.CreateTestDatabase();
-            var deleteUser = new DeleteUser("admin");
+            var profile = new Profile { Name = "Mario" };
+            profile.Users.Add(new User { Username = "Jonathan" });
+            database.SecurityManager.Profiles.Add(profile);
+            var deleteUser = new DeleteUser("Jonathan");
             var result = deleteUser.Execute(database);
 
             Assert.Equal(Constants.DeleteUserSuccess, result);
+            Assert.Null(database.SecurityManager.UserByName("Jonathan"));
         }
 
         [Fact]
@@ -41,11 +46,14 @@ namespace OurTests
         public void DeleteUser_Execute_ShouldReturnError_WhenUserIsNotAdmin()
         {
             var database = new Database("Juancillo", "1234");
-            var deleteUser = new DeleteUser("Juancillo");
+            var profile = new Profile { Name = "Mario" };
+            profile.Users.Add(new User { Username = "Jonathan" });
+            database.SecurityManager.Profiles.Add(profile);
+            var deleteUser = new DeleteUser("Jonathan");
             var result = deleteUser.Execute(database);
 
             Assert.Equal(Constants.UsersProfileIsNotGrantedRequiredPrivilege, result);
-        }
-        #endregion*/
+        }*/
+        #endregion
     }
 }
