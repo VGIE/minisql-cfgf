@@ -31,5 +31,75 @@ namespace OurTests
             Assert.Null(update.Where);
         }
         #endregion
+
+
+        #region execute tests
+        [Fact]
+        public void Update_Execute_ShouldWorkCorrectly()
+        {
+            var database = Database.CreateTestDatabase();
+            var setValues = new List<SetValue>()
+            {
+                new SetValue("Name", "UpdatedName")
+            };
+
+            var condition = new Condition("Age", "=", Table.TestColumn3Row1);
+            var update = new Update(Table.TestTableName, setValues, condition);
+            var result = update.Execute(database);
+            var table = database.TableByName(Table.TestTableName);
+
+            Assert.Equal(Constants.UpdateSuccess, result);
+            Assert.Equal("UpdatedName", table.GetRow(0).GetValue("Name"));
+        }
+
+        [Fact]
+        public void Update_Execute_TableDoesntExist_ShouldReturnError()
+        {
+            var database = Database.CreateTestDatabase();
+            var setValues = new List<SetValue>()
+            {
+                new SetValue("Name", "UpdatedName")
+            };
+
+            var condition = new Condition("Age", "=", Table.TestColumn3Row1);
+            var update = new Update("NoExiste", setValues, condition);
+            var result = update.Execute(database);
+
+            Assert.Equal(Constants.TableDoesNotExistError, result);
+        }
+
+        [Fact]
+        public void Update_Execute_ConditionColumnDoesntExist_ShouldReturnError()
+        {
+            var database = Database.CreateTestDatabase();
+            var setValues = new List<SetValue>()
+            {
+                new SetValue("Name", "UpdatedName")
+            };
+
+            var condition = new Condition("NoColumn", "=", "25");
+            var update = new Update(Table.TestTableName, setValues, condition);
+            var result = update.Execute(database);
+
+            Assert.Equal(Constants.ColumnDoesNotExistError, result);
+        }
+
+        [Fact]
+        public void Update_Execute_SetColumnDoesntExist_ShouldReturnError()
+        {
+            var database = Database.CreateTestDatabase();
+            var setValues = new List<SetValue>()
+            {
+                new SetValue("NoColumn", "UpdatedName")
+            };
+
+            var condition = new Condition("Age", "=", Table.TestColumn3Row1);
+            var update = new Update(Table.TestTableName, setValues, condition);
+            var result = update.Execute(database);
+
+            Assert.Equal(Constants.ColumnDoesNotExistError, result);
+        }
+
+        #endregion
     }
 }

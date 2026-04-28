@@ -21,9 +21,12 @@ namespace DbManager
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //UpdateSuccess or the last error in the database
-            
-            return null;
-            
+            var update = database.Update(Table, Columns, Where);
+            if (update == false)
+            {
+                return database.LastErrorMessage;
+            }
+            return Constants.UpdateSuccess;
         }
 
        
