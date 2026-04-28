@@ -27,8 +27,8 @@ namespace DbManager
 
 
             //TODO DEADLINE 4
-            const string createSecurityProfilePattern = null;
-            
+            const string createSecurityProfilePattern = @"^CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z]+)$";
+
             const string dropSecurityProfilePattern = null;
             
             const string grantPattern = null;
@@ -177,11 +177,17 @@ namespace DbManager
                 return new Update(tableName, setValues, updateCondition);
             }
 
-                //TODO DEADLINE 4
-                //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+            //TODO DEADLINE 4
+            //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+            
+            // create security profile
+            match = Regex.Match(miniSQLQuery, createSecurityProfilePattern);
+            if (match.Success)
+            {
+                return new CreateSecurityProfile(match.Groups[1].Value);
+            }
 
-                return null;
-           
+            return null;
         }
 
         static List<string> CommaSeparatedNames(string text)

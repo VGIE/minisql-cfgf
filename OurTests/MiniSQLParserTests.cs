@@ -742,5 +742,57 @@ namespace OurTests
             Assert.Null(MiniSQLParser.Parse("select Name,  FROM People"));
         }
         #endregion
+
+        #region parse create security profile tests
+
+        [Fact]
+        public void Parse_CreateSecurityProfile_ShouldParse()
+        {
+            var result1 = MiniSQLParser.Parse("CREATE SECURITY PROFILE User");
+            var result2 = MiniSQLParser.Parse("CREATE SECURITY PROFILE AdminProfile");
+            var result3 = MiniSQLParser.Parse("CREATE   SECURITY   PROFILE   Admin");
+            Assert.IsType<CreateSecurityProfile>(result1);
+            Assert.IsType<CreateSecurityProfile>(result2);
+            Assert.IsType<CreateSecurityProfile>(result3);
+
+            var createSecurityProfile = (CreateSecurityProfile)result1;
+            Assert.Equal("User", createSecurityProfile.ProfileName);
+            createSecurityProfile = (CreateSecurityProfile)result2;
+            Assert.Equal("AdminProfile", createSecurityProfile.ProfileName);
+            createSecurityProfile = (CreateSecurityProfile)result3;
+            Assert.Equal("Admin", createSecurityProfile.ProfileName);
+
+        }
+
+        [Fact]
+        public void Parse_CreateSecurityProfile_NotAcceptedSyntax_ShouldReturnNull()
+        {
+            var result1 = MiniSQLParser.Parse("create SECURITY PROFILE Admin");
+            var result2 = MiniSQLParser.Parse("CREATE SECURITY PROFILE");
+            var result3 = MiniSQLParser.Parse("CREATE SECURITY PROFILE ");
+            var result4 = MiniSQLParser.Parse(" CREATE SECURITY PROFILE Admin");
+            var result5 = MiniSQLParser.Parse("CREATE SECURITY PROFILE Admin ");
+
+            Assert.Null(result1);
+            Assert.Null(result2);
+            Assert.Null(result3);
+            Assert.Null(result4);
+            Assert.Null(result5);
+        }
+
+        [Fact]
+        public void Parse_CreateSecurityProfile_NumbersOrUnderscores_ShouldReturnNull()
+        {
+            var result1 = MiniSQLParser.Parse("CREATE SECURITY PROFILE Admin1");
+            var result2 = MiniSQLParser.Parse("CREATE SECURITY PROFILE Admin_Profile");
+            var result3 = MiniSQLParser.Parse("CREATE SECURITY PROFILE 1Admin");
+
+            Assert.Null(result1);
+            Assert.Null(result2);
+            Assert.Null(result3);
+        }
+
+        #endregion
+
     }
 }
