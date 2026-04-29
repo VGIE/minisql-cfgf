@@ -886,8 +886,6 @@ namespace OurTests
 			var result4 = MiniSQLParser.Parse("GRANT DELETE Table TO User");
 			Assert.Null(result4);
 		}
-		
-
 		#endregion
 
 	}

@@ -8,7 +8,7 @@ namespace OurTests
 	public class ManagerTest
 	{
 		#region IsUserAdminTests
-		/*
+		
 		[Fact]
 		public void Manager_IsUserAdmin_ShouldReturnTrue_WhenUserIsadminProfile() 
 		{
@@ -48,7 +48,7 @@ namespace OurTests
 			var result = manager.IsUserAdmin();
 			Assert.False(result);
 		}
-		*/
+		
 		#endregion
 		
 		#region IsPasswordCorrect Test

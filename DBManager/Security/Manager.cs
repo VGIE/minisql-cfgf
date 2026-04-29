@@ -21,15 +21,14 @@ namespace DbManager.Security
         public bool IsUserAdmin()
         {
             //TODO DEADLINE 5: Return true if the user logged-in (m_username) is the admin, false otherwise
-            /*
+            
             var profile = ProfileByUser(m_username);
             if (profile == null) 
             {
                 return false;
             }
             return profile.Name==Profile.AdminProfileName;
-            */
-            return false;
+            
         }
 
         public bool IsPasswordCorrect(string username, string password)
