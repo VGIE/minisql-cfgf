@@ -251,7 +251,7 @@ namespace OurTests
         #endregion
 
         #region IsGrantedPrivilege Tests
-        /*
+        
 		[Fact]
 		public void Manager_IsGrantedPrivilege_ShouldReturnTrue_WhenUserHasPrivilege()
 		{
@@ -319,7 +319,7 @@ namespace OurTests
 			var result = manager.IsGrantedPrivilege("user1", null, Privilege.Select);
 			Assert.False(result);
 		}
-		*/
+		
         #endregion
 
         #region AddProfile Tests
