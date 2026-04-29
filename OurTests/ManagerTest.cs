@@ -52,7 +52,7 @@ namespace OurTests
 		#endregion
 		
 		#region IsPasswordCorrect Test
-		/*
+		
 		[Fact]
 		public void Manager_IsPasswordCorrect_ShouldReturnTrue_WhenPasswordIsCorrect()
 		{
@@ -105,7 +105,7 @@ namespace OurTests
 			var result = manager.IsPasswordCorrect("adminUser", null);
 			Assert.False(result);
 		}
-		*/
+		
 		#endregion
 		
 		#region GrantPrivilegeTest
