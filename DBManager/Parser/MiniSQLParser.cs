@@ -34,9 +34,10 @@ namespace DbManager
             const string grantPattern = null;
             
             const string revokePattern = null;
-            
-            const string addUserPattern = null;
-            
+
+            const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+)[,](?<password>[a-zA-Z]+)[,](?<profile>[a-zA-Z]+)\)$";
+            var addUser = new Regex(addUserPattern, RegexOptions.None);
+
             const string deleteUserPattern = null;
 
 
@@ -187,8 +188,21 @@ namespace DbManager
                 return new CreateSecurityProfile(match.Groups[1].Value);
             }
 
-            return null;
+          //add user
+          var trimmedQuery = miniSQLQuery.Trim();
+          var addUserMatch = addUser.Match(trimmedQuery);
+          if (addUserMatch.Success)
+          {
+            var user = addUserMatch.Groups["user"].Value;
+            var password = addUserMatch.Groups["password"].Value;
+            var profile = addUserMatch.Groups["profile"].Value;
+
+            return new AddUser(user, password, profile);
+          }
+
+          return null;
         }
+
 
         static List<string> CommaSeparatedNames(string text)
         {
