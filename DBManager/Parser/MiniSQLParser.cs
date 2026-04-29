@@ -31,7 +31,7 @@ namespace DbManager
 
             const string dropSecurityProfilePattern = null;
             
-            const string grantPattern = null;
+            const string grantPattern = @"^GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)\s*$";
             
             const string revokePattern = null;
 
@@ -209,8 +209,20 @@ namespace DbManager
 
             return new DeleteUser(user);
           }
+            //Grant
+            var matchGrant = Regex.Match(miniSQLQuery, grantPattern);
+            if(matchGrant.Success)
+            {
+                string PrivilegeName = matchGrant.Groups[1].Value;
+				string TableName = matchGrant.Groups[2].Value;
+				string ProfileName = matchGrant.Groups[3].Value;
 
-          return null;
+                return new Grant(PrivilegeName, TableName, ProfileName);
+
+
+			}
+
+			return null;
         }
 
 

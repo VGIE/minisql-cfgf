@@ -793,6 +793,102 @@ namespace OurTests
         }
 
         #endregion
+        #region Parse Grant Tests
+        [Fact]
+        public void Parse_Grant_AllCorrect_ShouldParse()
+        {
+            var result1 = MiniSQLParser.Parse("GRANT DELETE ON Table TO User");
+            var grant1 = (Grant)result1;
+            Assert.Equal("DELETE", grant1.PrivilegeName);
+			Assert.Equal("Table", grant1.TableName);
+			Assert.Equal("User", grant1.ProfileName);
 
-    }
+			var result2 = MiniSQLParser.Parse("GRANT INSERT ON Table TO User");
+			var grant2 = (Grant)result2;
+			Assert.Equal("INSERT", grant2.PrivilegeName);
+			Assert.Equal("Table", grant2.TableName);
+			Assert.Equal("User", grant2.ProfileName);
+
+			var result3 = MiniSQLParser.Parse("GRANT SELECT ON Table TO User");
+			var grant3 = (Grant)result3;
+			Assert.Equal("SELECT", grant3.PrivilegeName);
+			Assert.Equal("Table", grant3.TableName);
+			Assert.Equal("User", grant3.ProfileName);
+
+			var result4 = MiniSQLParser.Parse("GRANT UPDATE ON Table TO User");
+			var grant4 = (Grant)result4;
+			Assert.Equal("UPDATE", grant4.PrivilegeName);
+			Assert.Equal("Table", grant4.TableName);
+			Assert.Equal("User", grant4.ProfileName);
+		}
+		public void Parse_Grant_Spaces_ShouldParse()
+		{
+			var result1 = MiniSQLParser.Parse("GRANT       DELETE          ON Table TO User");
+			var grant1 = (Grant)result1;
+			Assert.Equal("DELETE", grant1.PrivilegeName);
+			Assert.Equal("Table", grant1.TableName);
+			Assert.Equal("User", grant1.ProfileName);
+
+			var result2 = MiniSQLParser.Parse("GRANT       INSERT ON Table       TO         User");
+			var grant2 = (Grant)result1;
+			Assert.Equal("DELETE", grant2.PrivilegeName);
+			Assert.Equal("Table", grant2.TableName);
+			Assert.Equal("User", grant2.ProfileName);
+
+			var result3 = MiniSQLParser.Parse("GRANT       SELECT ON          Table TO User");
+			var grant3 = (Grant)result1;
+			Assert.Equal("SELECT", grant3.PrivilegeName);
+			Assert.Equal("Table", grant3.TableName);
+			Assert.Equal("User", grant3.ProfileName);
+
+			var result4 = MiniSQLParser.Parse("GRANT    UPDATE       ON      Table      TO       User");
+			var grant4 = (Grant)result1;
+			Assert.Equal("DELETE", grant4.PrivilegeName);
+			Assert.Equal("Table", grant4.TableName);
+			Assert.Equal("User", grant4.ProfileName);
+		}
+        [Fact]
+        public void Parse_Grant_IncorrectCapitalization_ShouldReturnNull()
+        {
+            var result1 = MiniSQLParser.Parse("Grant DELETE ON Table TO User");
+            Assert.Null(result1);
+
+			var result2 = MiniSQLParser.Parse("GRANT Insert ON Table TO User");
+			Assert.Null(result2);
+
+			var result3 = MiniSQLParser.Parse("GRANT DELETE on Table TO User");
+			Assert.Null(result3);
+
+			var result4 = MiniSQLParser.Parse("GRANT DELETE ON Table To User");
+			Assert.Null(result4);
+		}
+        [Fact]
+		public void Parse_Grant_NotAcceptedSyntax_ShouldReturnNull()
+		{
+			var result1 = MiniSQLParser.Parse("GRANT DELETE ON Table TO User 4");
+			Assert.Null(result1);
+
+			var result2 = MiniSQLParser.Parse("GRANT INSERT ON Table TO Use r");
+			Assert.Null(result2);
+		}
+		[Fact]
+		public void Parse_Grant_EmptyValues_ShouldReturnNull()
+		{
+			var result1 = MiniSQLParser.Parse("GRANT ON Table TO User");
+			Assert.Null(result1);
+
+			var result2 = MiniSQLParser.Parse("GRANT INSERT ON TO User");
+			Assert.Null(result2);
+
+			var result3 = MiniSQLParser.Parse("GRANT DELETE ON Table TO");
+			Assert.Null(result3);
+
+			var result4 = MiniSQLParser.Parse("GRANT DELETE Table TO User");
+			Assert.Null(result4);
+		}
+		
+
+		#endregion
+
+	}
 }
