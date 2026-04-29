@@ -38,17 +38,18 @@ namespace DbManager
             const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+)[,](?<password>[a-zA-Z]+)[,](?<profile>[a-zA-Z]+)\)$";
             var addUser = new Regex(addUserPattern, RegexOptions.None);
 
-            const string deleteUserPattern = null;
+            const string deleteUserPattern = @"^DELETE\s+USER\s+(?<user>[a-zA-Z]+)$";
+            var deleteUser = new Regex(deleteUserPattern, RegexOptions.None);
 
 
-            //TODO DEADLINE 2
-            //Parse query using the regular expressions above one by one. If there is a match, create an instance of the query with the parsed parameters
-            //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
-            //initialized with the table name, the columns, and (possibly) an instance of Condition.
-            //If there is no match, it means there is a syntax error. We will return null.
+      //TODO DEADLINE 2
+      //Parse query using the regular expressions above one by one. If there is a match, create an instance of the query with the parsed parameters
+      //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
+      //initialized with the table name, the columns, and (possibly) an instance of Condition.
+      //If there is no match, it means there is a syntax error. We will return null.
 
-            // select
-            var match = Regex.Match(miniSQLQuery, selectPattern);
+      // select
+      var match = Regex.Match(miniSQLQuery, selectPattern);
             if (match.Success)
             {
                 List<string> columns = CommaSeparatedNames(match.Groups[1].Value)
@@ -198,6 +199,15 @@ namespace DbManager
             var profile = addUserMatch.Groups["profile"].Value;
 
             return new AddUser(user, password, profile);
+          }
+
+          //delete user
+          var deleteUserMatch = deleteUser.Match(trimmedQuery);
+          if (deleteUserMatch.Success)
+          {
+            var user = deleteUserMatch.Groups["user"].Value;
+
+            return new DeleteUser(user);
           }
 
           return null;
