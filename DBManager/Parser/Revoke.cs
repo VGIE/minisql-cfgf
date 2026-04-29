@@ -14,17 +14,19 @@ namespace DbManager
 
         public Revoke(string privilegeName, string tableName, string profileName)
         {
-            //TODO DEADLINE 4: Initialize member variables
-            
+          //TODO DEADLINE 4: Initialize member variables
+          PrivilegeName = privilegeName;
+          TableName = tableName;
+          ProfileName = profileName;
         }
         public string Execute(Database database)
-        {
-            //TODO DEADLINE 5: Run the query and return the appropriate message
-            //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, RevokePrivilegeSuccess, 
+            {
+                //TODO DEADLINE 5: Run the query and return the appropriate message
+                //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, RevokePrivilegeSuccess, 
             
-            return null;
+                return null;
             
-        }
+            }
 
     }
 }
