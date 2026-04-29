@@ -28,6 +28,10 @@ namespace DbManager
           //DEADLINE 1.B: Initalize the member variables
           m_username = adminUsername;
           SecurityManager = new Manager(adminUsername);
+
+          var adminProfile = new Profile { Name = Profile.AdminProfileName };
+          adminProfile.Users.Add(new User(adminUsername, Encryption.Encrypt(adminPassword)));
+          SecurityManager.AddProfile(adminProfile);
         }
 
         public bool AddTable(Table table)
@@ -222,6 +226,7 @@ namespace DbManager
           writer.WriteLine("USER");
           writer.WriteLine(m_username);
         }
+        SecurityManager.Save(databaseName);
         return true;
       }
       catch
@@ -296,7 +301,16 @@ namespace DbManager
           database.AddTable(table);
           line = reader.ReadLine();
         }
+        // Read the saved username (line after "USER")
+        if (line == "USER") reader.ReadLine();
       }
+
+      var manager = Manager.Load(databaseName, username);
+      if (manager == null || !manager.IsPasswordCorrect(username, password))
+        return null;
+
+      database.m_username = username;
+      database.SecurityManager = manager;
       return database;
     }
 

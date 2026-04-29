@@ -172,16 +172,62 @@ namespace DbManager.Security
 
         public static Manager Load(string databaseName, string username)
         {
-            //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
-            
-            return null;
-            
+            var securityFile = databaseName + ".security";
+            if (!File.Exists(securityFile)) return null;
+
+            var manager = new Manager(username);
+            Profile currentProfile = null;
+
+            using (var reader = File.OpenText(securityFile))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line.StartsWith("PROFILE:"))
+                    {
+                        currentProfile = new Profile { Name = line.Substring("PROFILE:".Length) };
+                        manager.Profiles.Add(currentProfile);
+                    }
+                    else if (line.StartsWith("USER:") && currentProfile != null)
+                    {
+                        var parts = line.Substring("USER:".Length).Split(':', 2);
+                        currentProfile.Users.Add(new User { Username = parts[0], EncryptedPassword = parts[1] });
+                    }
+                    else if (line.StartsWith("PRIVILEGE:") && currentProfile != null)
+                    {
+                        var rest = line.Substring("PRIVILEGE:".Length);
+                        var colonIdx = rest.IndexOf(':');
+                        var tableName = rest.Substring(0, colonIdx);
+                        var privilegeNames = rest.Substring(colonIdx + 1).Split(',', StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var privName in privilegeNames)
+                        {
+                            if (Enum.TryParse<Privilege>(privName, out var priv))
+                                currentProfile.GrantPrivilege(tableName, priv);
+                        }
+                    }
+                }
+            }
+            return manager;
         }
 
         public void Save(string databaseName)
         {
-            //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
-            
+            using (var writer = File.CreateText(databaseName + ".security"))
+            {
+                foreach (var profile in Profiles)
+                {
+                    writer.WriteLine("PROFILE:" + profile.Name);
+                    foreach (var user in profile.Users)
+                    {
+                        writer.WriteLine("USER:" + user.Username + ":" + user.EncryptedPassword);
+                    }
+                    foreach (var entry in profile.PrivilegesOn)
+                    {
+                        var privileges = string.Join(",", entry.Value.Select(p => p.ToString()));
+                        writer.WriteLine("PRIVILEGE:" + entry.Key + ":" + privileges);
+                    }
+                }
+            }
         }
     }
 }

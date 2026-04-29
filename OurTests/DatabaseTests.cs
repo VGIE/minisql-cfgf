@@ -445,6 +445,7 @@ namespace OurTests
       var fileName = "TestTable.txt";
 
       if (File.Exists(fileName)) File.Delete(fileName);
+      if (File.Exists(fileName + ".security")) File.Delete(fileName + ".security");
 
       //Act
       var result = database.Save(fileName);
@@ -452,6 +453,19 @@ namespace OurTests
       //Assert
       Assert.True(result);
       Assert.True(File.Exists(fileName));
+    }
+    [Fact]
+    public void Database_Save_ShouldCreateASecurityFile()
+    {
+      var database = Database.CreateTestDatabase();
+      var fileName = "TestTable_security.txt";
+
+      if (File.Exists(fileName)) File.Delete(fileName);
+      if (File.Exists(fileName + ".security")) File.Delete(fileName + ".security");
+
+      database.Save(fileName);
+
+      Assert.True(File.Exists(fileName + ".security"));
     }
     [Fact]
     public void Database_Save_ShouldCorrectlySaveAllData()
@@ -462,6 +476,7 @@ namespace OurTests
       var fileName = "TestTable.txt";
 
       if (File.Exists(fileName)) File.Delete(fileName);
+      if (File.Exists(fileName + ".security")) File.Delete(fileName + ".security");
 
       //Act
       database.Save(fileName);
@@ -477,6 +492,21 @@ namespace OurTests
       Assert.Contains("Pepe", lines[2]);
       Assert.Contains("USER", lines[3]);
     }
+    [Fact]
+    public void Database_Save_ShouldWriteAdminUserToSecurityFile()
+    {
+      var database = Database.CreateTestDatabase();
+      var fileName = "TestTable_admin.txt";
+
+      if (File.Exists(fileName)) File.Delete(fileName);
+      if (File.Exists(fileName + ".security")) File.Delete(fileName + ".security");
+
+      database.Save(fileName);
+      var securityContent = File.ReadAllText(fileName + ".security");
+
+      Assert.Contains("PROFILE:" + DbManager.Security.Profile.AdminProfileName, securityContent);
+      Assert.Contains("USER:" + Database.AdminUsername + ":", securityContent);
+    }
     #endregion
 
     #region Load Tests
@@ -488,6 +518,7 @@ namespace OurTests
       var fileName = "test_db_load.txt";
 
       if (File.Exists(fileName)) File.Delete(fileName);
+      if (File.Exists(fileName + ".security")) File.Delete(fileName + ".security");
 
       database.Save(fileName);
 
@@ -512,6 +543,47 @@ namespace OurTests
     }
 
     [Fact]
+    public void Database_Load_ShouldReturnNull_WhenPasswordIsWrong()
+    {
+      var database = Database.CreateTestDatabase();
+      var fileName = "test_db_wrong_pw.txt";
+
+      if (File.Exists(fileName)) File.Delete(fileName);
+      if (File.Exists(fileName + ".security")) File.Delete(fileName + ".security");
+
+      database.Save(fileName);
+
+      var resultDatabase = Database.Load(fileName, Database.AdminUsername, "wrongPassword");
+
+      Assert.Null(resultDatabase);
+    }
+
+    [Fact]
+    public void Database_Load_ShouldReturnNull_WhenDatabaseFileDoesNotExist()
+    {
+      var resultDatabase = Database.Load("nonexistent_file.txt", Database.AdminUsername, Database.AdminPassword);
+      Assert.Null(resultDatabase);
+    }
+
+    [Fact]
+    public void Database_Load_ShouldLoadSecurityManager_WithCorrectCredentials()
+    {
+      var database = Database.CreateTestDatabase();
+      var fileName = "test_db_secmgr.txt";
+
+      if (File.Exists(fileName)) File.Delete(fileName);
+      if (File.Exists(fileName + ".security")) File.Delete(fileName + ".security");
+
+      database.Save(fileName);
+
+      var resultDatabase = Database.Load(fileName, Database.AdminUsername, Database.AdminPassword);
+
+      Assert.NotNull(resultDatabase);
+      Assert.NotNull(resultDatabase.SecurityManager);
+      Assert.True(resultDatabase.IsUserAdmin());
+    }
+
+    [Fact]
     public void Database_Load_ShouldLoadAllTablesWhenMultipleTablesAreSaved()
     {
       //Arrange
@@ -526,6 +598,7 @@ namespace OurTests
 
       var fileName = "test_db_load_multi.txt";
       if (File.Exists(fileName)) File.Delete(fileName);
+      if (File.Exists(fileName + ".security")) File.Delete(fileName + ".security");
       database.Save(fileName);
 
       //Act
