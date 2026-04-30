@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using DbManager.Parser;
+using DbManager.Security;
 
 namespace DbManager
 {
@@ -23,8 +25,30 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, PrivilegeDoesNotExistError, GrantPrivilegeSuccess, ProfileAlreadyHasPrivilege
-            
-            return null;
+            var profile = database.SecurityManager.ProfileByName(ProfileName);
+            Privilege privilege;
+            if (!database.SecurityManager.IsUserAdmin())
+            {
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+            }
+            if (profile == null)
+            {
+                return Constants.SecurityProfileDoesNotExistError;
+            }
+            try
+            {
+                privilege = PrivilegeUtils.FromPrivilegeName(PrivilegeName);
+            }
+            catch 
+            {
+                return Constants.PrivilegeDoesNotExistError;
+            }
+            bool granted = profile.GrantPrivilege(TableName, privilege);
+            if (!granted)
+            {
+                return Constants.ProfileAlreadyHasPrivilege;
+            }
+            return Constants.GrantPrivilegeSuccess;
             
         }
 
