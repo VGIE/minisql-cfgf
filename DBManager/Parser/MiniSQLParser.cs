@@ -33,7 +33,7 @@ namespace DbManager
             
             const string grantPattern = @"^GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)\s*$";
             
-            const string revokePattern = null;
+            const string revokePattern = @"^REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)\s*$";
 
             const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+)[,](?<password>[a-zA-Z]+)[,](?<profile>[a-zA-Z]+)\)$";
             var addUser = new Regex(addUserPattern, RegexOptions.None);
@@ -219,6 +219,23 @@ namespace DbManager
 
                 return new Grant(PrivilegeName, TableName, ProfileName);
 
+
+			}
+
+            //Revoke
+            var matchRevoke = Regex.Match(miniSQLQuery, revokePattern);
+            if (matchRevoke.Success)
+            {
+                string privilegeName = matchRevoke.Groups[1].Value;
+				string tableName = matchRevoke.Groups[2].Value;
+				string profileName = matchRevoke.Groups[3].Value;
+
+                if (string.IsNullOrEmpty(privilegeName) || string.IsNullOrEmpty(tableName) || string.IsNullOrEmpty(profileName))
+                {
+                    return null;
+                }
+
+				return new Revoke(privilegeName, tableName, profileName);
 
 			}
 
