@@ -20,7 +20,7 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, UserDoesNotExistError, DeleteUserSuccess
-            var profile = database.SecurityManager.ProfileByUser(Username);
+            var profile = database.SecurityManager.ProfileByUser(Username);//si profile by user devuelve null sabemos que no existe el usuario
             if (!database.SecurityManager.IsUserAdmin())
             {
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
