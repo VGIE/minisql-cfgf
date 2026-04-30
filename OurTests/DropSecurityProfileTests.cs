@@ -31,7 +31,7 @@ namespace OurTests
         }
 
         [Fact]
-        public void DropSecurityProfile_Execute_ShouldReturnError_IfUserDoesNotExist()
+        public void DropSecurityProfile_Execute_ShouldReturnError_IfProfileDoesNotExist()
         {
             var database = Database.CreateTestDatabase();
             var dropSecurityProfile = new DropSecurityProfile("Jonathan");
