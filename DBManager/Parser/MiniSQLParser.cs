@@ -29,8 +29,8 @@ namespace DbManager
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = @"^CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z]+)$";
 
-            const string dropSecurityProfilePattern = null;
-            
+            const string dropSecurityProfilePattern = @"^DROP\s+SECURITY\s+PROFILE\s+([a-zA-Z]+)$";
+
             const string grantPattern = @"^GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)\s*$";
             
             const string revokePattern = @"^REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)\s*$";
@@ -238,8 +238,14 @@ namespace DbManager
 				return new Revoke(privilegeName, tableName, profileName);
 
 			}
+            // drop security profile
+            match = Regex.Match(miniSQLQuery, dropSecurityProfilePattern);
+            if (match.Success)
+            {
+                return new DropSecurityProfile(match.Groups[1].Value);
+            }
 
-			return null;
+            return null;
         }
 
 

@@ -106,8 +106,8 @@ namespace OurTests
     public void DeleteUser_Execute_ShouldReturnError_WhenUserIsNotAdmin()
     {
             var database = new Database("Mario", "1234");
-            database.SecurityManager.RemoveProfile(Profile.AdminProfileName);
-            var profile = new Profile { Name = "Profile" };
+            database.SecurityManager.RemoveProfile(Profile.AdminProfileName);//conseguimos que Mario deje de ser Admin
+            var profile = new Profile { Name = "Profile" };//añadimos un perfil normal sin privileges
             profile.Users.Add(new User { Username = "Mario" });
             profile.Users.Add(new User { Username = "Jonathan" });
             database.SecurityManager.Profiles.Add(profile);

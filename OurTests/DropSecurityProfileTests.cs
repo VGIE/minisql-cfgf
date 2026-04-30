@@ -15,6 +15,77 @@ namespace OurTests
         }
         #endregion
 
+        #region Parser Tests
+        [Fact]
+        public void DropSecurityProfile_Parse_ShouldWorkCorrectly()
+        {
+            var dspquery = MiniSQLParser.Parse("DROP SECURITY PROFILE Profile");
+            var dropSecurityProfile = (DropSecurityProfile)dspquery;
+
+            Assert.Equal("Profile", dropSecurityProfile.ProfileName);
+        }
+
+        [Fact]
+        public void DropSecurityProfile_Parse_ShouldReturnNull_WhenProfileHasNumbers()
+        {
+            var dspquery = MiniSQLParser.Parse("DROP SECURITY PROFILE Profile92");
+            var dropSecurityProfile = (DropSecurityProfile)dspquery;
+
+            Assert.Null(dspquery);
+        }
+
+        [Fact]
+        public void DropSecurityProfile_Parse_ShouldReturnNull_WhenProfileHasIncorrectSyntax()
+        {
+            var dspquery = MiniSQLParser.Parse("DROP SECURITY Profile");
+            var dspquery1 = MiniSQLParser.Parse("DROP PROFILE Profile");
+            var dspquery2 = MiniSQLParser.Parse("SECURITY PROFILE Profile");
+            var dspquery3 = MiniSQLParser.Parse("drop security profile Profile");
+            var dspquery4 = MiniSQLParser.Parse("Dop SECURITY PROFILE Profile");
+            var dropSecurityProfile = (DropSecurityProfile)dspquery;
+            var dropSecurityProfile1 = (DropSecurityProfile)dspquery1;
+            var dropSecurityProfile2 = (DropSecurityProfile)dspquery2;
+            var dropSecurityProfile3 = (DropSecurityProfile)dspquery3;
+            var dropSecurityProfile4 = (DropSecurityProfile)dspquery4;
+
+            Assert.Null(dspquery);
+            Assert.Null(dspquery1);
+            Assert.Null(dspquery2);
+            Assert.Null(dspquery3);
+            Assert.Null(dspquery4);
+        }
+
+        [Fact]
+        public void DropSecurityProfile_Parse_ShouldReturnNull_WhenProfileHasSymbols()
+        {
+            var dspquery = MiniSQLParser.Parse("DROP SECURITY PROFILE Prof_ile");
+            var dspquery1 = MiniSQLParser.Parse("DROP SECURITY PROFILE Prof-ile");
+            var dspquery2 = MiniSQLParser.Parse("DROP SECURITY PROFILE Prof/ile");
+            var dspquery3 = MiniSQLParser.Parse("DROP SECURITY PROFILE Prof$ile");
+            var dspquery4 = MiniSQLParser.Parse("DROP SECURITY PROFILE Prof%ile");
+            var dropSecurityProfile = (DropSecurityProfile)dspquery;
+            var dropSecurityProfile1 = (DropSecurityProfile)dspquery1;
+            var dropSecurityProfile2 = (DropSecurityProfile)dspquery2;
+            var dropSecurityProfile3 = (DropSecurityProfile)dspquery3;
+            var dropSecurityProfile4 = (DropSecurityProfile)dspquery4;
+
+            Assert.Null(dspquery);
+            Assert.Null(dspquery1);
+            Assert.Null(dspquery2);
+            Assert.Null(dspquery3);
+            Assert.Null(dspquery4);
+        }
+
+        [Fact]
+        public void DropSecurityProfile_Parse_ShouldParse_WithSpacesBetween()
+        {
+            var dspquery = MiniSQLParser.Parse("DROP             SECURITY            PROFILE           Profile");
+            var dropSecurityProfile = (DropSecurityProfile)dspquery;
+
+            Assert.Equal("Profile", dropSecurityProfile.ProfileName);
+        }
+        #endregion
+
         #region Execute Tests
         /*
         [Fact]
