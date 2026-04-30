@@ -29,7 +29,6 @@ namespace OurTests
         public void DropSecurityProfile_Parse_ShouldReturnNull_WhenProfileHasNumbers()
         {
             var dspquery = MiniSQLParser.Parse("DROP SECURITY PROFILE Profile92");
-            var dropSecurityProfile = (DropSecurityProfile)dspquery;
 
             Assert.Null(dspquery);
         }
@@ -42,11 +41,6 @@ namespace OurTests
             var dspquery2 = MiniSQLParser.Parse("SECURITY PROFILE Profile");
             var dspquery3 = MiniSQLParser.Parse("drop security profile Profile");
             var dspquery4 = MiniSQLParser.Parse("Dop SECURITY PROFILE Profile");
-            var dropSecurityProfile = (DropSecurityProfile)dspquery;
-            var dropSecurityProfile1 = (DropSecurityProfile)dspquery1;
-            var dropSecurityProfile2 = (DropSecurityProfile)dspquery2;
-            var dropSecurityProfile3 = (DropSecurityProfile)dspquery3;
-            var dropSecurityProfile4 = (DropSecurityProfile)dspquery4;
 
             Assert.Null(dspquery);
             Assert.Null(dspquery1);
@@ -63,11 +57,6 @@ namespace OurTests
             var dspquery2 = MiniSQLParser.Parse("DROP SECURITY PROFILE Prof/ile");
             var dspquery3 = MiniSQLParser.Parse("DROP SECURITY PROFILE Prof$ile");
             var dspquery4 = MiniSQLParser.Parse("DROP SECURITY PROFILE Prof%ile");
-            var dropSecurityProfile = (DropSecurityProfile)dspquery;
-            var dropSecurityProfile1 = (DropSecurityProfile)dspquery1;
-            var dropSecurityProfile2 = (DropSecurityProfile)dspquery2;
-            var dropSecurityProfile3 = (DropSecurityProfile)dspquery3;
-            var dropSecurityProfile4 = (DropSecurityProfile)dspquery4;
 
             Assert.Null(dspquery);
             Assert.Null(dspquery1);
@@ -87,7 +76,7 @@ namespace OurTests
         #endregion
 
         #region Execute Tests
-        /*
+        
         [Fact]
         public void DropSecurityProfile_Execute_ShouldWork_WhenUserIsAdmin()
         {
@@ -115,13 +104,14 @@ namespace OurTests
         public void DropSecurityProfile_Execute_ShouldReturnError_WhenUserIsNotAdmin()
         {
             var database = new Database("Mario", "1234");
+            database.SecurityManager.RemoveProfile(Profile.AdminProfileName);//conseguimos que Mario deje de ser Admin
             var profile = new Profile { Name = "Jonathan" };
             database.SecurityManager.Profiles.Add(profile);
             var dropSecurityProfile = new DropSecurityProfile("Jonathan");
             var result = dropSecurityProfile.Execute(database);
 
             Assert.Equal(Constants.UsersProfileIsNotGrantedRequiredPrivilege, result);
-        }*/
+        }
         #endregion
     }
 }
