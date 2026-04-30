@@ -20,7 +20,7 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, UserDoesNotExistError, DeleteUserSuccess
-            /*var profile = database.SecurityManager.ProfileByUser(Username);
+            var profile = database.SecurityManager.ProfileByUser(Username);//si profile by user devuelve null sabemos que no existe el usuario
             if (!database.SecurityManager.IsUserAdmin())
             {
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
@@ -29,16 +29,10 @@ namespace DbManager
             {
                 return Constants.UserDoesNotExistError;
             }
-            for (int i = 0; i < profile.Users.Count; i++)
-            {
-                if (profile.Users[i].Username == Username)
-                {
-                    profile.Users.RemoveAt(i);
-                    return Constants.DeleteUserSuccess;
-                }
-            }
-            return Constants.UserDoesNotExistError;*/
-            return null;
+            var user = database.SecurityManager.UserByName(Username);
+            profile.Users.Remove(user);
+            return Constants.DeleteUserSuccess;
+            //return null;
         }
     }
 }
