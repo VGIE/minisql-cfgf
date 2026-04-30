@@ -223,7 +223,17 @@ namespace DbManager.Security
                     }
                     foreach (var entry in profile.PrivilegesOn)
                     {
-                        var privileges = string.Join(",", entry.Value.Select(p => p.ToString()));
+                        string privileges = "";
+
+                        foreach (var privilege in entry.Value)
+                        {
+                            if (privileges != "")
+                            {
+                                privileges += ",";
+                            }
+
+                            privileges += privilege.ToString();
+                        }
                         writer.WriteLine("PRIVILEGE:" + entry.Key + ":" + privileges);
                     }
                 }
