@@ -113,16 +113,39 @@ namespace OurTests
 		 [Fact]
 		public void Manager_GrantPrivilege_ShouldGrantPrivilege_WhenProfileExists() 
 		{
-			var manager = new Manager("adminUser");
+			var manager = new Manager("admin");
 
-			var profile = new Profile { Name = "User" };
-			manager.Profiles.Add(profile);
+			var adminProfile = new Profile { Name = Profile.AdminProfileName};
+            adminProfile.Users.Add(new User("admin", "1234"));
 
-			manager.GrantPrivilege("User", "Students", Privilege.Select);
+            var userProfile = new Profile { Name = "User" };
+            userProfile.Users.Add(new User("Alicia", "1234"));
 
-			var result = profile.IsGrantedPrivilege("Students", Privilege.Select);
+            manager.Profiles.Add(adminProfile);
+			manager.Profiles.Add(userProfile);
+
+			manager.GrantPrivilege("User", "Customers", Privilege.Select);
+
+
+			var result = manager.IsGrantedPrivilege("Alicia", "Customers", Privilege.Select);
 			Assert.True(result);
 		}
+		[Fact]
+		public void Manager_GrantPrivilege_ShouldDoNothing_WhenUserDoesNotHavePrivilege()
+		{
+			var manager = new Manager("anyUser");
+
+			var profile = new Profile { Name = "HR" };
+
+            var user = new User("ane", "1234");
+			profile.Users.Add(user);
+
+            manager.Profiles.Add(profile);
+
+			var result = manager.IsGrantedPrivilege("bob", "Employees", Privilege.Select);
+			Assert.False(result);
+		}
+
 		[Fact]
 		public void Manager_GrantPrivilege_ShouldDoNothing_WhenProfileDoesNotExists()
 		{
@@ -153,38 +176,49 @@ namespace OurTests
 		[Fact]
 		public void Manager_GrantPrivilege_ShouldAllowsSeveralGrantPrivilege_WhenIsOnSameTable()
 		{
-			var manager = new Manager("adminUser");
+			var manager = new Manager("admin");
 
-			var profile = new Profile { Name = "User" };
-			manager.Profiles.Add(profile);
+			var adminProfile = new Profile { Name = Profile.AdminProfileName};
+            adminProfile.Users.Add(new User("admin", "1234"));
+
+            var userProfile = new Profile { Name = "User" };
+
+            manager.Profiles.Add(adminProfile);
+			manager.Profiles.Add(userProfile);
+
 
 			manager.GrantPrivilege("User", "Students", Privilege.Select);
 			manager.GrantPrivilege("User", "Students", Privilege.Insert);
 
 
-			var result1 = profile.IsGrantedPrivilege("Students", Privilege.Select);
+			var result1 = userProfile.IsGrantedPrivilege("Students", Privilege.Select);
 			Assert.True(result1);
 
-			var result2 = profile.IsGrantedPrivilege("Students", Privilege.Insert);
+			var result2 = userProfile.IsGrantedPrivilege("Students", Privilege.Insert);
 			Assert.True(result2);
 		}
 		
 		[Fact]
 		public void Manager_GrantPrivilege_ShouldAllowsSeveralGrantPrivilege_WhenIsOnDifferentTable()
 		{
-			var manager = new Manager("adminUser");
+			var manager = new Manager("admin");
 
-			var profile = new Profile { Name = "User" };
-			manager.Profiles.Add(profile);
+			var adminprofile = new Profile { Name = Profile.AdminProfileName };
+            adminprofile.Users.Add(new User("admin", "1234"));
+
+            var userProfile = new Profile { Name = "User" };
+			
+            manager.Profiles.Add(adminprofile);
+            manager.Profiles.Add(userProfile);
 
 			manager.GrantPrivilege("User", "Students", Privilege.Select);
 			manager.GrantPrivilege("User", "Teachers", Privilege.Select);
 
 
-			var result1 = profile.IsGrantedPrivilege("Students", Privilege.Select);
+			var result1 = userProfile.IsGrantedPrivilege("Students", Privilege.Select);
 			Assert.True(result1);
 
-			var result2 = profile.IsGrantedPrivilege("Teachers", Privilege.Select);
+			var result2 = userProfile.IsGrantedPrivilege("Teachers", Privilege.Select);
 			Assert.True(result2);
 		}
 
