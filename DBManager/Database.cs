@@ -30,7 +30,7 @@ namespace DbManager
           SecurityManager = new Manager(adminUsername);
 
           var adminProfile = new Profile { Name = Profile.AdminProfileName };
-          adminProfile.Users.Add(new User(adminUsername, Encryption.Encrypt(adminPassword)));
+          adminProfile.Users.Add(new User(adminUsername, adminPassword));
           SecurityManager.AddProfile(adminProfile);
         }
 

@@ -60,7 +60,7 @@ namespace OurTests
 			var manager = new Manager("adminUser");
 
 			var adminProfile = new Profile { Name = "Admin" };
-			adminProfile.Users.Add(new User("adminUser", Encryption.Encrypt("1234")));
+			adminProfile.Users.Add(new User("adminUser","1234"));
 
 			manager.Profiles.Add(adminProfile);
 

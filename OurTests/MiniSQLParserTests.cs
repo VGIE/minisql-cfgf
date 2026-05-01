@@ -17,8 +17,21 @@ namespace OurTests
             var dropTable = (DropTable)result;
             Assert.Equal("TestTable", dropTable.Table);
         }
+		
+		[Fact]
+		public void Parse_DropTable_ShouldAcceptSpaces()
+		{
+			var result = MiniSQLParser.Parse("DROP           TABLE              TestTable");
 
-        [Fact]
+			Assert.NotNull(result);
+			Assert.IsType<DropTable>(result);
+
+			var dropTable = (DropTable)result;
+			Assert.Equal("TestTable", dropTable.Table);
+		}
+
+
+		[Fact]
         public void Parse_DropTable_ShouldAcceptAnyCapitalization()
         {
             var result1 = MiniSQLParser.Parse("DROP TABLE Tes2tT5abl3e");
