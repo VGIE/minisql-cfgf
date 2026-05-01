@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using DbManager.Parser;
+using DbManager.Security;
 
 namespace DbManager
 {
@@ -19,8 +21,12 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, CreateSecurityProfileSuccess
-            
-            return null;
+            if (!database.SecurityManager.IsUserAdmin())
+            {
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
+            }
+            database.SecurityManager.AddProfile(new Profile { Name=ProfileName});
+            return Constants.CreateSecurityProfileSuccess;
             
         }
 
