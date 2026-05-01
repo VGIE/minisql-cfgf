@@ -1,4 +1,5 @@
 ﻿using DbManager;
+using System.Data.Common;
 
 namespace OurTests
 {
@@ -29,5 +30,37 @@ namespace OurTests
             Assert.Null(select.Where);
         }
         #endregion
+        #region execute tests
+        [Fact]
+        public void Select_Execute_ShouldWork_WhenTableExists()
+        {
+            var database = Database.CreateTestDatabase();
+            var columns = new List<ColumnDefinition>
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "Nombre")
+            };
+            var createTable = new CreateTable("Alumnos", columns);
+            createTable.Execute(database);
+            var insert = new Insert("Alumnos", new List<string> { "Mario" });
+            insert.Execute(database);
+            var select = new Select("Alumnos", new List<string> { "Nombre" });
+            var result = select.Execute(database);
+
+            Assert.NotNull(result);
+            Assert.Contains("Mario", result);
+        }
+
+        [Fact]
+        public void Select_Execute_ShouldReturnError_WhenTableDoesNotExist()
+        {
+            var database = Database.CreateTestDatabase();
+            var select = new Select("desconocidou", new List<string> { "Name" });
+            var result = select.Execute(database);
+
+            Assert.Equal(Constants.TableDoesNotExistError, result);
+        }
+
+        #endregion
     }
+
 }
