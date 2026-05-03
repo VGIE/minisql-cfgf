@@ -822,12 +822,16 @@ namespace OurTests
         public void Manager_RemoveProfile_ShouldRemoveProfile_WhenProfileExists()
         {
             var manager = new Manager("adminUser");
-            var profile = new Profile {Name = "User"};
-            manager.Profiles.Add(profile);
+            var profile1 = new Profile { Name = "Admin" };
+            var profile2 = new Profile {Name = "User"};
+            profile1.Users.Add(new User("adminUser", "password"));
+            manager.Profiles.Add(profile1);
+            manager.Profiles.Add(profile2);
 
             var result = manager.RemoveProfile("User");
             Assert.True(result);
-            Assert.Empty(manager.Profiles);
+            Assert.Single(manager.Profiles);
+            Assert.Equal("Admin", manager.Profiles[0].Name);
         }
 
         [Fact]
@@ -844,8 +848,10 @@ namespace OurTests
         public void Manager_RemoveProfile_ShouldRemoveOnlySelectedProfile_WhenSeveralProfilesExist()
         {
             var manager = new Manager("adminUser");
-            var profile1 = new Profile {Name = "User"};
-            var profile2 = new Profile {Name = "Admin"};
+            var profile1 = new Profile { Name = "Admin" };
+
+            var profile2 = new Profile {Name = "User"};
+            profile1.Users.Add(new User("adminUser", "password"));
             manager.Profiles.Add(profile1);
             manager.Profiles.Add(profile2);
 

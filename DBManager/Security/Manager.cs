@@ -168,6 +168,10 @@ namespace DbManager.Security
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
+            if (!IsUserAdmin())
+            {
+                return false;
+            }
             var profile = ProfileByName(profileName);
             if (profile == null)
             {
