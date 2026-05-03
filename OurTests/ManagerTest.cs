@@ -424,21 +424,23 @@ namespace OurTests
         public void Manager_AddProfile_ShouldAddSeveralProfiles_WhenNamesAreDifferent()
         {
             var manager = new Manager("adminUser");
-            var profile1 = new Profile {Name = "User"};
-            var profile2 = new Profile {Name = "Admin"};
+            var profile1 = new Profile {Name = "Admin"};
+            var profile2 = new Profile {Name = "User"};
+            profile1.Users.Add(new User("adminUser", "password123"));
             manager.AddProfile(profile1);
             manager.AddProfile(profile2);
 
             Assert.Equal(2, manager.Profiles.Count);
-            Assert.Equal("User", manager.Profiles[0].Name);
-            Assert.Equal("Admin", manager.Profiles[1].Name);
+            Assert.Equal("Admin", manager.Profiles[0].Name);
+            Assert.Equal("User", manager.Profiles[1].Name);
+
         }
 
-		#endregion
+        #endregion
 
-		#region UserByName Tests
+        #region UserByName Tests
 
-		[Fact]
+        [Fact]
         public void Manager_UserByName_ShouldReturnUser_WhenUserExists()
         {
             var manager = new Manager("adminUser");

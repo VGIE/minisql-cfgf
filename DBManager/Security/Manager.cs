@@ -109,6 +109,10 @@ namespace DbManager.Security
             {
                 return;
             }
+            if (Profiles.Count > 0 && !IsUserAdmin())
+            {
+                return;
+            }
             if (ProfileByName(profile.Name) != null)
             {
                 return;
