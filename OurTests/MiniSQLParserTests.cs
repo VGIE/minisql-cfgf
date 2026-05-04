@@ -173,7 +173,9 @@ namespace OurTests
             Assert.Null(result2);
             var result3 = MiniSQLParser.Parse("CREATE TABL TestTable (Name TEXT)");
             Assert.Null(result3);
-            var result4 = MiniSQLParser.Parse("create table TestTable (Name TEXT)");
+			var result10 = MiniSQLParser.Parse("CREATE TABLE TestTable(Name TEXT)");
+			Assert.Null(result10);
+			var result4 = MiniSQLParser.Parse("create table TestTable (Name TEXT)");
             Assert.Null(result4);
             var result5 = MiniSQLParser.Parse(" ");
             Assert.Null(result5);
