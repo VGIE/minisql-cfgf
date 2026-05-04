@@ -88,8 +88,12 @@ namespace DbManager.Security
         public bool IsGrantedPrivilege(string username, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return true if the username has this privilege on this table. False otherwise (also in case of error)
-            
-			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
+
+            if (IsUserAdmin())
+            {
+                return true;
+            }
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(table))
 			{
 				return false;
 			}

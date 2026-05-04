@@ -332,6 +332,45 @@ namespace OurTests
 			Assert.True(result);
 		}
 		[Fact]
+		public void Manager_IsGrantedPrivilege_ShouldReturnTrue_WhenUserIsAdmin()
+		{
+			var manager = new Manager("adminUser");
+
+			var adminProfile = new Profile { Name = "Admin" };
+			adminProfile.Users.Add(new User("adminUser", "1234"));
+
+			manager.Profiles.Add(adminProfile);
+
+			var result = manager.IsGrantedPrivilege("adminUser", "Students", Privilege.Select);
+
+			Assert.True(result);
+		}
+		[Fact]
+        public void Manager_IsGrantesPrivilege_ShouldReturnfalse_WhenUsernameIsNull()
+        {
+            var manager = new Manager("adminUser");
+
+            var result = manager.IsGrantedPrivilege(null, "Students", Privilege.Select);
+            Assert.False(result);
+        }
+        [Fact]
+		public void Manager_IsGrantesPrivilege_ShouldReturnfalse_WhenUsernameIsEmpty()
+		{
+			var manager = new Manager("adminUser");
+
+			var result = manager.IsGrantedPrivilege("", "Students", Privilege.Select);
+			Assert.False(result);
+		}
+		[Fact]
+		public void Manager_IsGrantesPrivilege_ShouldReturnfalse_WhenTableIsEmpty()
+		{
+			var manager = new Manager("adminUser");
+
+			var result = manager.IsGrantedPrivilege("adminUser", "", Privilege.Select);
+			Assert.False(result);
+		}
+
+		[Fact]
 		public void Manager_IsGrantedPrivilege_ShouldReturnFalse_WhenUserDoesHasPrivilege()
 		{
 			var manager = new Manager("adminUser");
