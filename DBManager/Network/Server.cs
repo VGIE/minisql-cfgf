@@ -13,6 +13,8 @@ namespace DbManager.Network
 {
     public class Server
     {
+        private const string ExitCommand = "Exit";
+        private const string ListenIp = "0.0.0.0";
         public void Listen(int port)
         {
       //DEADLINE 6: Implement the server as specified (eGela)
@@ -23,7 +25,7 @@ namespace DbManager.Network
       {
         DbManager.Database serverDatabase = new Database("admin", "adminPassword");
         //Listen on port 1200. Accept connections from any IP address
-        TcpListener server = new TcpListener(IPAddress.Parse("0.0.0.0"), 1200);
+        TcpListener server = new TcpListener(IPAddress.Parse(ListenIp), 1200);
 
         server.Start();
 
@@ -43,7 +45,7 @@ namespace DbManager.Network
           string clientMessage = encoding.GetString(buffer).Substring(0, bytesRead);
 
           //("Message received from client: " + clientMessage);
-          if (clientMessage == "Exit")
+          if (clientMessage == ExitCommand)
           {
             trueFalse = false;
           }
