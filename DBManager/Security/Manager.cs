@@ -53,20 +53,23 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            foreach (var profile in Profiles)
+            var profile = ProfileByName(profileName);
+
+            if (profile == null || string.IsNullOrEmpty(table))
             {
-                if (profile.Name == profileName && table!=null) 
-                {
-                    profile.GrantPrivilege(table, privilege);
-                }
+                return;
             }
+            profile.GrantPrivilege(table, privilege);
         }
 
         public void RevokePrivilege(string profileName, string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            
+            if (!IsUserAdmin())
+            {
+                return;
+            }
             if (string.IsNullOrEmpty(profileName) || string.IsNullOrEmpty(table))
             {
                 return;
@@ -103,6 +106,10 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Add this profile
             if (profile == null)
+            {
+                return;
+            }
+            if (Profiles.Count > 0 && !IsUserAdmin())
             {
                 return;
             }
@@ -161,6 +168,10 @@ namespace DbManager.Security
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
+            if (!IsUserAdmin())
+            {
+                return false;
+            }
             var profile = ProfileByName(profileName);
             if (profile == null)
             {
@@ -223,7 +234,17 @@ namespace DbManager.Security
                     }
                     foreach (var entry in profile.PrivilegesOn)
                     {
-                        var privileges = string.Join(",", entry.Value.Select(p => p.ToString()));
+                        string privileges = "";
+
+                        foreach (var privilege in entry.Value)
+                        {
+                            if (privileges != "")
+                            {
+                                privileges += ",";
+                            }
+
+                            privileges += privilege.ToString();
+                        }
                         writer.WriteLine("PRIVILEGE:" + entry.Key + ":" + privileges);
                     }
                 }

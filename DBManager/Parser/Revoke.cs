@@ -1,7 +1,8 @@
+using DbManager.Parser;
+using DbManager.Security;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DbManager.Parser;
 
 namespace DbManager
 {
@@ -20,13 +21,31 @@ namespace DbManager
           ProfileName = profileName;
         }
         public string Execute(Database database)
+        {
+            //TODO DEADLINE 5: Run the query and return the appropriate message
+            //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, RevokePrivilegeSuccess, 
+            if (!database.SecurityManager.IsUserAdmin())
             {
-                //TODO DEADLINE 5: Run the query and return the appropriate message
-                //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, RevokePrivilegeSuccess, 
-            
-                return null;
-            
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
+            var profile = database.SecurityManager.ProfileByName(ProfileName);
+            if (profile == null)
+            {
+                return Constants.SecurityProfileDoesNotExistError;
+            }
+            Privilege privilege;
+            try
+            {
+                privilege = PrivilegeUtils.FromPrivilegeName(PrivilegeName);
+            }
+            catch
+            {
+                return Constants.PrivilegeDoesNotExistError;
+            }
+            profile.RevokePrivilege(TableName, privilege);
+            return Constants.RevokePrivilegeSuccess;
+
+        }
 
     }
 }

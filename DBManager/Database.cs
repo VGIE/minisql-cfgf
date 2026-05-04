@@ -30,7 +30,7 @@ namespace DbManager
           SecurityManager = new Manager(adminUsername);
 
           var adminProfile = new Profile { Name = Profile.AdminProfileName };
-          adminProfile.Users.Add(new User(adminUsername, Encryption.Encrypt(adminPassword)));
+          adminProfile.Users.Add(new User(adminUsername, adminPassword));
           SecurityManager.AddProfile(adminProfile);
         }
 
@@ -237,6 +237,7 @@ namespace DbManager
     private const string String = "String";
     private const string Double = "Double";
     private const string Int = "Int";
+    private const string UserLine = "USER";
     public static Database Load(string databaseName, string username, string password)
     {
       //DEADLINE 1.C: Load the (previously saved) database of name databaseName
@@ -302,7 +303,7 @@ namespace DbManager
           line = reader.ReadLine();
         }
         // Read the saved username (line after "USER")
-        if (line == "USER") reader.ReadLine();
+        if (line == UserLine) reader.ReadLine();
       }
 
       var manager = Manager.Load(databaseName, username);

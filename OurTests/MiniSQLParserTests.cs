@@ -17,8 +17,21 @@ namespace OurTests
             var dropTable = (DropTable)result;
             Assert.Equal("TestTable", dropTable.Table);
         }
+		
+		[Fact]
+		public void Parse_DropTable_ShouldAcceptSpaces()
+		{
+			var result = MiniSQLParser.Parse("DROP           TABLE              TestTable");
 
-        [Fact]
+			Assert.NotNull(result);
+			Assert.IsType<DropTable>(result);
+
+			var dropTable = (DropTable)result;
+			Assert.Equal("TestTable", dropTable.Table);
+		}
+
+
+		[Fact]
         public void Parse_DropTable_ShouldAcceptAnyCapitalization()
         {
             var result1 = MiniSQLParser.Parse("DROP TABLE Tes2tT5abl3e");
@@ -821,6 +834,7 @@ namespace OurTests
 			Assert.Equal("Table", grant4.TableName);
 			Assert.Equal("User", grant4.ProfileName);
 		}
+        [Fact]
 		public void Parse_Grant_Spaces_ShouldParse()
 		{
 			var result1 = MiniSQLParser.Parse("GRANT       DELETE          ON Table TO User");
@@ -830,20 +844,20 @@ namespace OurTests
 			Assert.Equal("User", grant1.ProfileName);
 
 			var result2 = MiniSQLParser.Parse("GRANT       INSERT ON Table       TO         User");
-			var grant2 = (Grant)result1;
-			Assert.Equal("DELETE", grant2.PrivilegeName);
+			var grant2 = (Grant)result2;
+			Assert.Equal("INSERT", grant2.PrivilegeName);
 			Assert.Equal("Table", grant2.TableName);
 			Assert.Equal("User", grant2.ProfileName);
 
 			var result3 = MiniSQLParser.Parse("GRANT       SELECT ON          Table TO User");
-			var grant3 = (Grant)result1;
+			var grant3 = (Grant)result3;
 			Assert.Equal("SELECT", grant3.PrivilegeName);
 			Assert.Equal("Table", grant3.TableName);
 			Assert.Equal("User", grant3.ProfileName);
 
 			var result4 = MiniSQLParser.Parse("GRANT    UPDATE       ON      Table      TO       User");
-			var grant4 = (Grant)result1;
-			Assert.Equal("DELETE", grant4.PrivilegeName);
+			var grant4 = (Grant)result4;
+			Assert.Equal("UPDATE", grant4.PrivilegeName);
 			Assert.Equal("Table", grant4.TableName);
 			Assert.Equal("User", grant4.ProfileName);
 		}
@@ -886,6 +900,167 @@ namespace OurTests
 			var result4 = MiniSQLParser.Parse("GRANT DELETE Table TO User");
 			Assert.Null(result4);
 		}
+        #endregion
+
+        #region Parse Revoke Tests
+        [Fact]
+        public void Parse_Revoke_Correct_ShouldParse()
+        {
+            var result1 = MiniSQLParser.Parse("REVOKE DELETE ON Table TO User");
+			var revoke1 = Assert.IsType<Revoke>(result1);
+            Assert.Equal("DELETE", revoke1.PrivilegeName);
+            Assert.Equal("Table", revoke1.TableName);
+            Assert.Equal("User", revoke1.ProfileName);
+
+			var result2 = MiniSQLParser.Parse("REVOKE INSERT ON Table TO User");
+			var revoke2 = Assert.IsType<Revoke>(result2);
+			Assert.Equal("INSERT", revoke2.PrivilegeName);
+			Assert.Equal("Table", revoke2.TableName);
+			Assert.Equal("User", revoke2.ProfileName);
+
+			var result3 = MiniSQLParser.Parse("REVOKE SELECT ON Table TO User");
+			var revoke3 = Assert.IsType<Revoke>(result3);
+			Assert.Equal("SELECT", revoke3.PrivilegeName);
+			Assert.Equal("Table", revoke3.TableName);
+			Assert.Equal("User", revoke3.ProfileName);
+
+			var result4 = MiniSQLParser.Parse("REVOKE UPDATE ON Table TO User");
+			var revoke4 = Assert.IsType<Revoke>(result4);
+			Assert.Equal("UPDATE", revoke4.PrivilegeName);
+			Assert.Equal("Table", revoke4.TableName);
+			Assert.Equal("User", revoke4.ProfileName);
+		}
+		[Fact]
+		public void Parse_Revoke_Spaces_ShouldParse()
+		{
+			var result1 = MiniSQLParser.Parse("REVOKE         DELETE ON Table TO User");
+			var revoke1 = Assert.IsType<Revoke>(result1);
+			Assert.Equal("DELETE", revoke1.PrivilegeName);
+			Assert.Equal("Table", revoke1.TableName);
+			Assert.Equal("User", revoke1.ProfileName);
+
+			var result2 = MiniSQLParser.Parse("REVOKE INSERT           ON Table TO User");
+			var revoke2 = Assert.IsType<Revoke>(result2);
+			Assert.Equal("INSERT", revoke2.PrivilegeName);
+			Assert.Equal("Table", revoke2.TableName);
+			Assert.Equal("User", revoke2.ProfileName);
+
+			var result3 = MiniSQLParser.Parse("REVOKE SELECT ON Table           TO User");
+			var revoke3 = Assert.IsType<Revoke>(result3);
+			Assert.Equal("SELECT", revoke3.PrivilegeName);
+			Assert.Equal("Table", revoke3.TableName);
+			Assert.Equal("User", revoke3.ProfileName);
+
+			var result4 = MiniSQLParser.Parse("REVOKE      UPDATE        ON Table TO            User");
+			var revoke4 = Assert.IsType<Revoke>(result4);
+			Assert.Equal("UPDATE", revoke4.PrivilegeName);
+			Assert.Equal("Table", revoke4.TableName);
+			Assert.Equal("User", revoke4.ProfileName);
+		}
+		[Fact]
+		public void Parse_Revoke_AcceptedSyntax_ShouldParse()
+		{
+			var result1 = MiniSQLParser.Parse("REVOKE DELETE ON table TO User");
+			var revoke1 = Assert.IsType<Revoke>(result1);
+			Assert.Equal("DELETE", revoke1.PrivilegeName);
+			Assert.Equal("table", revoke1.TableName);
+			Assert.Equal("User", revoke1.ProfileName);
+
+			var result2 = MiniSQLParser.Parse("REVOKE INSERT ON Table1 TO User123");
+			var revoke2 = Assert.IsType<Revoke>(result2);
+			Assert.Equal("INSERT", revoke2.PrivilegeName);
+			Assert.Equal("Table1", revoke2.TableName);
+			Assert.Equal("User123", revoke2.ProfileName);
+
+			var result3 = MiniSQLParser.Parse("REVOKE SELECT ON Table_Name TO User_Name");
+			var revoke3 = Assert.IsType<Revoke>(result3);
+			Assert.Equal("SELECT", revoke3.PrivilegeName);
+			Assert.Equal("Table_Name", revoke3.TableName);
+			Assert.Equal("User_Name", revoke3.ProfileName);
+		}
+
+		[Fact]
+        public void Parse_Revoke_NotAcceptedSyntax_ShouldReturnNUll()
+        {
+            var result1 = MiniSQLParser.Parse("REVOKE DELETE ON Table TO User 1");
+            Assert.Null(result1);
+
+			var result2 = MiniSQLParser.Parse("REVOKE DELETE ON Table TO Us er");
+			Assert.Null(result2);
+
+			var result3 = MiniSQLParser.Parse("DELETE ON Table TO User");
+			Assert.Null(result3);
+
+			var result4 = MiniSQLParser.Parse("REVOKE DELETE Table TO User");
+			Assert.Null(result4);
+
+			var result5 = MiniSQLParser.Parse("REVOKE DELETE ON Table User");
+			Assert.Null(result5);
+		}
+        [Fact]
+		public void Parse_Revoke_IncorrectCapitalization_ShouldReturnNull()
+		{
+			var result1 = MiniSQLParser.Parse("Revoke DELETE ON Table TO User");
+			Assert.Null(result1);
+
+			var result2 = MiniSQLParser.Parse("REVOKE Insert ON Table TO User");
+			Assert.Null(result2);
+
+			var result3 = MiniSQLParser.Parse("REVOKE SELECT on Table TO User"); 
+            Assert.Null(result3);
+
+			var result4 = MiniSQLParser.Parse("REVOKE UPDATE ON Table to User");
+            Assert.Null(result4);
+		}
+        [Fact]
+		public void Parse_Revoke_IncorrectPrivileges_ShouldReturnNull()
+		{
+			var result1 = MiniSQLParser.Parse("REVOKE REMOVE ON Table TO User");
+			Assert.Null(result1);
+
+			var result2 = MiniSQLParser.Parse("REVOKE UPGRADE ON Table TO User");
+			Assert.Null(result2);
+
+			var result3 = MiniSQLParser.Parse("REVOKE SET ON Table TO User");
+			Assert.Null(result3);
+		}
+		[Fact]
+		public void Parse_Revoke_EmptyValue_ShouldReturnNull()
+		{
+			var result1 = MiniSQLParser.Parse("REVOKE ON Table TO User");
+			Assert.Null(result1);
+
+			var result2 = MiniSQLParser.Parse("REVOKE SELECT ON TO User");
+			Assert.Null(result2);
+
+			var result3 = MiniSQLParser.Parse("REVOKE SELECT ON Table TO");
+			Assert.Null(result3);
+		}
+		[Fact]
+		public void Parse_Revoke_IncorrectOrder_ShouldReturnNull()
+		{
+			var result1 = MiniSQLParser.Parse("SELECT REVOKE ON Table TO User");
+			Assert.Null(result1);
+
+			var result2 = MiniSQLParser.Parse("REVOKE ON SELECT Table TO User");
+			Assert.Null(result2);
+
+			var result3 = MiniSQLParser.Parse("REVOKE TO User SELECT ON Table");
+			Assert.Null(result3);
+
+			var result4 = MiniSQLParser.Parse("REVOKE TO User ON Table SELECT");
+			Assert.Null(result4);
+		}
+		[Fact]
+		public void Parse_Revoke_NullOrEmptyInput_ShouldReturnNUll()
+		{
+			var result1 = MiniSQLParser.Parse("");
+			Assert.Null(result1);
+
+			var result2 = MiniSQLParser.Parse("Null");
+			Assert.Null(result2);
+		}
+
 		#endregion
 
 	}

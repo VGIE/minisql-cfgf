@@ -60,7 +60,7 @@ namespace OurTests
 			var manager = new Manager("adminUser");
 
 			var adminProfile = new Profile { Name = "Admin" };
-			adminProfile.Users.Add(new User("adminUser", Encryption.Encrypt("1234")));
+			adminProfile.Users.Add(new User("adminUser","1234"));
 
 			manager.Profiles.Add(adminProfile);
 
@@ -113,16 +113,39 @@ namespace OurTests
 		 [Fact]
 		public void Manager_GrantPrivilege_ShouldGrantPrivilege_WhenProfileExists() 
 		{
-			var manager = new Manager("adminUser");
+			var manager = new Manager("admin");
 
-			var profile = new Profile { Name = "User" };
-			manager.Profiles.Add(profile);
+			var adminProfile = new Profile { Name = Profile.AdminProfileName};
+            adminProfile.Users.Add(new User("admin", "1234"));
 
-			manager.GrantPrivilege("User", "Students", Privilege.Select);
+            var userProfile = new Profile { Name = "User" };
+            userProfile.Users.Add(new User("Alicia", "1234"));
 
-			var result = profile.IsGrantedPrivilege("Students", Privilege.Select);
+            manager.Profiles.Add(adminProfile);
+			manager.Profiles.Add(userProfile);
+
+			manager.GrantPrivilege("User", "Customers", Privilege.Select);
+
+
+			var result = manager.IsGrantedPrivilege("Alicia", "Customers", Privilege.Select);
 			Assert.True(result);
 		}
+		[Fact]
+		public void Manager_GrantPrivilege_ShouldDoNothing_WhenUserDoesNotHavePrivilege()
+		{
+			var manager = new Manager("anyUser");
+
+			var profile = new Profile { Name = "HR" };
+
+            var user = new User("ane", "1234");
+			profile.Users.Add(user);
+
+            manager.Profiles.Add(profile);
+
+			var result = manager.IsGrantedPrivilege("bob", "Employees", Privilege.Select);
+			Assert.False(result);
+		}
+
 		[Fact]
 		public void Manager_GrantPrivilege_ShouldDoNothing_WhenProfileDoesNotExists()
 		{
@@ -153,53 +176,75 @@ namespace OurTests
 		[Fact]
 		public void Manager_GrantPrivilege_ShouldAllowsSeveralGrantPrivilege_WhenIsOnSameTable()
 		{
-			var manager = new Manager("adminUser");
+			var manager = new Manager("admin");
 
-			var profile = new Profile { Name = "User" };
-			manager.Profiles.Add(profile);
+			var adminProfile = new Profile { Name = Profile.AdminProfileName};
+            adminProfile.Users.Add(new User("admin", "1234"));
+
+            var userProfile = new Profile { Name = "User" };
+
+            manager.Profiles.Add(adminProfile);
+			manager.Profiles.Add(userProfile);
+
 
 			manager.GrantPrivilege("User", "Students", Privilege.Select);
 			manager.GrantPrivilege("User", "Students", Privilege.Insert);
 
 
-			var result1 = profile.IsGrantedPrivilege("Students", Privilege.Select);
+			var result1 = userProfile.IsGrantedPrivilege("Students", Privilege.Select);
 			Assert.True(result1);
 
-			var result2 = profile.IsGrantedPrivilege("Students", Privilege.Insert);
+			var result2 = userProfile.IsGrantedPrivilege("Students", Privilege.Insert);
 			Assert.True(result2);
 		}
 		
 		[Fact]
 		public void Manager_GrantPrivilege_ShouldAllowsSeveralGrantPrivilege_WhenIsOnDifferentTable()
 		{
-			var manager = new Manager("adminUser");
+			var manager = new Manager("admin");
 
-			var profile = new Profile { Name = "User" };
-			manager.Profiles.Add(profile);
+			var adminprofile = new Profile { Name = Profile.AdminProfileName };
+            adminprofile.Users.Add(new User("admin", "1234"));
+
+            var userProfile = new Profile { Name = "User" };
+			
+            manager.Profiles.Add(adminprofile);
+            manager.Profiles.Add(userProfile);
 
 			manager.GrantPrivilege("User", "Students", Privilege.Select);
 			manager.GrantPrivilege("User", "Teachers", Privilege.Select);
 
 
-			var result1 = profile.IsGrantedPrivilege("Students", Privilege.Select);
+			var result1 = userProfile.IsGrantedPrivilege("Students", Privilege.Select);
 			Assert.True(result1);
 
-			var result2 = profile.IsGrantedPrivilege("Teachers", Privilege.Select);
+			var result2 = userProfile.IsGrantedPrivilege("Teachers", Privilege.Select);
 			Assert.True(result2);
 		}
 
-		#endregion
-		
-		#region RevokePrivilege Tests
-		
+        #endregion
+
+        #region RevokePrivilege Tests
+        private Manager CreateManager() 
+        {
+            var manager = new Manager("admin");
+
+            var adminProfile = new Profile { Name = Profile.AdminProfileName };
+            adminProfile.Users.Add(new User("admin", "1234"));
+
+            manager.Profiles.Add(adminProfile);
+
+            return manager;
+        }
 		[Fact]
 		public void Manager_RevokePrivilege_ShouldRevokePrivilege_WhenProfileExists()
 		{
-			var manager = new Manager("adminUser");
+            var manager = CreateManager();
 
 			var profile = new Profile { Name = "User" };
 			profile.GrantPrivilege("Students", Privilege.Select);
-			manager.Profiles.Add(profile);
+			
+            manager.Profiles.Add(profile);
 
 			manager.RevokePrivilege("User", "Students", Privilege.Select);
 
@@ -209,11 +254,12 @@ namespace OurTests
 		[Fact]
 		public void Manager_RevokePrivilege_ShouldDoNothing_WhenProfileDoesNotExists()
 		{
-			var manager = new Manager("adminUser");
+            var manager = CreateManager();
 
 			var profile = new Profile { Name = "User" };
 			profile.GrantPrivilege("Students", Privilege.Select);
-			manager.Profiles.Add(profile);
+			
+            manager.Profiles.Add(profile);
 
 			manager.RevokePrivilege("Unknow", "Students", Privilege.Select);
 
@@ -223,11 +269,12 @@ namespace OurTests
 		[Fact]
 		public void Manager_RevokePrivilege_ShouldDoNothing_WhenTableDoesNotExists()
 		{
-			var manager = new Manager("adminUser");
+            var manager = CreateManager();
 
 			var profile = new Profile { Name = "User" };
 			profile.GrantPrivilege("Students", Privilege.Select);
-			manager.Profiles.Add(profile);
+			
+            manager.Profiles.Add(profile);
 
 			manager.RevokePrivilege("User", "Teachers", Privilege.Select);
 
@@ -237,23 +284,39 @@ namespace OurTests
 		[Fact]
 		public void Manager_RevokePrivilege_ShouldDoNothing_WhenPrivilegeDoesNotExists()
 		{
-			var manager = new Manager("adminUser");
+            var manager = CreateManager();
 
 			var profile = new Profile { Name = "User" };
 			profile.GrantPrivilege("Students", Privilege.Select);
-			manager.Profiles.Add(profile);
+			
+            manager.Profiles.Add(profile);
 
 			manager.RevokePrivilege("User", "Students", Privilege.Insert);
 
 			var result = profile.IsGrantedPrivilege("Students", Privilege.Select);
 			Assert.True(result);
 		}
+        [Fact]
+        public void Manager_RevokePrivilege_ShouldDoNothing_WhenUserIsNotAdmin()
+        {
+            var manager = new Manager("normalUser");
 
-        #endregion
+            var profile = new Profile { Name = "User" };
+            profile.Users.Add(new User("normalUser", "1234"));
+            profile.GrantPrivilege("Students", Privilege.Select);
 
-        #region IsGrantedPrivilege Tests
-        
-		[Fact]
+            manager.Profiles.Add(profile);
+
+            manager.RevokePrivilege("User", "Students", Privilege.Select);
+            var result = profile.IsGrantedPrivilege("Students", Privilege.Select);
+            Assert.True(result);
+        }
+
+		#endregion
+
+			#region IsGrantedPrivilege Tests
+
+			[Fact]
 		public void Manager_IsGrantedPrivilege_ShouldReturnTrue_WhenUserHasPrivilege()
 		{
 			var manager = new Manager("adminUser");
@@ -361,21 +424,23 @@ namespace OurTests
         public void Manager_AddProfile_ShouldAddSeveralProfiles_WhenNamesAreDifferent()
         {
             var manager = new Manager("adminUser");
-            var profile1 = new Profile {Name = "User"};
-            var profile2 = new Profile {Name = "Admin"};
+            var profile1 = new Profile {Name = "Admin"};
+            var profile2 = new Profile {Name = "User"};
+            profile1.Users.Add(new User("adminUser", "password123"));
             manager.AddProfile(profile1);
             manager.AddProfile(profile2);
 
             Assert.Equal(2, manager.Profiles.Count);
-            Assert.Equal("User", manager.Profiles[0].Name);
-            Assert.Equal("Admin", manager.Profiles[1].Name);
+            Assert.Equal("Admin", manager.Profiles[0].Name);
+            Assert.Equal("User", manager.Profiles[1].Name);
+
         }
 
-		#endregion
+        #endregion
 
-		#region UserByName Tests
+        #region UserByName Tests
 
-		[Fact]
+        [Fact]
         public void Manager_UserByName_ShouldReturnUser_WhenUserExists()
         {
             var manager = new Manager("adminUser");
@@ -757,12 +822,16 @@ namespace OurTests
         public void Manager_RemoveProfile_ShouldRemoveProfile_WhenProfileExists()
         {
             var manager = new Manager("adminUser");
-            var profile = new Profile {Name = "User"};
-            manager.Profiles.Add(profile);
+            var profile1 = new Profile { Name = "Admin" };
+            var profile2 = new Profile {Name = "User"};
+            profile1.Users.Add(new User("adminUser", "password"));
+            manager.Profiles.Add(profile1);
+            manager.Profiles.Add(profile2);
 
             var result = manager.RemoveProfile("User");
             Assert.True(result);
-            Assert.Empty(manager.Profiles);
+            Assert.Single(manager.Profiles);
+            Assert.Equal("Admin", manager.Profiles[0].Name);
         }
 
         [Fact]
@@ -779,8 +848,10 @@ namespace OurTests
         public void Manager_RemoveProfile_ShouldRemoveOnlySelectedProfile_WhenSeveralProfilesExist()
         {
             var manager = new Manager("adminUser");
-            var profile1 = new Profile {Name = "User"};
-            var profile2 = new Profile {Name = "Admin"};
+            var profile1 = new Profile { Name = "Admin" };
+
+            var profile2 = new Profile {Name = "User"};
+            profile1.Users.Add(new User("adminUser", "password"));
             manager.Profiles.Add(profile1);
             manager.Profiles.Add(profile2);
 

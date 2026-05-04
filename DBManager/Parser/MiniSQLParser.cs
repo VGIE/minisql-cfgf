@@ -29,11 +29,11 @@ namespace DbManager
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = @"^CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z]+)$";
 
-            const string dropSecurityProfilePattern = null;
-            
+            const string dropSecurityProfilePattern = @"^DROP\s+SECURITY\s+PROFILE\s+([a-zA-Z]+)$";
+
             const string grantPattern = @"^GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)\s*$";
             
-            const string revokePattern = null;
+            const string revokePattern = @"^REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)\s*$";
 
             const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+)[,](?<password>[a-zA-Z]+)[,](?<profile>[a-zA-Z]+)\)$";
             var addUser = new Regex(addUserPattern, RegexOptions.None);
@@ -222,7 +222,30 @@ namespace DbManager
 
 			}
 
-			return null;
+            //Revoke
+            var matchRevoke = Regex.Match(miniSQLQuery, revokePattern);
+            if (matchRevoke.Success)
+            {
+                string privilegeName = matchRevoke.Groups[1].Value;
+				string tableName = matchRevoke.Groups[2].Value;
+				string profileName = matchRevoke.Groups[3].Value;
+
+                if (string.IsNullOrEmpty(privilegeName) || string.IsNullOrEmpty(tableName) || string.IsNullOrEmpty(profileName))
+                {
+                    return null;
+                }
+
+				return new Revoke(privilegeName, tableName, profileName);
+
+			}
+            // drop security profile
+            match = Regex.Match(miniSQLQuery, dropSecurityProfilePattern);
+            if (match.Success)
+            {
+                return new DropSecurityProfile(match.Groups[1].Value);
+            }
+
+            return null;
         }
 
 
