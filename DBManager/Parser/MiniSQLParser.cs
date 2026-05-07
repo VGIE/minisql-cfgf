@@ -35,7 +35,7 @@ namespace DbManager
             
             const string revokePattern = @"^REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)\s*$";
 
-            const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+)[,](?<password>[a-zA-Z]+)[,](?<profile>[a-zA-Z]+)\)$";
+            const string addUserPattern = @"^ADD\s+USER\s+\((?<user>[a-zA-Z]+)[,](?<password>[a-zA-Z0-9]+)[,](?<profile>[a-zA-Z]+)\)$";
             var addUser = new Regex(addUserPattern, RegexOptions.None);
 
             const string deleteUserPattern = @"^DELETE\s+USER\s+(?<user>[a-zA-Z]+)$";

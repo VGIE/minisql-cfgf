@@ -36,7 +36,7 @@ namespace DbManager
             }
             profile.Users.Add(new User(Username, Encryption.Encrypt(Password)));
             return Constants.AddUserSuccess;
-            
+            // no estamos aceptando un numero en password (error del parsing)
         }
 
     }
