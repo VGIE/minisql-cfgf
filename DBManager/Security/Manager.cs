@@ -54,7 +54,10 @@ namespace DbManager.Security
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
             var profile = ProfileByName(profileName);
-
+            if (!IsUserAdmin())
+            {
+                return;
+            }
             if (profile == null || string.IsNullOrEmpty(table))
             {
                 return;
