@@ -1,3 +1,4 @@
+using DbManager.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace DbManager
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //InsertSuccess or the last error in the database
+
             database.Insert(Table, Values);
             return database.LastErrorMessage;
         }
